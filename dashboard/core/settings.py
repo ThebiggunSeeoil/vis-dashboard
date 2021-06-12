@@ -100,7 +100,7 @@ DATABASES = {
     },
 }
 
-# On widows use ODBC 13 
+# On widows use ODBC 13  xxxxxxxxxxxxxx
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
