@@ -1,0 +1,448 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+ <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>VIS monitor</title>
+
+    <!-- Bootstrap core CSS -->
+<!--    <link href={% static "assets/css/store-css/bootstrap.css" %} rel="stylesheet">-->
+
+    <!-- Add custom CSS here -->
+    <link href={% static "assets/css/store-css/sb-admin.css" %} rel="stylesheet">
+    <link rel=stylesheet" href={% static "font-awesome/css/font-awesome.min.css" %}>
+    <link rel="shortcut icon" type={% static "image/x-icon" %} href={% static "pic/favicon.ico" %}>
+  </head>
+<!--<head>-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--&lt;!&ndash;    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">&ndash;&gt;-->
+<!--&lt;!&ndash;    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>&ndash;&gt;-->
+<!--&lt;!&ndash;    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>&ndash;&gt;-->
+<!--</head>-->
+<style>
+  .table {
+  font-size: 12px;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th
+{
+  padding:0;
+}
+
+</style>
+
+<div class="row">
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header card-header-success">
+                <!--เริ่มต้น ส่วนแสดงโลโก้-->
+                <div class="card-icon">
+                    <i class="material-icons">devices_other</i>
+                </div>
+                <!--จบ แสดงโลโก้-->
+                <!--เริ่มต้นส่วนแสดงหัวข้อในตารางด้านบน-->
+                <h4 class="card-title"><h4>VIS Detail แยกตามสถานี</h4></h4>
+                <p class="card-category">Last Update 31/05/2020 18:00</p>
+                <!--จบ ส่วนแสดงหัวข้อในตารางด้านบน-->
+            </div>
+            <div class="card-body table-responsive">
+        <table class="table table-hover">
+            <tbody>
+                   <!----------------------------------------------------------------------------->
+                    <tr  data-toggle="collapse" data-target="#demo1" class="accordion-toggle">
+                        <td >
+                            <div class="stats">
+                                <i class="material-icons align-middle  text-success ">monitor</i>
+                                <i class="material-icons align-middle  text-success ">devices</i>
+                                <i class="material-icons align-middle  text-warning ">local_gas_station</i>
+                                <i class="material-icons align-middle  text-success ">battery_alert</i>
+                            </div>
+
+                        </td>
+                        <td align="left">ปตท.อยุธยา เจริญผลอำนาจเจริญ</td>
+                        <td align="left">IP : 10.10.25.200</td>
+                        <td align="left">LogAdd : 4</td>
+                        <td align="left">ON-LINE</td>
+                         <td align="left">LAST : 31/05/2020 18:00</td>
+                        <td align="left">[เปิด 2 หน้า | 12 มือจ่าย]</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="12" class="hiddenRow">
+                            <div class="accordian-body collapse" id="demo1">
+                                <table class="table table-striped">
+                                    <!-- หัวตาราง Log-address -->
+                                    <thead>
+                                    <tr class="info">
+                                        <th style="font-size:13px">LogAddress</th>
+                                        <th style="font-size:13px">Unit IP Address</th>
+                                    </tr>
+                                    </thead>
+
+                                    <!-- ส่วนแสดงข้อมูล Log Address -->
+                                    <tbody>
+                                    <!--LOG-ADDRESS 1-->
+                                    <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
+                                        <td><a href="#">1</a></td>
+                                        <td>192.168.1.111</td>
+                                        <td>
+                                            <a href="#" class="btn btn-default btn-sm">
+                                                <i class="glyphicon glyphicon-cog"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                        <!--LOG-ADDRESS 1 DATA-->
+
+                                    <tr>
+                                        <td colspan="12" class="hiddenRow">
+                                            <div class="accordian-body collapse" id="demo10">
+                                                 <div class="panel-body">
+                                            <div CLASS="table-responsive">
+                                                <table class="table table-bordered table-hover table-striped tablesorter">
+                                                    <thead>
+                                                    <!-- ส่วนหัวตาราง ที่ 3 -->
+                                                    <tr>
+                                                        <td class="text-center">IP-Address</td>
+                                                        <td class="text-center">Status</td>
+                                                        <td class="text-center">PumpLog</td>
+                                                        <td class="text-center">NozzleNumber</td>
+                                                         <td class="text-center">BatteryStus</td>
+                                                        <td class="text-center">LastCons</td>
+                                                        <td class="text-center">TimeUpdate</td>
+                                                    </tr>
+                                                    <!-- ส่วนหัวข้อมูล ที่ 3 -->
+                                                    <tr>
+                                                        <th class="text-center" style="font-size:12px" >192.168.1.111</th>
+                                                        <th class="text-center" style="font-size:12px">ON-LINE</th>
+                                                        <th class="text-center" style="font-size:12px">1</th>
+                                                        <th class="text-center" style="font-size:12px">1</th>
+                                                        <th class="text-center" style="font-size:12px">5</th>
+                                                        <th class="text-center" style="font-size:12px">2020-06-11 15:00</th>
+                                                        <th class="text-center" style="font-size:12px">2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="font-size:14px">192.168.1.111</th>
+                                                        <th style="font-size:14px">ON-LINE</th>
+                                                        <th style="font-size:14px">1</th>
+                                                        <th style="font-size:14px">2</th>
+                                                        <th style="font-size:14px">5</th>
+                                                        <th style="font-size:14px">2020-06-11 15:00</th>
+                                                        <th style="font-size:14px">2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="font-size:14px">192.168.1.111</th>
+                                                        <th style="font-size:14px">ON-LINE</th>
+                                                        <th style="font-size:14px">1</th>
+                                                        <th style="font-size:14px">3</th>
+                                                        <th style="font-size:14px">5</th>
+                                                        <th style="font-size:14px">2020-06-11 15:00</th>
+                                                        <th style="font-size:14px">2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="font-size:14px">192.168.1.111</th>
+                                                        <th style="font-size:14px">ON-LINE</th>
+                                                        <th style="font-size:14px">1</th>
+                                                        <th style="font-size:14px">4</th>
+                                                        <th style="font-size:14px">5</th>
+                                                        <th style="font-size:14px">2020-06-11 15:00</th>
+                                                        <th style="font-size:14px">2020-06-11 15:00</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                                 </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                     <!--END LOG-ADDRESS 1-->
+
+
+                                    <!--LOG-ADDRESS 2-->
+                                    <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo11">
+                                        <td>2</td>
+                                        <td>192.168.1.112</td>
+                                        <td><a href="#" class="btn btn-default btn-sm">
+                                            <i class="glyphicon glyphicon-cog"></i>
+                                        </a>
+                                        </td>
+                                    </tr>
+                                         <!--LOG-ADDRESS 2 DATA-->
+                                    <tr>
+                                        <td colspan="12" class="hiddenRow">
+                                            <div class="accordian-body collapse" id="demo11">
+                                                <table class="table table-striped">
+
+                                                    <thead>
+                                                    <!-- ส่วนหัวตาราง ที่ 3 -->
+                                                    <tr>
+                                                        <td><a href="#">IP-Address</a></td>
+                                                        <td>Status</td>
+                                                        <td>PumpLog</td>
+                                                        <td>NozzleNumber</td>
+                                                         <td>BatteryStus</td>
+                                                        <td>LastCons</td>
+                                                        <td>TimeUpdate</td>
+                                                    </tr>
+                                                    <!-- ส่วนหัวข้อมูล ที่ 3 -->
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>1</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>2</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>3</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>4</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                        <!--END LOG-ADDRESS 2-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                 <!----------------------------------------------------------------------------->
+
+                     <tr data-toggle="collapse" data-target="#demo2" class="accordion-toggle">
+                        <td>
+                            <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open"></span>
+                            </button>
+                        </td>
+                        <td align="left">ปตท.เจริญผลอำนาจเจริญ</td>
+                        <td align="left">IP : 10.10.25.250</td>
+                        <td align="left">LogAdd : 2</td>
+                        <td align="left">ON-LINE</td>
+                         <td align="left">LAST : 31/05/2020 18:00</td>
+                        <td align="left">[เปิด 2 หน้า | 12 มือจ่าย]</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="12" class="hiddenRow">
+                            <div class="accordian-body collapse" id="demo2">
+                                <table class="table table-striped">
+                                    <!-- หัวตาราง Log-address -->
+                                    <thead>
+                                    <tr class="info">
+                                        <th>LogAddress</th>
+                                        <th>Unit IP Address</th>
+                                    </tr>
+                                    </thead>
+
+                                    <!-- ส่วนแสดงข้อมูล Log Address -->
+                                    <tbody>
+                                    <!--LOG-ADDRESS 1-->
+                                    <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo21">
+                                        <td><a href="#">1</a></td>
+                                        <td>192.168.1.111</td>
+                                        <td>
+                                            <a href="#" class="btn btn-default btn-sm">
+                                                <i class="glyphicon glyphicon-cog"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                        <!--LOG-ADDRESS 1 DATA-->
+                                    <tr>
+                                        <td colspan="12" class="hiddenRow">
+                                            <div class="accordian-body collapse" id="demo21">
+                                                <table class="table table-striped">
+
+                                                    <thead>
+                                                    <!-- ส่วนหัวตาราง ที่ 3 -->
+                                                    <tr>
+                                                        <td><a href="#">IP-Address</a></td>
+                                                        <td>Status</td>
+                                                        <td>PumpLog</td>
+                                                        <td>NozzleNumber</td>
+                                                         <td>BatteryStus</td>
+                                                        <td>LastCons</td>
+                                                        <td>TimeUpdate</td>
+                                                    </tr>
+                                                    <!-- ส่วนหัวข้อมูล ที่ 3 -->
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>1</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>2</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>3</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>4</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                     <!--END LOG-ADDRESS 1-->
+
+
+                                    <!--LOG-ADDRESS 2-->
+                                    <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo22">
+                                        <td>2</td>
+                                        <td>192.168.1.112</td>
+                                        <td><a href="#" class="btn btn-default btn-sm">
+                                            <i class="glyphicon glyphicon-cog"></i>
+                                        </a>
+                                        </td>
+                                    </tr>
+                                         <!--LOG-ADDRESS 2 DATA-->
+                                    <tr>
+                                        <td colspan="12" class="hiddenRow">
+                                            <div class="accordian-body collapse" id="demo22">
+                                                <table class="table table-striped">
+
+                                                    <thead>
+                                                    <!-- ส่วนหัวตาราง ที่ 3 -->
+                                                    <tr>
+                                                        <td><a href="#">IP-Address</a></td>
+                                                        <td>Status</td>
+                                                        <td>PumpLog</td>
+                                                        <td>NozzleNumber</td>
+                                                         <td>BatteryStus</td>
+                                                        <td>LastCons</td>
+                                                        <td>TimeUpdate</td>
+                                                    </tr>
+                                                    <!-- ส่วนหัวข้อมูล ที่ 3 -->
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>1</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>2</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>3</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>192.168.1.111</th>
+                                                        <th>ON-LINE</th>
+                                                        <th>1</th>
+                                                        <th>4</th>
+                                                        <th>5</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                        <th>2020-06-11 15:00</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                        <!--END LOG-ADDRESS 2-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                <!----------------------------------------------------------------------------->
+
+
+
+            </tbody>
+        </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+
+{% endblock javascripts %}
+

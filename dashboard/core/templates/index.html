@@ -1,0 +1,457 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+{% load humanize %}
+
+{% block content %}
+
+<style>
+  .table {
+  font-size: 13px;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th
+{
+  padding:0;
+}
+
+</style>
+
+<div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-success card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">monitor</i>
+                </div>
+                <p class="card-category">VIS</p>
+                <h3 class="card-title">
+                    {{VIS_SUM_OFFLINE}}
+                    <small></small>
+                </h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons text-warning">access_time</i>
+                    <a href="#pablo">TotalSite {{TOTAL_SITE_ACTIVE}} สถานี </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-success card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">devices</i>
+                </div>
+                <p class="card-category">MWGT</p>
+                <h3 class="card-title">{{MWGT_SUM_OFFLINE}}</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons text-danger">cloud_off</i>Last Offline {{MWGT_LAST_OFFLINE.MWGT_last_time | naturalday | default:'การสื่อสารปกติ'}} {{MWGT_LAST_OFFLINE.MWGT_last_time | naturaltime | default:''}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-success card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">local_gas_station</i>
+                </div>
+                <p class="card-category">NOZZLE</p>
+                <h3 class="card-title">{{NOZZLE_OFFLINE}}</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons  text-warning">taxi_alert</i>LastOffline {{NOZZLE_LAST_OFFLINE.MWGT_last_time | naturalday | default:'การสื่อสารปกติ'}} {{NOZZLE_LAST_OFFLINE.MWGT_last_time | naturaltime | default:''}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-success card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">battery_alert</i>
+                </div>
+                <p class="card-category">Battery</p>
+                <h3 class="card-title">{{BATTERY_OFFLINE}}</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons  text-warning">battery_alert</i>LastOffline {{BATTERY_LAST_OFFLINE.MWGT_last_time | naturalday | default:'การสื่อสารปกติ'}} {{BATTERY_LAST_OFFLINE.MWGT_last_time | naturaltime | default:''}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--ส่วนแสดงข้อมูลแบบรวมทุก ERROR-->
+<div class="row">
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header card-header-success">
+                <div class="card-icon">
+                    <i class="material-icons">devices_other</i>
+                </div>
+
+                <h4 class="card-title">MAIN STATUS [VIS : MWGT : NOZZLE : BATTERY]</h4>
+                <p class="card-category">Last Update {{TIME_UPDATE}}</p>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover">
+                    <thead class="text-warning text-center">
+                    <th>Parity</th>
+                    <th>SiteName</th>
+                    <th>IP</th>
+                    <th>ErrorDevice</th>
+                    <th>LastCon.</th>
+                    <th>LossTime</th>
+                    <th>BatLev.</th>
+                    <th align="center">Detail</th>
+                    </thead>
+                    <tbody>
+                    {% for vis_detail in VIS_DETAIL %}
+                    <tr class="td-actions">
+                        <td align="center">
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if vis_detail.time_dif.day >= 1 or vis_detail.time_dif.hour >= 3 %} text-danger {% elif vis_detail.time_dif.hour <= 3  %} text-warning {% endif %}">monitor</i>
+                            </div>
+                        </td>
+                        <td align="left">{{vis_detail.name}}</td>
+                        <td align="center">{{vis_detail.ip_address}}</td>
+                        <td align="center">{{vis_detail.type}}</td>
+                        <td align="center">{{vis_detail.NOZZLE_Last_conn}}</td>
+                        <td align="center">{{vis_detail.time_dif.day }} วัน {{vis_detail.time_dif.hour }} ชม {{vis_detail.time_dif.minutes }} นาที</td>
+<!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
+                        <td align="center">{{vis_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">
+                            <button type="button" rel="tooltip"
+                                    title="ทีม : {{vis_detail.TEAM_ID}} คุณ : {{vis_detail.TEAM_NAME}}"
+                                    class="btn btn-primary btn-link btn-sm">
+                                <i class="material-icons">notification_important</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% for mwgt_detail in MWTG_DETAIL %}
+                    <tr class="td-actions">
+                        <td align="center">
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if mwgt_detail.time_dif.day >= 1 or mwgt_detail.time_dif.hour >= 3 %} text-danger {% elif mwgt_detail.time_dif.hour <= 3  %} text-warning {% endif %}">devices</i>
+                            </div>
+                        </td>
+                        <td align="left">{{mwgt_detail.name}}</td>
+                        <td align="center">{{mwgt_detail.ip_address}}</td>
+                        <td align="center">{{mwgt_detail.type}}</td>
+                        <td align="center">{{mwgt_detail.NOZZLE_Last_conn}}</td>
+                        <td align="center">{{mwgt_detail.time_dif.day }} วัน {{mwgt_detail.time_dif.hour }} ชม {{mwgt_detail.time_dif.minutes }} นาที</td>
+<!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
+                        <td align="center">{{mwgt_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">
+                            <button type="button" rel="tooltip"
+                                    title="ทีม : {{mwgt_detail.TEAM_ID}} คุณ : {{mwgt_detail.TEAM_NAME}}"
+                                    class="btn btn-primary btn-link btn-sm">
+                                <i class="material-icons">notification_important</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% for nozzle_detail in NOZZLE_DETAIL %}
+                    <tr class="td-actions">
+                        <td align="center">
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if nozzle_detail.time_dif.day >= 1 or nozzle_detail.time_dif.hour >= 3 %} text-danger {% elif nozzle_detail.time_dif.hour <= 3  %} text-warning {% endif %}">local_gas_station</i>
+                            </div>
+                        </td>
+                        <td align="left">{{nozzle_detail.name}} (offline หน้า  {{nozzle_detail.NOZZLE_pump_log_address}}/{{nozzle_detail.NOZZLE_num}})</td>
+                        <td align="center">{{nozzle_detail.ip_address}}</td>
+                        <td align="center">{{nozzle_detail.type}}</td>
+                        <td align="center">{{nozzle_detail.NOZZLE_Last_conn}}</td>
+                        <td align="center">{{nozzle_detail.time_dif.day }} วัน {{nozzle_detail.time_dif.hour }} ชม {{nozzle_detail.time_dif.minutes }} นาที</td>
+<!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
+                        <td align="center">{{nozzle_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">
+                            <button type="button" rel="tooltip"
+                                    title="ทีม : {{nozzle_detail.TEAM_ID}} คุณ : {{nozzle_detail.TEAM_NAME}}"
+                                    class="btn btn-primary btn-link btn-sm">
+                                <i class="material-icons">notification_important</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% for battery_detail in BATTERY_DETAIL %}
+                    <tr class="td-actions">
+                        <td align="center">
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if battery_detail.NOZZLE_Battery_Status <= '5' %} text-danger {% elif battery_detail.NOZZLE_Battery_Status >= '6' %} text-warning {% endif %}">battery_alert</i>
+                            </div>
+                        </td>
+                        <td align="left">{{battery_detail.name}} (ตำแหน่ง มือจ่าย {{battery_detail.NOZZLE_pump_log_address}}/{{battery_detail.NOZZLE_num}})</td>
+                        <td align="center">{{battery_detail.ip_address}}</td>
+                        <td align="center">{{battery_detail.type}}</td>
+                        <td align="center">{{battery_detail.NOZZLE_Last_conn}}</td>
+                        <td align="center">----</td>
+<!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
+                        <td align="center" {% if battery_detail.NOZZLE_Battery_Status < '5' %} class="text-danger" {% elif battery_detail.NOZZLE_Battery_Status >= '5' %} class="text-warning" {% endif %}">{{battery_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">
+                            <button type="button" rel="tooltip"
+                                    title="ทีม : {{battery_detail.TEAM_ID}} คุณ : {{battery_detail.TEAM_NAME}}"
+                                    class="btn btn-primary btn-link btn-sm">
+                                <i class="material-icons">notification_important</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--End MWGT Detail-->
+    </div>
+</div>
+
+
+
+<div class="row justify-content-center">
+    <button type="button" class="btn btn-info" aling="center" onclick="myFunction()">รายละเอียดแยกตาม Device กดที่นี่
+    </button>
+</div>
+<!--ส่วนแสดง รายละเอียดแยกตาม ERROR-->
+<div class="row" id="myDIV">
+    <!--ส่วน VIS แยกตามสถานี-->
+    <div class="col-lg-12 col-md-12">
+        <!--Start VIS Detail-->
+        <div class="card">
+            <div class="card-header card-header-success">
+                <div class="card-icon">
+                    <i class="material-icons">monitor</i>
+                </div>
+                <h4 class="card-title">VIS : STATUS [OFF-LINE : {{VIS_SUM_OFFLINE}} ADDRESS]</h4>
+                <p class="card-category">Last Update {{TIME_UPDATE}}</p>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover">
+                    <thead class="text-warning text-center">
+                    <th>Parity</th>
+                    <th>SiteName</th>
+                    <th>IP</th>
+                    <th>Status</th>
+                    <th>LastConnect</th>
+                    <th>LossTime</th>
+                    <th>Detail</th>
+                    </thead>
+                    <tbody>
+                   {% for vis_detail in VIS_DETAIL %}
+                    <tr class="td-actions">
+                        <td align="center">
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if vis_detail.time_dif.day >= 1 or vis_detail.time_dif.hour >= 3 %} text-danger {% elif vis_detail.time_dif.hour <= 3  %} text-warning {% endif %}">monitor</i>
+                            </div>
+                        </td>
+                        <td align="left">{{vis_detail.name}}</td>
+                        <td align="center">{{vis_detail.ip_address}}</td>
+                        <td align="center">{{vis_detail.type}}</td>
+                        <td align="center">{{vis_detail.NOZZLE_Last_conn}}</td>
+                        <td align="center">{{vis_detail.time_dif.day }} วัน {{vis_detail.time_dif.hour }} ชม {{vis_detail.time_dif.minutes }} นาที</td>
+<!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
+<!--                        <td align="center">{{vis_detail.NOZZLE_Battery_Status}}</td>-->
+                        <td align="center">
+                            <button type="button" rel="tooltip"
+                                    title="ทีม : {{vis_detail.TEAM_ID}} คุณ : {{vis_detail.TEAM_NAME}}"
+                                    class="btn btn-primary btn-link btn-sm">
+                                <i class="material-icons">notification_important</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Start MWGT แยกตามสถานี-->
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header card-header-success">
+                <div class="card-icon">
+                    <i class="material-icons">devices</i>
+                </div>
+                <h4 class="card-title">MWGT : STATUS [OFF-LINE : {{MWGT_SUM_OFFLINE}} DEVICE]</h4>
+                <p class="card-category">Last Update {{TIME_UPDATE}}</p>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover">
+                    <thead class="text-warning text-center">
+                    <th>Parity</th>
+                    <th>SiteName</th>
+                    <th>IP</th>
+                    <th>Status</th>
+                    <th>LastConnect</th>
+                    <th>LossTime</th>
+                    <th align="center">Detail</th>
+                    </thead>
+                    <tbody>
+                    {% for mwgt_detail in MWTG_DETAIL %}
+                    <tr class="td-actions">
+                        <td align="center">
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if mwgt_detail.time_dif.day >= 1 or mwgt_detail.time_dif.hour >= 3 %} text-danger {% elif mwgt_detail.time_dif.hour <= 3  %} text-warning {% endif %}">devices</i>
+                            </div>
+                        </td>
+                        <td align="left">{{mwgt_detail.name}}</td>
+                        <td align="center">{{mwgt_detail.ip_address}}</td>
+                        <td align="center">{{mwgt_detail.type}}</td>
+                        <td align="center">{{mwgt_detail.NOZZLE_Last_conn}}</td>
+                        <td align="center">{{mwgt_detail.time_dif.day }} วัน {{mwgt_detail.time_dif.hour }} ชม {{mwgt_detail.time_dif.minutes }} นาที</td>
+<!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
+<!--                        <td align="center">{{mwgt_detail.NOZZLE_Battery_Status}}</td>-->
+                        <td align="center">
+                            <button type="button" rel="tooltip"
+                                    title="ทีม : {{mwgt_detail.TEAM_ID}} คุณ : {{mwgt_detail.TEAM_NAME}}"
+                                    class="btn btn-primary btn-link btn-sm">
+                                <i class="material-icons">notification_important</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Start Nozzle แยกตามสถานี-->
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header card-header-success">
+                <div class="card-icon">
+                    <i class="material-icons">local_gas_station</i>
+                </div>
+                <h4 class="card-title">NOZZLE: STATUS [OFF-LINE : {{NOZZLE_OFFLINE}} NOZZLE]</h4>
+                <p class="card-category">Last Update {{TIME_UPDATE}}</p>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover">
+                    <thead class="text-warning text-center">
+                    <th>Parity</th>
+                    <th>SiteName</th>
+                    <th>Status</th>
+                    <th>PumpLog</th>
+                    <th>NozzleNumber</th>
+                    <th>BatStatus</th>
+                    <th>LastConnect</th>
+                    <th>LossTime</th>
+                    <th align="center">Detail</th>
+                    </thead>
+                    <tbody>
+                   {% for nozzle_detail in NOZZLE_DETAIL %}
+                    <tr class="td-actions">
+                        <td align="center">
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if nozzle_detail.time_dif.day >= 1 or nozzle_detail.time_dif.hour >= 3 %} text-danger {% elif nozzle_detail.time_dif.hour <= 3  %} text-warning {% endif %}">local_gas_station</i>
+                            </div>
+                        </td>
+                        <td align="left">{{nozzle_detail.name}}</td>
+                        <td align="center">OFF-LINE</td>
+                        <td align="center">{{nozzle_detail.NOZZLE_pump_log_address}}</td>
+                        <td align="center">{{nozzle_detail.NOZZLE_num}}</td>
+                        <td align="center">{{nozzle_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">{{nozzle_detail.NOZZLE_Last_conn}}</td>
+                        <td align="center">{{nozzle_detail.time_dif.day }} วัน {{nozzle_detail.time_dif.hour }} ชม {{nozzle_detail.time_dif.minutes }} นาที</td>
+<!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
+
+                        <td align="center">
+                            <button type="button" rel="tooltip"
+                                    title="ทีม : {{nozzle_detail.TEAM_ID}} คุณ : {{nozzle_detail.TEAM_NAME}}"
+                                    class="btn btn-primary btn-link btn-sm">
+                                <i class="material-icons">notification_important</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Start Battery แยกตามสถานี-->
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header card-header-success">
+                <div class="card-icon">
+                    <i class="material-icons">battery_alert</i>
+                </div>
+                <h4 class="card-title">BATTERY: STATUS [OFF-LINE : {{BATTERY_OFFLINE}} DEVICE]</h4>
+                <p class="card-category">Last Update {{TIME_UPDATE}}</p>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover">
+                    <thead class="text-warning">
+                    <th>Parity</th>
+                    <th>SiteName</th>
+                    <th>Status</th>
+                    <th>PumpLog</th>
+                    <th>NozzleNumber</th>
+                    <th>BatStatus</th>
+                    <th>LastConnect</th>
+                    <th align="center">Detail</th>
+                    </thead>
+                    <tbody>
+                    {% for battery_detail in BATTERY_DETAIL %}
+                    <tr class="td-actions">
+                        <td align="center">
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if battery_detail.NOZZLE_Battery_Status <= '5' %} text-danger {% elif battery_detail.NOZZLE_Battery_Status >= '6' %} text-warning {% endif %}">battery_alert</i>
+                            </div>
+                        </td>
+                        <td align="left">{{battery_detail.name}}</td>
+                        <td align="center">{{battery_detail.type}}</td>
+                        <td align="center">{{battery_detail.NOZZLE_pump_log_address}}</td>
+                         <td align="center">{{battery_detail.NOZZLE_num}}</td>
+                        <td align="center" {% if battery_detail.NOZZLE_Battery_Status < '5' %} class="text-danger" {% elif battery_detail.NOZZLE_Battery_Status >= '5' %} class="text-warning" {% endif %}">{{battery_detail.NOZZLE_Battery_Status}}</td>
+                          <td align="center">{{battery_detail.NOZZLE_Last_conn}}</td>
+                        <td align="center">
+                            <button type="button" rel="tooltip"
+                                    title="ทีม : {{battery_detail.TEAM_ID}} คุณ : {{battery_detail.TEAM_NAME}}"
+                                    class="btn btn-primary btn-link btn-sm">
+                                <i class="material-icons">notification_important</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+  document.getElementById("myDIV").style.display = "none";
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      md.initDashboardPageCharts();});
+
+    function myFunction() {
+        var x = document.getElementById("myDIV");
+        if (x.style.display === "none") {
+          x.style.display = "block";
+        } else {
+          x.style.display = "none";
+        }
+      }
+</script>
+
+ <script>
+    window.setTimeout(function () {
+   window.location.reload();
+ }, 90000);
+  </script>
+
+
+
+
+{% endblock javascripts %}

@@ -1,0 +1,194 @@
+{% extends "layouts/base-vis-status.html" %}
+{% load static %}
+{% block title %} Dashboard {% endblock %}
+{% load humanize %}
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+ <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>VIS monitor</title>
+
+    <!-- Bootstrap core CSS -->
+<!--    <link href={% static "assets/css/store-css/bootstrap.css" %} rel="stylesheet">-->
+
+    <!-- Add custom CSS here -->
+    <link href={% static "assets/css/store-css/sb-admin.css" %} rel="stylesheet">
+    <link rel=stylesheet" href={% static "font-awesome/css/font-awesome.min.css" %}>
+    <link rel="shortcut icon" type={% static "image/x-icon" %} href={% static "pic/favicon.ico" %}>
+  </head>
+<!--<head>-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--&lt;!&ndash;    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">&ndash;&gt;-->
+<!--&lt;!&ndash;    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>&ndash;&gt;-->
+<!--&lt;!&ndash;    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>&ndash;&gt;-->
+<!--</head>-->
+<style>
+  .table {
+  font-size: 12px;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th
+{
+  padding:0;
+}
+
+</style>
+
+<div class="row">
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header card-header-success">
+                <!--เริ่มต้น ส่วนแสดงโลโก้-->
+                <div class="card-icon">
+                    <i class="material-icons">devices_other</i>
+                </div>
+                <!--จบ แสดงโลโก้-->
+                <!--เริ่มต้นส่วนแสดงหัวข้อในตารางด้านบน-->
+                <h4 class="card-title"><h4>VIS Detail แยกตามสถานี</h4></h4>
+                <p class="card-category">Last Update {{TIME_UPDATE | date:'d-m-Y H:i' }}</p>
+                <div class="col-md-6 mb-4">
+
+      <!-- Search form -->
+
+
+    </div>
+                <!--จบ ส่วนแสดงหัวข้อในตารางด้านบน-->
+            </div>
+            <div class="card-body table-responsive">
+        <table class="table table-hover">
+            <tbody>
+<!-------------------------------------------------------------------------------------------------------------------------------------------------------------->
+                    {% for site_data in sites_data %}
+                    <tr  data-toggle="collapse" data-target="#site{{site_data.name_id}}" class="accordion-toggle" >
+                        <td >
+                            <div class="stats">
+                                <i class="material-icons align-middle {% if site_data.VIS_status == 'offline' %} text-danger {% else %} text-success {% endif %}">monitor</i>
+                                <i class="material-icons align-middle  {% if site_data.MWGT_status == 'offline' %} text-danger {% else %} text-success {% endif %} ">devices</i>
+                                <i class="material-icons align-middle {% if site_data.NOZZLE_status_check == 'offline' %} text-danger {% else %} text-success {% endif %} ">local_gas_station</i>
+                                <i class="material-icons align-middle  {% if site_data.BATTERY_status_check == 'low' %} text-danger {% else %} text-success {% endif %} ">battery_alert</i>
+                            </div>
+                        </td>
+                        <td align="left">{{site_data.site_name}}</td>
+                        <td align="left" >IP {{site_data.station_ip}}</td>
+                        <td align="left">LogAdd : {{site_data.log_address_count}}</td>
+                        <td align="left">{{site_data.VIS_status}}</td>
+                         <td align="left">Updated : {{site_data.VIS_last_time | date:'d-m-Y H:i' }}</td>
+                        <td align="left">[เปิด {{site_data.pump_log_address_count}} หน้า | {{site_data.nozzle_data_count}} มือจ่าย]</td>
+                    </tr>
+                   <!----------------------------------------------------------------------------->
+                    <tr>
+                        <td colspan="12" class="hiddenRow">
+                            <div class="accordian-body collapse" id="site{{site_data.name_id}}">
+                                <table class="table table-striped">
+                                    <!-- หัวตาราง Log-address -->
+                                    <thead>
+                                    <tr class="info">
+                                        <th style="font-size:13px">LogAddress</th>
+                                        <th style="font-size:13px">Unit IP Address</th>
+                                    </tr>
+                                    </thead>
+
+                                    <!-- ส่วนแสดงข้อมูล Log Address -->
+                                    <tbody>
+                            <!----------------------------------------------------------------------------->
+
+                                {%  for site_logaddress in site_data.Unit_log_address    %}
+                                    <!--LOG-ADDRESS 1-->
+                                    <tr data-toggle="collapse" class="accordion-toggle {% for nozzle in site_logaddress.nozzle %} {% if forloop.counter == 1 %} {% if nozzle.MWGT_status == 'offline'%} text-danger {% endif %} {% endif %} {% endfor %}" data-target="#{{site_data.name_id}}{{site_logaddress}}">
+                                        <td><a href="#">{{site_logaddress.Unit_log_address}}</a></td>
+                                        <td >{% for nozzle in site_logaddress.nozzle %} {% if forloop.counter == 1 %} {{nozzle.DataUnitMap_IP }} {% endif %} {% endfor %}</td>
+                                        <td>
+                                            <a href="#" class="btn btn-default btn-sm">
+                                                <i class="glyphicon glyphicon-cog"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                        <!--LOG-ADDRESS 1 DATA-->
+
+                                    <tr>
+                                        <td colspan="12" class="hiddenRow">
+                                            <div class="accordian-body collapse" id="{{site_data.name_id}}{{site_logaddress}}">
+                                                 <div class="panel-body">
+                                            <div CLASS="table-responsive">
+                                                <table class="table table-bordered table-hover table-striped tablesorter">
+                                                    <thead>
+                                                    <!-- ส่วนหัวตาราง ที่ 3 -->
+                                                    <tr>
+                                                        <td class="text-center">IP-Address</td>
+                                                        <td class="text-center">Status</td>
+                                                        <td class="text-center">LogAddress</td>
+                                                        <td class="text-center">PumpAddress</td>
+                                                        <td class="text-center">NozzleNumber</td>
+                                                         <td class="text-center">BatteryStus</td>
+                                                        <td class="text-center">LastCons</td>
+                                                        <td class="text-center">TimeUpdate</td>
+                                                    </tr>
+                                            <!----------------------------------------------------------------------------->
+                                                    <!-- ส่วนหัวข้อมูล ที่ 3 -->
+                                                {% for nozzle in site_logaddress.nozzle %}
+                                                    <tr {% if nozzle.NOZZLE_status_check == 'offline'%} class="text-danger" {% endif %}>
+                                                        <th class="text-center" style="font-size:12px" >{{nozzle.DataUnitMap_IP}}</th>
+                                                        <th class="text-center" style="font-size:12px">{{nozzle.NOZZLE_status_check}}</th>
+                                                        <th class="text-center" style="font-size:12px">{{nozzle.Unit_log_address}}</th>
+                                                        <th class="text-center" style="font-size:12px">{{nozzle.NOZZLE_pump_log_address}}</th>
+                                                        <th class="text-center" style="font-size:12px">{{nozzle.NOZZLE_num}}</th>
+                                                        <th class="text-center {% if nozzle.BATTERY_status_check == 'low' %} text-danger {% endif %}" style="font-size:12px">{{nozzle.NOZZLE_Battery_Status}}</th>
+                                                        <th class="text-center" style="font-size:12px">{{nozzle.NOZZLE_Last_conn}}</th>
+                                                        <th class="text-center" style="font-size:12px">{{nozzle.Timestramp | date:'d-m-Y H:i'}}</th>
+                                                    </tr>
+                                                {% endfor %}
+
+                                        <!----------------------------------------------------------------------------->
+
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                                 </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                     <!--END LOG-ADDRESS 1-->
+                            <!----------------------------------------------------------------------------->
+
+                            {% endfor %}
+                                        <!--END LOG-ADDRESS 2-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+
+                {% endfor %}
+
+<!-------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+
+
+            </tbody>
+        </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+
+{% endblock javascripts %}
+

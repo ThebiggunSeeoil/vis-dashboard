@@ -1,0 +1,81 @@
+{% extends "layouts/base-map.html" %}
+
+{% block title %} Maps {% endblock %}
+{% load static %}
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Multiple Location Sample | Longdo Map</title>
+        <style type="text/css">
+          html{
+            height:100%;
+          }
+          body{
+            margin:0px;
+            height:70%;
+          }
+          #map {
+            height: 70%;
+          }
+        </style>
+
+        <script type="text/javascript" src="https://api.longdo.com/map/?key=e48243536c109e04676b3af99cfde207"></script>
+        <script>
+          var map;
+          var marker = new longdo.Marker({ lon: 100.643005, lat: 14.525007 });
+          function init() {
+              map = new longdo.Map({
+                placeholder: document.getElementById('map')
+              });
+              map.Tags.add(function(tile, zoom) {
+                var bound = longdo.Util.boundOfTile(map.projection(), tile);
+                mockAjaxFromServer(bound, function(locationList) {
+                  for (var i = 0; i < locationList.length; ++i) {
+                    map.Overlays.add(new longdo.Marker(locationList[i], { visibleRange: { min: zoom, max: zoom } }));
+                  }
+                });
+              });
+          }
+
+          function mockAjaxFromServer(bound, callback) {
+            var locationList = [];
+            var count = Math.random() * 5;
+            for (var i = 0; i < 3; ++i) {
+              locationList.push({ lon: bound.minLon + (Math.random() * (bound.maxLon - bound.minLon)),
+                lat: bound.minLat + (Math.random() * (bound.maxLat - bound.minLat)) });
+            }
+            callback(locationList);
+          }
+        </script>
+    </head>
+    <body onload="init();">
+        <div id="map"></div>
+    </body>
+  </html>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+
+<!--<script src="https://api.longdo.com/map/?key=e48243536c109e04676b3af99cfde207"></script>-->
+<!--<div id="map"></div>-->
+<!--        <script type="text/javascript" src="https://api.longdo.com/map/?key=e48243536c109e04676b3af99cfde207"></script>-->
+<!--        <link rel="stylesheet" href={% static "/assets/js/map-js/MarkerCluster.Default.css" %}>-->
+<!--        <script type="text/javascript" src={% static "/assets/css/map-css/longdomap.markercluster-src.js" %}></script>-->
+{% block javascripts %}
+
+<!--  <script>-->
+<!--    $(document).ready(function() {-->
+<!--      // Javascript method's body can be found in assets/js/demos.js-->
+<!--      demo.initGoogleMaps();-->
+<!--    });-->
+<!--  </script>-->
+
+{% endblock javascripts %}

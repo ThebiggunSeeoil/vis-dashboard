@@ -1,0 +1,194 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- <head>-->
+<!--    <meta charset="utf-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <meta name="description" content="">-->
+<!--    <meta name="author" content="">-->
+
+<!--    <title>VIS monitor</title>-->
+
+<!--    &lt;!&ndash; Bootstrap core CSS &ndash;&gt;-->
+<!--    <link href={% static "assets/css/store-css/bootstrap.css" %} rel="stylesheet">-->
+
+<!--    &lt;!&ndash; Add custom CSS here &ndash;&gt;-->
+<!--    <link href={% static "assets/css/store-css/sb-admin.css" %} rel="stylesheet">-->
+<!--    <link rel=stylesheet" href={% static "font-awesome/css/font-awesome.min.css" %}>-->
+<!--    <link rel="shortcut icon" type={% static "image/x-icon" %} href={% static "pic/favicon.ico" %}>-->
+<!--  </head>-->
+<style>
+  .table {
+  font-size: 13px;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th
+{
+  padding:0;
+}
+
+
+
+
+
+
+
+
+
+
+
+</style>
+
+
+<div class="row">
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <!--เริ่มต้น Card ส่วน Header-->
+            <div class="card-header card-header-success">
+                <!--เริ่มต้น ส่วนแสดงโลโก้-->
+                <div class="card-icon">
+                    <i class="material-icons">devices_other</i>
+                </div>
+                <!--จบ แสดงโลโก้-->
+                <!--เริ่มต้นส่วนแสดงหัวข้อในตารางด้านบน-->
+                <h4 class="card-title"><h4>VIS Detail แยกตามสถานี</h4></h4>
+                <p class="card-category">Last Update 31/05/2020 18:00</p>
+                <!--จบ ส่วนแสดงหัวข้อในตารางด้านบน-->
+            </div>
+            <!--จบ Card ส่วน Header-->
+
+            <!--เริ่มต้น ส่วนแสดงข้อมูลสถานี สถานีที่ 1-->
+            <div class="card-body table-responsive">
+                <!--เริ่มต้น หัวตาราง สถานีที่ 1-->
+                <table class="table table-hover">
+                    <thead class="text-warning text-center">
+                    <tr>
+                        <th></th>
+                        <th>SiteName</th>
+                        <th>IpAddress</th>
+                        <th>LogAdds</th>
+                        <th>Status</th>
+                        <th>LastCons</th>
+                        <th>Nozzle</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr data-toggle="collapse" title="Click to detail" data-target="#collapseExample"
+                        class="accordion-toggle">
+                        <td align="left">
+                            <div class="stats"><i class="material-icons align-middle text-success">monitor</i></div>
+                        </td>
+                        <td align="left">ปตท.อยุธยา เจริญผลอำนาจเจริญ</td>
+                        <td align="center">LogAdd : 1</td>
+                        <td align="center">IP : 10.10.25.200</td>
+                        <td align="center">ON-LINE</td>
+                        <td align="center">LAST : 31/05/2020 18:00</td>
+                        <td align="center">[เปิด 2 หน้า | 12 มือจ่าย]</td>
+                    </tr>
+                     <div class="card-body table-responsive">
+                     <td colspan="7" >
+                        <div class="collapse" id="collapseExample">
+                            <table class="table">
+                                <thead class="text-warning">
+                                <td align="center"><h6>MWGT</h6></td>
+                                <td align="left"><h6>Log Address</h6></td>
+                                <td align="left"><h6>''</h6></td>
+                                </thead>
+                                <!-- ส่วนแสดงข้อมูล Log Address -->
+                                <tbody>
+                                <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
+                                    <td align="center">1</td>
+                                    <td>LastStatus 06-06/2021 15:00</td>
+                                </tr>
+                                <!--LOG-ADDRESS 1 DATA-->
+                                <tr>
+                                    <td>
+                                        <div class="card-body table-responsive" id="demo10">
+                                            <table class="table">
+                                                <thead>
+                                                <tr class="text-warning text-center">
+                                                    <th><h6>Status</h6></th>
+                                                    <th><h6>Serial No</h6></th>
+                                                    <th><h6>Pump Log,Nozzles No</h6></th>
+                                                    <th><h6>Software Version</h6></th>
+                                                    <th><h6>Last Connect</h6></th>
+                                                    <th><h6>Battery Status</h6></th>
+                                                </tr>
+                                                <tr align="center">
+                                                    <td>5</td>
+                                                    <td>xxxxxxxxxxxxx</td>
+                                                    <td>5,1</td>
+                                                    <td>01.23.25</td>
+                                                    <td>03.06.2021 08:37</td>
+                                                    <td>6
+                                                    </td>
+                                                </tr>
+                                                <tr align="center">
+                                                    <td>5</td>
+                                                    <td>xxxxxxxxxxxxx</td>
+                                                    <td>5,2</td>
+                                                    <td>01.23.25</td>
+                                                    <td>03.06.2021 08:37</td>
+                                                    <td>6
+                                                    </td>
+                                                </tr>
+                                                <tr align="center">
+                                                    <td>5</td>
+                                                    <td>xxxxxxxxxxxxx</td>
+                                                    <td>5,3</td>
+                                                    <td>01.23.25</td>
+                                                    <td>03.06.2021 08:37</td>
+                                                    <td>6
+                                                    </td>
+                                                </tr>
+                                                <tr align="center">
+                                                    <td>5</td>
+                                                    <td>xxxxxxxxxxxxx</td>
+                                                    <td>5,4</td>
+                                                    <td>01.23.25</td>
+                                                    <td>03.06.2021 08:37</td>
+                                                    <td>6
+                                                    </td>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <!--LOG-ADDRESS 2 DATA-->
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </div>
+
+
+                    </tbody>
+
+                    <!--จบ ข้อมูลในตาราง สถานีที่ 1-->
+                </table>
+
+            </div>
+
+
+        </div>
+    </div>
+
+
+    {% endblock content %}
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}
+
+
+    {% endblock javascripts %}
+

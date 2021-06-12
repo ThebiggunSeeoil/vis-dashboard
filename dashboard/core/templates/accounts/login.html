@@ -1,0 +1,85 @@
+{% extends "layouts/base_login.html" %}
+
+
+
+{% block content %}
+
+  <br>
+  <div class="row">
+    <br>
+    <br>
+    <div class="col-md-5 mx-auto">
+      <a href="https://see-oil.com">
+        <img class="rounded  mx-auto d-block" alt="Responsive image"  src="https://seeoil-web.com/picture_logo/vis.png" width="430" height="140">
+      </a>
+      <br>
+      <br>
+      <div class="card-header-success">
+        <h4 style="text-align:center">ระบบบริการจัดการอุปกรณ์ VIS สำหรับ Fill & Go </h4>
+      </div>
+      <div class="card ">
+
+        <div class="card-header card-header-success">
+          <h4 class="card-title">
+            Login
+          </h4>
+        </div>
+        <div class="card-body">
+
+          <h6 class="card-category">
+              {% if msg %}
+                <span class="text-danger">{{ msg }}</span>
+              {% else %}
+
+              {% endif %}
+          </h6>
+
+          <br />
+
+          <form role="form" method="post" action="">
+
+            {% csrf_token %}
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label class="bmd-label-floating">Username</label>
+                  {{ form.username }}
+                </div>
+              </div>
+            </div>
+
+            <br />
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label class="bmd-label-floating">Password</label>
+                  {{ form.password }}
+                </div>
+              </div>
+            </div>
+
+            <br />
+
+            <button type="submit" name="login" class="btn btn-success pull-left">Login</button>
+
+            &nbsp; &nbsp;
+            <!-- <span class="pull-right">
+              Don't have an account? <a href="{% url 'register' %}" class="text-primary">Create</a>
+            </span> -->
+
+            <div class="clearfix"></div>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+
