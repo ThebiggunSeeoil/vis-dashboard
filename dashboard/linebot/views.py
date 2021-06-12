@@ -18,7 +18,7 @@ from app.models import Site, Status , Status_Error_logger,Store_data_send_line_f
 
 Channel_access_token = settings.LINE_CHANNEL_ACCESS_TOKEN
 
-
+print ('OK')
 def index(request):
     return HttpResponse("test!!")
 
