@@ -53,7 +53,6 @@ def convert_xml_json(data_xml_type_check): #ใช้สำหรับจัด
         try :
             for I in Mapping_DataUnit_Units_Nozzles:
                 print('data nozzle is',I)
-
                 data_main = {"name_id":site_id ,
                                 "MWGT_last_time": datetime_now,
                                     "VIS_last_time": datetime_now,
