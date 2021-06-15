@@ -90,7 +90,7 @@ class line_templates:
                             "action": {
                                 "type": "postback",
                                 "label": "กด - ลงทะเบียนใช้งาน",
-                                "data": "register"
+                                "data": "new_register"
                             },
                             "color": "#078025FF",
                             "margin": "none",
@@ -184,7 +184,7 @@ class line_templates:
                     "contents": [
                         {
                             "type": "text",
-                            "text": "EXXON:CBRE",
+                            "text": "VIS : MONITOR",
                             "weight": "bold",
                             "size": "xl",
                             "color": "#225508FF",
@@ -198,7 +198,7 @@ class line_templates:
                         },
                         {
                             "type": "text",
-                            "text": "ไม่พบระหัสยืนยันตัวตน กรุณาป้อนอีกครั้ง หรือ ติดต่อ CBRE",
+                            "text": "ไม่พบระหัสยืนยันตัวตน กรุณาป้อนอีกครั้ง หรือ ติดต่อ Orpak",
                             "weight": "bold",
                             "color": "#293CCDFF",
                             "align": "center",
@@ -217,7 +217,7 @@ class line_templates:
                         },
                         {
                             "type": "text",
-                            "text": "CBREXO6875",
+                            "text": "orpakXXXX",
                             "weight": "bold",
                             "color": "#D01111FF",
                             "align": "center",
@@ -325,7 +325,7 @@ class line_templates:
                     "contents": [
                         {
                             "type": "text",
-                            "text": "EXXON:CBRE",
+                            "text": "VIS : MONITOR",
                             "weight": "bold",
                             "size": "xl",
                             "color": "#225508FF",
@@ -396,7 +396,7 @@ class line_templates:
                             "action": {
                                 "type": "postback",
                                 "label": "ไม่ใช่ ฉัน",
-                                "text": "กรุณาติดต่อ CBRE เพื่อยืนยันอีกครั้ง",
+                                "text": "กรุณาติดต่อ orpak เพื่อยืนยันอีกครั้ง",
                                 "data": "REGISTER-NOK"
                             },
                             "color": "#706C6CFF",
@@ -426,7 +426,7 @@ class line_templates:
                     "contents": [
                         {
                             "type": "text",
-                            "text": "EXXON:CBRE",
+                            "text": "VIS : MONITOR",
                             "weight": "bold",
                             "size": "xl",
                             "color": "#225508FF",
@@ -450,7 +450,7 @@ class line_templates:
                         },
                         {
                             "type": "text",
-                            "text": "เลือกแถบ CBRE - MENU แล้วเลือก",
+                            "text": "เลือกแถบ VIS - MONITOR แล้วเลือก",
                             "weight": "bold",
                             "color": "#D01111FF",
                             "align": "center",
@@ -459,7 +459,7 @@ class line_templates:
                         },
                         {
                             "type": "text",
-                            "text": "LOGIN",
+                            "text": "Vis Monitor logo",
                             "weight": "bold",
                             "color": "#D01111FF",
                             "align": "center",
@@ -594,7 +594,7 @@ class line_templates:
                     "contents": [
                         {
                             "type": "text",
-                            "text": "EXXON:CBRE",
+                            "text": "VIS : MONITOR",
                             "weight": "bold",
                             "size": "xl",
                             "color": "#225508FF",
@@ -608,7 +608,17 @@ class line_templates:
                         },
                         {
                             "type": "text",
-                            "text": "กรุณายืนยันตัวตนก่อนเข้าใช้งาน หรือ ติดต่อ CBRE",
+                            "text": "กรุณายืนยันตัวตนก่อนเข้าใช้งาน หรือ ติดต่อ ORPAK",
+                            "weight": "bold",
+                            "color": "#293CCDFF",
+                            "align": "center",
+                            "margin": "lg",
+                            "wrap": True,
+                            "contents": []
+                        },
+                        {
+                            "type": "text",
+                            "text": "หรือพิมพ์ oprak ตามด้วยพิมพ์ระหัสยืนยัน 6 ตัว",
                             "weight": "bold",
                             "color": "#293CCDFF",
                             "align": "center",

@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
-from app.models import Team,Site,Nozzle,Status,Status_Error_logger,VIS_ip_address,Setup_Config
+from app.models import Team,Site,Nozzle,Status,Status_Error_logger,VIS_ip_address,Setup_Config,LinegroupId,PersanalDetaillogin
 from admin_auto_filters.filters import AutocompleteFilter
 
 @admin.register(Site)
@@ -23,11 +23,11 @@ class TeamListAdmin(ImportExportModelAdmin):
     list_per_page = 30
     pass
 
-@admin.register(VIS_ip_address)
-class VisAddressListAdmin(ImportExportModelAdmin):
-    list_display = ("ip_address","last_update")
-    list_per_page = 30
-    pass
+# @admin.register(VIS_ip_address)
+# class VisAddressListAdmin(ImportExportModelAdmin):
+#     list_display = ("ip_address","last_update")
+#     list_per_page = 30
+#     pass
 
 # ส่วนของการสร้าง Filter ในหน้า Admin เพื่อสร้างการค้นหาจากรายชื่อสถานี
 class NozzleFilter(AutocompleteFilter): #ขั้นตอนที่ 1
@@ -88,5 +88,37 @@ class SetupListAdmin(ImportExportModelAdmin):
     # This will help you to disable delete functionaliyt
     def has_delete_permission(self, request, obj=None):
         return False
+    pass
+
+@admin.register(LinegroupId)
+class LinegroupIdListAdmin(ImportExportModelAdmin):
+    # search_fields = ('time_alert_alarm_day', 'time_alert_warning_day','battery_level_alarm_hours','battery_level_low_hours','battery_level_failed_hours') # สร้าง tab ในการค้นหาข้อมูลต่างที่ต้องการ
+    # list_filter = ['station_name']
+    list_display = ('group_name', 'group_id')
+
+    list_per_page = 30
+    # This will help you to disbale add functionality
+    # def has_add_permission(self, request):
+    #     return False
+
+    # # This will help you to disable delete functionaliyt
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
+    pass
+
+@admin.register(PersanalDetaillogin)
+class PersanalDetailloginListAdmin(ImportExportModelAdmin):
+    # search_fields = ('time_alert_alarm_day', 'time_alert_warning_day','battery_level_alarm_hours','battery_level_low_hours','battery_level_failed_hours') # สร้าง tab ในการค้นหาข้อมูลต่างที่ต้องการ
+    # list_filter = ['station_name']
+    list_display = ('company', 'user_type','name')
+    exclude = ('richmenu_id','line_id','line_id_name','member_status') # ซ่อนในหน้า Admain หากไม่ต้องการให้แสดง
+    list_per_page = 30
+    # This will help you to disbale add functionality
+    # def has_add_permission(self, request):
+    #     return False
+
+    # # This will help you to disable delete functionaliyt
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
     pass
 # Register your models here.

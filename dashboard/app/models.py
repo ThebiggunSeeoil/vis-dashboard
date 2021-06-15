@@ -7,7 +7,7 @@ Copyright (c) 2019 - present AppSeed.us
 from django.utils import timezone
 from django.db import models
 from django.utils.timezone import now
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User , Group
 
 
 class Team(models.Model):
@@ -218,6 +218,47 @@ class Setup_Config(models.Model):
         verbose_name_plural = 'ตั้งค่าการแจ้งเตือน'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
 
 
+class LinegroupId (models.Model):
+    group_name=models.CharField(max_length=200,blank=True, null=True)
+    group_id=models.CharField(max_length=200,blank=True, null=True)
+    
+    class Meta :
+        db_table='LinegroupId'
+        verbose_name = 'จัดการ Line Group' # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย 
+        verbose_name_plural = 'ตั้งค่า Line Group' # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย 
+    
+    # def pending_total (self):
+    #     return self.product.price * self.quantity
+    def __str__(self):
+        return self.group_name
+
+
+
+class PersanalDetaillogin (models.Model):
+    Orpak = "orpak"
+    Customer = "Customer"
+    compamy_choices = ((Orpak,"orpak"),(Customer,"customer"))
+    
+    name=models.CharField(max_length=200)
+    user_type=models.ForeignKey(Group,on_delete=models.CASCADE, null=True)
+    company=models.CharField(max_length=9,choices=compamy_choices,default="JANUARY")
+    key_login=models.CharField(max_length=6,unique=True,blank=True, null=True) 
+    line_id=models.CharField(max_length=255,blank=True, null=True)
+    line_id_name=models.CharField(max_length=255,blank=True, null=True)
+    group_line_id=models.ForeignKey(LinegroupId,on_delete=models.CASCADE, null=True)
+    richmenu_id=models.CharField(max_length=255,blank=True,null=True)
+    member_status=models.BooleanField(default=False)
+    timestramp=models.DateTimeField(auto_now_add=True)
+    update=models.DateTimeField(auto_now_add=True, auto_now=False, blank=True)
+    class Meta :
+        db_table='persanaldetaillogin'
+        verbose_name = 'จัดการเข้าใช้งาน Line' # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย 
+        verbose_name_plural = 'ตั้งค่าผู้ใช้งาน Line ' # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย 
+    
+    # def pending_total (self):
+    #     return self.product.price * self.quantity
+    def __str__(self):
+        return self.name
 
 
 

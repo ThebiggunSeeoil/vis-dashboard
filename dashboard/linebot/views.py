@@ -14,7 +14,7 @@ from linebot.convert_xml import *
 from linebot.calculate_function import *
 from linebot.connect_db_profile import *
 from linebot.line_tamplates import *
-from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed
+from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed,PersanalDetaillogin
 
 
 
@@ -29,49 +29,106 @@ def callback(request):  # สำหรับส่งการแจ้งเต
     if request.method == "POST":  # Check if method is POST
         payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         print('first payload',payload)
+        global name
+        global company
         if len(payload['events']) == 0 :
             print ('Message from server to Verify')
             return HttpResponse(200)
         else :
+            payloads = json.loads(request.body.decode('utf-8'))
+            payload = {'events': []}
             global Reply_token
             global User_id
-            Reply_token = payload['events'][0]['replyToken']
-            User_id = payload['events'][0]['source']['userId']
-            if payload['events'][0]['type'] == 'follow':
-                    ReplyMessage(line_templates.Gressing_msg())
-                    return HttpResponse(200)
-            elif payload['events'][0]['type'] == 'message':
-                message = payload['events'][0]['message']['text']
-                print ('message is',message)
-                if message == 'test':
-                    ReplyMessage(line_templates.Gressing_msg())
-                    return HttpResponse(200)
-                if (message[0:5]).lower() == 'orpak':
-                    print(message)
-                    command_payload = ((payload['events'][0]['message']['text'])[0:5]).lower()+((payload['events'][0]['message']['text'])[5:])
-                    print (command_payload)
-                    code_login = (command_payload[5:])
-                    print ('code login is',code_login)
-                    # try :
-                    #     id_user = PersanalDetaillogin.objects.filter(key_login=code_login).first()
-                    #     if id_user != None :
-                    #         if id_user.member_status == 'none' :
-                    #             global name
-                    #             global company
-                    #             name=id_user.name
-                    #             company=id_user.company
-                    #             ReplyMessage(line_templates.ensure_submit(id_user))
-                    #         else:
-                    #             ReplyMessage(line_templates.alreadySubmit_code(id_user))
-                    #     else :
-                    #         ReplyMessage(line_templates.re่ject_code())        
-                    # except PersanalDetaillogin.DoesNotExist:
-                    #     ReplyMessage(line_templates.re่ject_code())
-                    #     return None 
-            elif payload['events'][0]['type'] == 'postback':
-                message = payload['events'][0]['postback']['data']
-                if message == 'register'    :
-                    ReplyMessage(line_templates.register_code())
+            Reply_token = payloads['events'][0]['replyToken']
+            User_id = payloads['events'][0]['source']['userId']
+            # วน loop เพื่อเช็คว่า ทีการส่ง request postback มาหรือไม่
+            for payload_check in payloads ['events']:
+                if 'postback' in payload_check['type']:
+                    payload['events'].insert(-1, payload_check)
+                    if payload['events'][0]['type'] == 'postback':
+                        message = payload['events'][0]['postback']['data']
+                        if message == 'new_register':
+                            ReplyMessage(line_templates.register_code())
+                        if message == 'register':
+                            active_user = PersanalDetaillogin.objects.values('member_status').filter(line_id=User_id).first()
+                            if active_user['member_status'] == True :
+                                print ('REGISTER-OK')
+                            else :
+                                print ('active_user is',active_user)
+                                ReplyMessage(line_templates.re่ject_not_register())
+                        if message == 'REGISTER-OK' :
+                            data_user = Get_profile(User_id) # ส่ง user_id ไปที่ line server เพื่อขอ name id
+                            user_id_display_name = data_user['displayName'] # รับค่า display name 
+                            register_user=PersanalDetaillogin.objects.filter(name=name,company=company).update(member_status=True,line_id=User_id,line_id_name=user_id_display_name)
+                            ReplyMessage(line_templates.registed())
+                        if message == 'Data 1':
+                            try :
+                                id_user = PersanalDetaillogin.objects.filter(line_id=User_id).first()
+                                if id_user != None :
+                                    if id_user.company == "CBRE":
+                                        Link_rich_menu_to_user(settings.CBRE_MENU,id_user.line_id)
+                                        updaterich_menu=PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.CBRE_MENU)
+                                        ReplyMessage(line_templates.login())
+                                    else:
+                                        Link_rich_menu_to_user(settings.CONTRACTOR_MENU,id_user.line_id)
+                                        updaterich_menu=PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.CBRE_MENU)
+                                        ReplyMessage(line_templates.login())
+                                else:
+                                    ReplyMessage(line_templates.re่ject_not_register())
+                                    print ('NOT OK user_id')
+                            except PersanalDetaillogin.DoesNotExist:
+                                print ('NO DATA user_id')
+                        if message == 'logout' :
+                            try :
+                                id_user = PersanalDetaillogin.objects.filter(line_id=User_id).first()
+                                if id_user != None :
+                                    if id_user.company == "CBRE":
+                                        Link_rich_menu_to_user(settings.DEFULT_RICH_MUNU,id_user.line_id)
+                                        updaterich_menu=PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.DEFULT_RICH_MUNU)
+                                        ReplyMessage(line_templates.logout())
+                                    else:
+                                        Link_rich_menu_to_user(settings.DEFULT_RICH_MUNU,id_user.line_id)
+                                        updaterich_menu=PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.DEFULT_RICH_MUNU)
+                                        ReplyMessage(line_templates.logout())
+                                else:
+                                    print ('NOT OK user_id')
+                            except PersanalDetaillogin.DoesNotExist:
+                                print ('NO DATA user_id')
+                        return HttpResponse(200)
+            for payload_check in payloads['events']:
+                if 'postback' not in payload_check['type']:
+                    payload['events'].insert(-1, payload_check)
+                    if payload['events'][0]['type'] == 'follow':
+                        ReplyMessage(line_templates.Gressing_msg())
+                        return HttpResponse(200)
+                    if payload['events'][0]['type'] == 'message':
+                        message = payload['events'][0]['message']['text']
+                        print ('message is',message)
+                    if message == 'test':
+                        ReplyMessage(line_templates.Gressing_msg())
+                        return HttpResponse(200)
+                    if (message[0:5]).lower() == 'orpak':
+                        print(message)
+                        command_payload = ((payload['events'][0]['message']['text'])[0:5]).lower()+((payload['events'][0]['message']['text'])[5:])
+                        print (command_payload)
+                        code_login = (command_payload[5:])
+                        print ('code login is',code_login)
+                        try :
+                            id_user = PersanalDetaillogin.objects.filter(key_login=code_login).first()
+                            if id_user != None :
+                                if id_user.member_status == False :
+                                    
+                                    name=id_user.name
+                                    company=id_user.company
+                                    ReplyMessage(line_templates.ensure_submit(id_user))
+                                else:
+                                    ReplyMessage(line_templates.alreadySubmit_code(id_user))
+                            else :
+                                ReplyMessage(line_templates.re่ject_code())        
+                        except PersanalDetaillogin.DoesNotExist:
+                            ReplyMessage(line_templates.re่ject_code())
+                            return None 
+            
                 
         
     return HttpResponse(200)
@@ -134,6 +191,15 @@ def permission_check(request):
                 return JsonResponse({"site_id": "failed"})  # ส่งเลข failed กลับไปให้เนื่องจากไม่พบเลข ip ที่ส่งเข้า
     return HttpResponse(200)
 
+
+def Get_profile(User_ID):
+    LINE_API = 'https://api.line.me/v2/bot/profile/' + User_ID
+    Authorization = 'Bearer {}'.format(Channel_access_token)
+    headers = {'Authorization': Authorization, }
+    r = requests.get(LINE_API, headers=headers)
+    data = r.json()
+    print('Already setup defult richmenu', data)
+    return data
 
 def ReplyMessage(TextMessage):
     Token = Channel_access_token
