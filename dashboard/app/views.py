@@ -12,7 +12,7 @@ from django import template
 import json
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta, SA, TH
-from app.models import Team,Site,Nozzle,Status,Status_Error_logger,VIS_ip_address
+from app.models import Team,Site,Nozzle,Status,Status_Error_logger,VIS_ip_address ,Setup_Config
 from django.db.models import OuterRef, Subquery, Count, Min 
 
 # @login_required(login_url="/login/")
@@ -45,7 +45,7 @@ def prepare_nozzle (GET_VIS_DATA,GET_VIS_DATA_ALL,NOZZLE) :
                                     'MWGT_status':data['MWGT_status'],
                                         'VIS_status':data['VIS_status'],
                                             'NOZZLE_status_check':data['NOZZLE_status_check'],
-                                                'BATTERY_status_check':data['BATTERY_status_check'],
+                                                'BATTERY_status_check':data['NOZZLE_Battery_Status_Volts'],
                                                     'VIS_last_time':data['VIS_last_time'],
                     'Unit_log_address': []}  # สร้างข้อมูลไว้ สำหรับโยนเข้าไปเก็บไว้ใน vis_result = []
             vis_result.append(data)  # นำ data ไปเก็บไว้ใน vis_result = [] เพื่อเอาไปใช้ใน function อื่น
@@ -100,6 +100,10 @@ def different_time_calculate(TimeZone,TimeCalculate):
     day_loss = different_time.days  # แสดงผลลัพท์เป็นจำนวนวัน จาก different_time
     hours_loss = different_time.hours  # แสดงผลลัพท์เป็นจำนวน ชั่วโมง จาก different_time
     minutes_loss = different_time.minutes  # แสดงผลลัพท์เป็นจำนวนวัน นาที different_time
+    hours_count = TimeZone - TimeCalculate
+    hours_def = hours_count.total_seconds()
+    hours_deff = (hours_def/60)/60 # คำนวณผลต่างของเวลามให้แสดงผลในรูปแบบชั่วโมง
+    # print (hours_deff)
     # datetime_now = datetime.datetime.now().strftime("%d-%m-%y %H:%M")
     # MWGT_last_time = TimeCalculate.strftime("%d-%m-%y %H:%M")    # แปลง datetime
     # print('TimeCalculateDetail',TimeCalculate)
@@ -109,7 +113,7 @@ def different_time_calculate(TimeZone,TimeCalculate):
     # print('minutes_loss',minutes_loss)
     # print('datetime_now',datetime_now)
     # print('MWGT_last_time',MWGT_last_time)
-    return day_loss , hours_loss , minutes_loss
+    return day_loss , hours_loss , minutes_loss , hours_deff
 
 @login_required(login_url="/login/")
 def index(request):
@@ -126,6 +130,16 @@ def index(request):
         GET_MWGT_DATA = Status.objects.select_related('site').filter(MWGT_status='offline', site__station_active=True)
         GET_NOZZLE_DATA = Status.objects.select_related('site').filter(NOZZLE_status_check='offline', site__station_active=True)
         GET_BATTERY_DATA = Status.objects.select_related('site').filter(BATTERY_status_check='low',site__station_active=True)
+        STATUS_CONFIG = Setup_Config.objects.values()
+        for setup_config in STATUS_CONFIG :
+            time_alert_alarm_hours = setup_config['time_alert_alarm_hours']
+            time_alert_warning_hours = setup_config['time_alert_warning_hours']
+            battery_level_alarm_volt = setup_config['battery_level_alarm_volt']
+            battery_level_low_volt = setup_config['battery_level_low_volt']
+            battery_level_failed_volt = setup_config['battery_level_failed_volt']
+            
+        # print (STATUS_CONFIG)
+        # print (STATUS_CONFIG)
         # data = Status.objects.values('name_id', 'Unit_log_address').annotate(dcount=Count('Unit_log_address')).filter(name_id=1221).order_by('name_id')
         # for name_id in Site.objects.values_list('id', flat=True):
         # for Unit_log_address in Status.objects.filter(site__station_active=True).values('Unit_log_address').annotate(dcount=Count('Unit_log_address')):
@@ -166,7 +180,7 @@ def index(request):
                 # vis_check2.append(data)
                 time_def_check = different_time_calculate(timezone.now(),data.VIS_last_time)
                 vis_result.append({'name':data.site,'ip_address':data.site.station_ip,'type':'VIS',
-                                   'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
+                                   'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2],'hours_deff':time_def_check[3]},
                                     'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status_Volts ,
                                         'TEAM_ID':data.site.team_support.team ,
                                             'TEAM_NAME': data.site.team_support.team_name ,'TIME_UPDATE':timezone.now()})
@@ -176,7 +190,7 @@ def index(request):
                 # vis_check2.append(data)
                 time_def_check = different_time_calculate(timezone.now(),data.MWGT_last_time)
                 mwgt_result.append({'name':data.site,'ip_address':data.site.station_ip,'type':'MWGT',
-                                   'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
+                                   'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2],'hours_deff':time_def_check[3]},
                                     'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status_Volts ,
                                         'TEAM_ID':data.site.team_support.team ,
                                             'TEAM_NAME': data.site.team_support.team_name , 'TIME_UPDATE':timezone.now()})
@@ -186,7 +200,7 @@ def index(request):
             # print('time_def_check',time_def_check)
             # print('time',data.MWGT_last_time)
             nozzle_result.append({'name':data.site,'ip_address':data.site.station_ip,'type':'NOZZLE',
-                               'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
+                               'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2],'hours_deff':time_def_check[3]},
                                 'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status_Volts ,
                                     'TEAM_ID':data.site.team_support.team ,
                                         'TEAM_NAME': data.site.team_support.team_name , 'NOZZLE_pump_log_address':data.NOZZLE_pump_log_address , 'NOZZLE_num':data.NOZZLE_num , 'TIME_UPDATE':timezone.now()})
@@ -194,7 +208,7 @@ def index(request):
         for data in GET_BATTERY_DATA:
             time_def_check = different_time_calculate(timezone.now(),data.MWGT_last_time)
             battery_result.append({'name':data.site,'ip_address':data.site.station_ip,'type':'BATT',
-                               'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
+                               'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2],'hours_deff':time_def_check[3]},
                                 'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status_Volts ,
                                     'TEAM_ID':data.site.team_support.team ,
                                         'TEAM_NAME': data.site.team_support.team_name , 'NOZZLE_pump_log_address':data.NOZZLE_pump_log_address , 'NOZZLE_num':data.NOZZLE_num , 'TIME_UPDATE':timezone.now()})
@@ -202,7 +216,9 @@ def index(request):
         return render(request,'index.html',{'TIME_UPDATE':timezone.now(),'VIS_SUM_OFFLINE':VIS_SUM_OFFLINE,'MWGT_SUM_OFFLINE':MWGT_SUM_OFFLINE,
                                                 'TOTAL_SITE_ACTIVE':TOTAL_SITE_ACTIVE,'MWGT_LAST_OFFLINE':MWGT_LAST_OFFLINE,'NOZZLE_OFFLINE':NOZZLE_OFFLINE,
                                                     'NOZZLE_LAST_OFFLINE':NOZZLE_LAST_OFFLINE,'BATTERY_OFFLINE':BATTERY_OFFLINE,'BATTERY_LAST_OFFLINE':BATTERY_LAST_OFFLINE,
-                                                        'VIS_DETAIL':vis_result ,'MWTG_DETAIL':mwgt_result ,'NOZZLE_DETAIL':nozzle_result ,'BATTERY_DETAIL':battery_result})
+                                                        'VIS_DETAIL':vis_result ,'MWTG_DETAIL':mwgt_result ,'NOZZLE_DETAIL':nozzle_result ,'BATTERY_DETAIL':battery_result, 
+                                                            'time_alert_alarm_hours':time_alert_alarm_hours,'time_alert_warning_hours':time_alert_warning_hours,'battery_level_alarm_volt':battery_level_alarm_volt,
+                                                                'battery_level_low_volt':battery_level_low_volt,'battery_level_failed_volt':battery_level_failed_volt})
 
 # def get_more_tables(request):
 #     if request.method == "GET":

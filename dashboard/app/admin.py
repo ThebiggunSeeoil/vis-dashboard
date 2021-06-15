@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
-from app.models import Team,Site,Nozzle,Status,Status_Error_logger,VIS_ip_address
+from app.models import Team,Site,Nozzle,Status,Status_Error_logger,VIS_ip_address,Setup_Config
 from admin_auto_filters.filters import AutocompleteFilter
 
 @admin.register(Site)
@@ -73,4 +73,20 @@ class StatusErrorListAdmin(ImportExportModelAdmin):
     list_per_page = 30
     pass
 
+
+@admin.register(Setup_Config)
+class SetupListAdmin(ImportExportModelAdmin):
+    # search_fields = ('time_alert_alarm_day', 'time_alert_warning_day','battery_level_alarm_hours','battery_level_low_hours','battery_level_failed_hours') # สร้าง tab ในการค้นหาข้อมูลต่างที่ต้องการ
+    # list_filter = ['station_name']
+    list_display = ('time_alert_alarm_hours', 'time_alert_warning_hours','battery_level_alarm_volt','battery_level_low_volt','battery_level_failed_volt')
+
+    list_per_page = 30
+    # This will help you to disbale add functionality
+    def has_add_permission(self, request):
+        return False
+
+    # This will help you to disable delete functionaliyt
+    def has_delete_permission(self, request, obj=None):
+        return False
+    pass
 # Register your models here.

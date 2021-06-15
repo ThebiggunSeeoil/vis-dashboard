@@ -6,6 +6,8 @@ Copyright (c) 2019 - present AppSeed.us
 from django.urls import path, re_path, include
 from app import views
 from django.contrib import admin
+admin.site.site_header = 'VIS-MONITOR PAGE ADMIN'
+admin.site.site_title = 'VIS-MONITOR PAGE ADMIN'
 
 urlpatterns = [
     re_path(r'^.*\.html', views.pages, name='pages'),

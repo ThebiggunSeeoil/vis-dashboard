@@ -128,7 +128,7 @@ class Status(models.Model):
     NOZZLE_SN = models.CharField(max_length=255, default='None')
     NOZZLE_Last_conn = models.CharField(max_length=255, default='None')
     NOZZLE_Battery_Status = models.CharField(max_length=255, default='None')
-    NOZZLE_Battery_Status_Volts = models.CharField(max_length=255, default='3.50')
+    NOZZLE_Battery_Status_Volts = models.FloatField(max_length=255, default=3.50)
     NOZZLE_Battery_BatPrcnt = models.CharField(max_length=255, default='None')
     Timestramp = models.DateTimeField(auto_now_add=True, auto_now=False, blank=True)
 
@@ -200,6 +200,22 @@ class Store_data_send_line_failed(models.Model):
         ordering = ('name_id',)  # ทำหน้าที่เรียงลำดับการแสดงผลที่หน้าเวบ
         verbose_name = 'สถานะการส่งแจ้งเตือน'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
         verbose_name_plural = 'ข้อมูลการส่งข้อมูลไม่ผ่านสถานะ'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
+        
+class Setup_Config(models.Model):
+    time_alert_alarm_hours = models.IntegerField(blank=True, null=True)
+    time_alert_warning_hours = models.IntegerField(blank=True, null=True)
+    battery_level_alarm_volt = models.FloatField(blank=True, null=True)
+    battery_level_low_volt = models.FloatField(blank=True, null=True)
+    battery_level_failed_volt = models.FloatField(blank=True, null=True)
+    last_update = models.DateTimeField(auto_now_add=True, auto_now=False, blank=True)
+
+    def __str__(self):
+        return str(self.time_alert_alarm_hours)
+
+    class Meta:
+        ordering = ('last_update',)  # ทำหน้าที่เรียงลำดับการแสดงผลที่หน้าเวบ
+        verbose_name = 'ตั้งค่าการแจ้งเตือน'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
+        verbose_name_plural = 'ตั้งค่าการแจ้งเตือน'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
 
 
 

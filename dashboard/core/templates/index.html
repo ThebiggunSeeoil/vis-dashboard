@@ -119,7 +119,7 @@
                     <tr class="td-actions">
                         <td align="center">
                             <div class="stats">
-                                <i class="material-icons align-middle {% if vis_detail.time_dif.day >= 1 or vis_detail.time_dif.hour >= 3 %} text-danger {% elif vis_detail.time_dif.hour <= 3  %} text-warning {% endif %}">monitor</i>
+                                <i class="material-icons align-middle {% if vis_detail.time_dif.hours_deff >= time_alert_alarm_hours or vis_detail.time_dif.hour >= time_alert_warning_hours %} text-danger {% elif vis_detail.time_dif.hour <= time_alert_warning_hours  %} text-warning {% endif %}">monitor</i>
                             </div>
                         </td>
                         <td align="left">{{vis_detail.name}}</td>
@@ -128,7 +128,7 @@
                         <td align="center">{{vis_detail.NOZZLE_Last_conn}}</td>
                         <td align="center">{{vis_detail.time_dif.day }} วัน {{vis_detail.time_dif.hour }} ชม {{vis_detail.time_dif.minutes }} นาที</td>
 <!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
-                        <td align="center">{{vis_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">{{vis_detail.NOZZLE_Battery_Status}}V.</td>
                         <td align="center">
                             <button type="button" rel="tooltip"
                                     title="ทีม : {{vis_detail.TEAM_ID}} คุณ : {{vis_detail.TEAM_NAME}}"
@@ -141,7 +141,7 @@
                     <tr class="td-actions">
                         <td align="center">
                             <div class="stats">
-                                <i class="material-icons align-middle {% if mwgt_detail.time_dif.day >= 1 or mwgt_detail.time_dif.hour >= 3 %} text-danger {% elif mwgt_detail.time_dif.hour <= 3  %} text-warning {% endif %}">devices</i>
+                                <i class="material-icons align-middle {% if mwgt_detail.time_dif.day >= time_alert_alarm_hours or mwgt_detail.time_dif.hour >= time_alert_warning_hours %} text-danger {% elif mwgt_detail.time_dif.hour <= time_alert_warning_hours  %} text-warning {% endif %}">devices</i>
                             </div>
                         </td>
                         <td align="left">{{mwgt_detail.name}}</td>
@@ -150,7 +150,7 @@
                         <td align="center">{{mwgt_detail.NOZZLE_Last_conn}}</td>
                         <td align="center">{{mwgt_detail.time_dif.day }} วัน {{mwgt_detail.time_dif.hour }} ชม {{mwgt_detail.time_dif.minutes }} นาที</td>
 <!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
-                        <td align="center">{{mwgt_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">{{mwgt_detail.NOZZLE_Battery_Status}}V.</td>
                         <td align="center">
                             <button type="button" rel="tooltip"
                                     title="ทีม : {{mwgt_detail.TEAM_ID}} คุณ : {{mwgt_detail.TEAM_NAME}}"
@@ -163,7 +163,7 @@
                     <tr class="td-actions">
                         <td align="center">
                             <div class="stats">
-                                <i class="material-icons align-middle {% if nozzle_detail.time_dif.day >= 1 or nozzle_detail.time_dif.hour >= 3 %} text-danger {% elif nozzle_detail.time_dif.hour <= 3  %} text-warning {% endif %}">local_gas_station</i>
+                                <i class="material-icons align-middle {% if nozzle_detail.time_dif.day >= time_alert_alarm_hours or nozzle_detail.time_dif.hour >= time_alert_warning_hours %} text-danger {% elif nozzle_detail.time_dif.hour <= time_alert_warning_hours  %} text-warning {% endif %}">local_gas_station</i>
                             </div>
                         </td>
                         <td align="left">{{nozzle_detail.name}} (offline หน้า  {{nozzle_detail.NOZZLE_pump_log_address}}/{{nozzle_detail.NOZZLE_num}})</td>
@@ -172,7 +172,7 @@
                         <td align="center">{{nozzle_detail.NOZZLE_Last_conn}}</td>
                         <td align="center">{{nozzle_detail.time_dif.day }} วัน {{nozzle_detail.time_dif.hour }} ชม {{nozzle_detail.time_dif.minutes }} นาที</td>
 <!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
-                        <td align="center">{{nozzle_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">{{nozzle_detail.NOZZLE_Battery_Status}}V.</td>
                         <td align="center">
                             <button type="button" rel="tooltip"
                                     title="ทีม : {{nozzle_detail.TEAM_ID}} คุณ : {{nozzle_detail.TEAM_NAME}}"
@@ -184,8 +184,8 @@
                     {% for battery_detail in BATTERY_DETAIL %}
                     <tr class="td-actions">
                         <td align="center">
-                            <div class="stats">
-                                <i class="material-icons align-middle {% if battery_detail.NOZZLE_Battery_Status <= '5' %} text-danger {% elif battery_detail.NOZZLE_Battery_Status >= '6' %} text-warning {% endif %}">battery_alert</i>
+                            <div class="stats"> 
+                                <i class="material-icons align-middle {% if battery_detail.NOZZLE_Battery_Status < battery_level_failed_volt %} text-danger {% elif battery_detail.NOZZLE_Battery_Status <= battery_level_low_volt %} text-warning {% endif %}">battery_alert</i>
                             </div>
                         </td>
                         <td align="left">{{battery_detail.name}} (ตำแหน่ง มือจ่าย {{battery_detail.NOZZLE_pump_log_address}}/{{battery_detail.NOZZLE_num}})</td>
@@ -194,7 +194,7 @@
                         <td align="center">{{battery_detail.NOZZLE_Last_conn}}</td>
                         <td align="center">----</td>
 <!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
-                        <td align="center" {% if battery_detail.NOZZLE_Battery_Status < '5' %} class="text-danger" {% elif battery_detail.NOZZLE_Battery_Status >= '5' %} class="text-warning" {% endif %}">{{battery_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center" {% if battery_detail.NOZZLE_Battery_Status < battery_level_failed_volt %} class="text-danger" {% elif battery_detail.NOZZLE_Battery_Status <= battery_level_low_volt %} class="text-warning" {% endif %}">{{battery_detail.NOZZLE_Battery_Status}}V.</td>
                         <td align="center">
                             <button type="button" rel="tooltip"
                                     title="ทีม : {{battery_detail.TEAM_ID}} คุณ : {{battery_detail.TEAM_NAME}}"
@@ -246,7 +246,7 @@
                     <tr class="td-actions">
                         <td align="center">
                             <div class="stats">
-                                <i class="material-icons align-middle {% if vis_detail.time_dif.day >= 1 or vis_detail.time_dif.hour >= 3 %} text-danger {% elif vis_detail.time_dif.hour <= 3  %} text-warning {% endif %}">monitor</i>
+                                <i class="material-icons align-middle {% if vis_detail.time_dif.hours_deff >= time_alert_alarm_hours or vis_detail.time_dif.hour >= time_alert_warning_hours %} text-danger {% elif vis_detail.time_dif.hour <= time_alert_warning_hours  %} text-warning {% endif %}">monitor</i>
                             </div>
                         </td>
                         <td align="left">{{vis_detail.name}}</td>
@@ -295,7 +295,7 @@
                     <tr class="td-actions">
                         <td align="center">
                             <div class="stats">
-                                <i class="material-icons align-middle {% if mwgt_detail.time_dif.day >= 1 or mwgt_detail.time_dif.hour >= 3 %} text-danger {% elif mwgt_detail.time_dif.hour <= 3  %} text-warning {% endif %}">devices</i>
+                                <i class="material-icons align-middle {% if mwgt_detail.time_dif.hours_deff >= time_alert_alarm_hours or mwgt_detail.time_dif.hour >= time_alert_warning_hours %} text-danger {% elif mwgt_detail.time_dif.hour <= time_alert_warning_hours  %} text-warning {% endif %}">devices</i>
                             </div>
                         </td>
                         <td align="left">{{mwgt_detail.name}}</td>
@@ -347,14 +347,14 @@
                     <tr class="td-actions">
                         <td align="center">
                             <div class="stats">
-                                <i class="material-icons align-middle {% if nozzle_detail.time_dif.day >= 1 or nozzle_detail.time_dif.hour >= 3 %} text-danger {% elif nozzle_detail.time_dif.hour <= 3  %} text-warning {% endif %}">local_gas_station</i>
+                                <i class="material-icons align-middle {% if nozzle_detail.time_dif.hours_deff >= time_alert_alarm_hours or nozzle_detail.time_dif.hour >= time_alert_warning_hours %} text-danger {% elif nozzle_detail.time_dif.hour <= time_alert_warning_hours  %} text-warning {% endif %}">local_gas_station</i>
                             </div>
                         </td>
                         <td align="left">{{nozzle_detail.name}}</td>
                         <td align="center">OFF-LINE</td>
                         <td align="center">{{nozzle_detail.NOZZLE_pump_log_address}}</td>
                         <td align="center">{{nozzle_detail.NOZZLE_num}}</td>
-                        <td align="center">{{nozzle_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center">{{nozzle_detail.NOZZLE_Battery_Status}}V.</td>
                         <td align="center">{{nozzle_detail.NOZZLE_Last_conn}}</td>
                         <td align="center">{{nozzle_detail.time_dif.day }} วัน {{nozzle_detail.time_dif.hour }} ชม {{nozzle_detail.time_dif.minutes }} นาที</td>
 <!--                        <td align="center">{% if vis_detail.VIS_last_time|date:"YmdHis" > now|date:"YmdHis" %} xx {% endif %}</td>-->
@@ -399,14 +399,14 @@
                     <tr class="td-actions">
                         <td align="center">
                             <div class="stats">
-                                <i class="material-icons align-middle {% if battery_detail.NOZZLE_Battery_Status <= '5' %} text-danger {% elif battery_detail.NOZZLE_Battery_Status >= '6' %} text-warning {% endif %}">battery_alert</i>
+                                <i class="material-icons align-middle {% if battery_detail.NOZZLE_Battery_Status < battery_level_failed_volt %} text-danger {% elif battery_detail.NOZZLE_Battery_Status <= battery_level_low_volt %} text-warning {% endif %}">battery_alert</i>
                             </div>
                         </td>
                         <td align="left">{{battery_detail.name}}</td>
                         <td align="center">{{battery_detail.type}}</td>
                         <td align="center">{{battery_detail.NOZZLE_pump_log_address}}</td>
                          <td align="center">{{battery_detail.NOZZLE_num}}</td>
-                        <td align="center" {% if battery_detail.NOZZLE_Battery_Status < '5' %} class="text-danger" {% elif battery_detail.NOZZLE_Battery_Status >= '5' %} class="text-warning" {% endif %}">{{battery_detail.NOZZLE_Battery_Status}}</td>
+                        <td align="center" {% if battery_detail.NOZZLE_Battery_Status < battery_level_failed_volt %} class="text-danger" {% elif battery_detail.NOZZLE_Battery_Status < battery_level_low_volt %} class="text-warning" {% endif %}">{{battery_detail.NOZZLE_Battery_Status}}V.</td>
                           <td align="center">{{battery_detail.NOZZLE_Last_conn}}</td>
                         <td align="center">
                             <button type="button" rel="tooltip"

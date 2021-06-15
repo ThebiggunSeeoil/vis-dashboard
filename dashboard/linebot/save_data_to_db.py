@@ -177,7 +177,7 @@ def UpdateBatteryStatus(request):
                                                                     sn=data_battery['SN'])
             # If duplicate data no need to insert to db
             print ('Duplicate data battery ')
-            return 200
+            
         except battery_status.DoesNotExist:  # Check if battery already in db or not if NO go next step to insert into
             save_record = battery_status()
             save_record.site_id = name_id
@@ -196,8 +196,14 @@ def UpdateBatteryStatus(request):
             save_record.save(request)
 
         # ทำการ update สถานะ battery ไปที่ Status
+        # print (data_battery['SN'])
+        # print (data_battery['SN'].strip())
+        # print (len(data_battery['SN']))
+        # print (len(data_battery['SN'].strip()))
         try :
-            update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=data_battery['SN']).update(NOZZLE_Battery_Status_Volts=data_battery['BatLevel'])
+            update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=data_battery['SN'].strip()).update(NOZZLE_Battery_Status_Volts=data_battery['BatLevel'].strip())
+            print ('update_battery_to_status is',update_battery_to_status)
+            print ('Update battery to status Succeed')
         except Status.DoesNotExist:
             print ('Cannot update battery to status')
             

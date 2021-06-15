@@ -16,6 +16,8 @@ from linebot.connect_db_profile import *
 from linebot.line_tamplates import *
 from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed
 
+
+
 Channel_access_token = settings.LINE_CHANNEL_ACCESS_TOKEN
 
 print ('OK')
@@ -27,35 +29,51 @@ def callback(request):  # สำหรับส่งการแจ้งเต
     if request.method == "POST":  # Check if method is POST
         payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         print('first payload',payload)
-        if payload['events'][0]['type'] == 'VIS-MONITOR':  # Check if request is VIS-Monitor to update in database
-            if payload['events'][0]['update_type'] == 'notify_MWGT_OFFLINE':     #เมื่อมีการ POST แจ้ง MWGT OFFLINE เข้า
-                print(payload['events'][0]['data'])
-                site_profile = get_site_profile(payload,'notify_MWGT_OFFLINE') #ส่งไป get data profile ที่ connect_db_profile
-                SaveRecord= SaveRecordStatusErrorLogger(payload)
-                result_calculate_time = different_time_calculate(timezone.now(),site_profile[1].MWGT_last_time) #ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].MWGT_last_time คือ MWGT ที่ติดต่อได้ครั้้งล่าสุุด)
-                line_notify_preparing = Line_Creating_MWGT_OFFLINE(result_calculate_time,site_profile)#ส่งไปทำงานที่ linebot/creating_line_data/Line_Creating_MWGT_OFFLINE ร
-                result_notify = send_notify(line_notify_preparing[0], line_notify_preparing[1]) #line_notify_preparing[1] คือ line token index[0] คือ messages ที่ต้องการจะส่ง
-                if result_notify == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
-                    result_save = SaveDataSendLineFailedToBD(site_profile,line_notify_preparing[0]) #ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
-                    if result_save == True :
-                        return None
-                # print('SaveRecord',SaveRecord)
-                return JsonResponse({"Logger_id": SaveRecord.id})# ส่ง id ที่ logger save กลับไปให้เครื่องลูกเพื่อบันทึกเป็น record
-            elif payload['events'][0]['update_type'] == 'notify_MWGT_ONLINE': #เมื่อมีการ POST แจ้ง MWGT กลับมา ONLINE แล้ว
-                update_status_error = UpdateStatusLoggerBackToOnline(payload) #ส่งค่าที่ได้รับ ไป update ที่ linebot/save_data_to_db/UpdateStatusLoggerBackToOnline
-                if update_status_error == True :
-                    site_profile = get_site_profile(payload,'notify_MWGT_ONLINE')  # ส่งไป get data profile ที่ connect_db_profile
-                    result_calculate_time = different_time_calculate(site_profile[2].Error_stop,site_profile[2].Error_start)  # ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].Error_start คือ MWGT ที่เริ่มมีการ offline)
-                    print(result_calculate_time)
-                    UpdateRecord   = UpdateRecordStatusErrorLogger(payload)
-                    if UpdateRecord == True :
-                        line_notify_preparing = Line_Creating_MWGT_ONLINE(result_calculate_time,site_profile)  # ส่งไปทำงานที่ linebot/creating_line_data/Line_Creating_MWGT_ONLINE
-                        print(line_notify_preparing)
-                        result_notify = send_notify(line_notify_preparing[0], line_notify_preparing[1])  # line_notify_preparing[1] คือ line token index[0] คือ messages ที่ต้องการจะส่ง
-                        if result_notify == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
-                            result_save = SaveDataSendLineFailedToBD(site_profile, line_notify_preparing[0])  # ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
-                            if result_save == True:
-                                return None
+        if len(payload['events']) == 0 :
+            print ('Message from server to Verify')
+            return HttpResponse(200)
+        else :
+            global Reply_token
+            global User_id
+            Reply_token = payload['events'][0]['replyToken']
+            User_id = payload['events'][0]['source']['userId']
+            if payload['events'][0]['type'] == 'follow':
+                    ReplyMessage(line_templates.Gressing_msg())
+                    return HttpResponse(200)
+            elif payload['events'][0]['type'] == 'message':
+                message = payload['events'][0]['message']['text']
+                print ('message is',message)
+                if message == 'test':
+                    ReplyMessage(line_templates.Gressing_msg())
+                    return HttpResponse(200)
+                if (message[0:5]).lower() == 'orpak':
+                    print(message)
+                    command_payload = ((payload['events'][0]['message']['text'])[0:5]).lower()+((payload['events'][0]['message']['text'])[5:])
+                    print (command_payload)
+                    code_login = (command_payload[5:])
+                    print ('code login is',code_login)
+                    # try :
+                    #     id_user = PersanalDetaillogin.objects.filter(key_login=code_login).first()
+                    #     if id_user != None :
+                    #         if id_user.member_status == 'none' :
+                    #             global name
+                    #             global company
+                    #             name=id_user.name
+                    #             company=id_user.company
+                    #             ReplyMessage(line_templates.ensure_submit(id_user))
+                    #         else:
+                    #             ReplyMessage(line_templates.alreadySubmit_code(id_user))
+                    #     else :
+                    #         ReplyMessage(line_templates.re่ject_code())        
+                    # except PersanalDetaillogin.DoesNotExist:
+                    #     ReplyMessage(line_templates.re่ject_code())
+                    #     return None 
+            elif payload['events'][0]['type'] == 'postback':
+                message = payload['events'][0]['postback']['data']
+                if message == 'register'    :
+                    ReplyMessage(line_templates.register_code())
+                
+        
     return HttpResponse(200)
 
 

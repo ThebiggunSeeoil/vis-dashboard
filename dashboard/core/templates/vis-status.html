@@ -140,7 +140,7 @@
                                                         <th class="text-center" style="font-size:12px">{{nozzle.Unit_log_address}}</th>
                                                         <th class="text-center" style="font-size:12px">{{nozzle.NOZZLE_pump_log_address}}</th>
                                                         <th class="text-center" style="font-size:12px">{{nozzle.NOZZLE_num}}</th>
-                                                        <th class="text-center {% if nozzle.BATTERY_status_check == 'low' %} text-danger {% endif %}" style="font-size:12px">{{nozzle.NOZZLE_Battery_Status_Volts}}</th>
+                                                        <th class="text-center {% if nozzle.BATTERY_status_check == 'low' %} text-danger {% endif %}" style="font-size:12px">{{nozzle.NOZZLE_Battery_Status_Volts}}V.</th>
                                                         <th class="text-center" style="font-size:12px">{{nozzle.NOZZLE_Last_conn}}</th>
                                                         <th class="text-center" style="font-size:12px">{{nozzle.Timestramp | date:'d-m-Y H:i'}}</th>
                                                     </tr>
