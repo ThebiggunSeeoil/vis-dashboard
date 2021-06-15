@@ -163,9 +163,11 @@ STATICFILES_DIRS = (
 LINE_CHANNEL_ACCESS_TOKEN = "HiIGJRtQdpcaurQLUKse53RGjSxXrPor0Tx/kLCT26cXid0YH5LKPVpQvLnGXEFqW9Icxn4LsMFylcIePtchAG3b+yHqdmkc31CxUR6B2s9OEfziCXLtKk2U5LzsJdvyJ8AHIoAwGZ0RptLoMWw8/wdB04t89/1O/w1cDnyilFU="
 LINE_CHANNEL_SECRET = "1f3161681bb10c5a06350426f00c9c73"
 FIRST_MENU = 'richmenu-92dc2fc9bfe644eadcc702163eccd6d3'
-DEFULT_RICH_MENU ="richmenu-a1266a264e8ad9fe600132eef3200825"
-CBRE_MENU = "richmenu-098c9ee37d0eee2e2ff123ef8799c928"
-CONTRACTOR_MENU = "richmenu-5f9022a3f1aa905d8a6860dd87f3414f"
+SECOND_LEVEL = 'richmenu-fc2463365441199552545387f8ca8837'
+FIRST_LEVEL = 'richmenu-c2925d95cdb5e44fb10b488356565d7c'
+# DEFULT_RICH_MENU ="richmenu-a1266a264e8ad9fe600132eef3200825"
+# CBRE_MENU = "richmenu-098c9ee37d0eee2e2ff123ef8799c928"
+# CONTRACTOR_MENU = "richmenu-5f9022a3f1aa905d8a6860dd87f3414f"
 #############################################################
 #############################################################
 now = timezone.now()

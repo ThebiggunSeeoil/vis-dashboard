@@ -2,7 +2,7 @@
 from django.utils import timezone
 import dateutil.parser
 import datetime
-from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed,battery_status
+from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed,battery_status,LinegroupId
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from dateutil.relativedelta import relativedelta, SA, TH
 def SaveDataSendLineFailedToBD (request,site_profile): # สำหรับ save ข้อมูล line notify ที่ไม่สามารถส่งได้
@@ -208,6 +208,27 @@ def UpdateBatteryStatus(request):
             print ('Cannot update battery to status')
             
     return 200  # Response back to request
+
+{'destination': 'Ud1d574db1a010fa89cf41e891e10f6bd', 
+ 'events': [{'type': 'join', 'timestamp': 1623757824955, 'source': 
+     {'type': 'group', 'groupId': 'C6f08cd7ac176721b1be16ddca5fbec0b'}, 
+     'replyToken': 'f8ec604ea462418a82391cbcd02aee2a', 'mode': 'active'}]}
+
+def CreateLineGroup(request,group_name):
+    group_id = request['events'][0]['source']['groupId']
+    try:
+        # Check if nozzle already in db or not if YES go next step
+        prepare_data = LinegroupId.objects.get(group_id=group_id)
+        # Update each filed into db
+        LinegroupId.objects.filter(group_id=group_id).update(
+                                        group_name=group_name,
+                                            Timestramp=timezone.now())
+    except LinegroupId.DoesNotExist:  # Check if nozzle already in db or not if NO go next step to insert into
+        save_record = LinegroupId()
+        save_record.group_id = group_id
+        save_record.group_name = group_name
+        save_record.save(request)
+    return HttpResponse(200)  # Response back to request
 
 
 

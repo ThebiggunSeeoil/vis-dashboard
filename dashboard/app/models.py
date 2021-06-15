@@ -180,7 +180,7 @@ class Status_Error_logger(models.Model):
     class Meta:
         ordering = ('name_id',)  # ทำหน้าที่เรียงลำดับการแสดงผลที่หน้าเวบ
         verbose_name = 'ประวัติ'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
-        verbose_name_plural = 'รายละเอียดประวัติ'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
+        verbose_name_plural = 'ข้อมูลประวัติการ error record'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
 
 
 class Store_data_send_line_failed(models.Model):

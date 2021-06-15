@@ -500,7 +500,7 @@ class line_templates:
                     "contents": [
                         {
                             "type": "text",
-                            "text": "EXXON:CBRE",
+                            "text": "VIS : MONITOR",
                             "weight": "bold",
                             "size": "xl",
                             "color": "#225508FF",
@@ -547,7 +547,7 @@ class line_templates:
                     "contents": [
                         {
                             "type": "text",
-                            "text": "EXXON:CBRE",
+                            "text": "VIS : MONOTOR",
                             "weight": "bold",
                             "size": "xl",
                             "color": "#225508FF",
