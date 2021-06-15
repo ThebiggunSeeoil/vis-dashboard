@@ -83,21 +83,35 @@ def updatedb(request):
 
 
 @csrf_exempt  # this is used for avoid csrf request from line server
+def update_battery (request): # function สำหรับการ update สถานะ แบตเตอร์รี่ ไปที่ data base 
+    if request.method == "POST":  # Check if method is POST
+        payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
+        name_id = payload['events'][0]['name_id']
+        # print (payload)
+        if payload['events'][0]['type'] == 'VIS-MONITOR':  # Check if request is VIS-Monitor to update in database
+            if payload['events'][0]['update_type'] == 'update_battery': # Check request ว่าใช่ update_battery หรือไม่ 
+                # print(payload)
+                update_BATTEY_Data = UpdateBatteryStatus(payload)
+                if update_BATTEY_Data == 200 :
+                    return HttpResponse (200)
+                # return HttpResponse (200)
+    
+
+@csrf_exempt  # this is used for avoid csrf request from line server
 def permission_check(request):
     if request.method == "POST":  # Check if method is POST
         payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         if payload['events'][0]['type'] == 'VIS-MONITOR':
             try:
-                result = Site.objects.select_related().get(
-                    station_ip=payload['events'][0]['ip'])  # นำ ip มาเช็คกับตาราง Site และส่งเลข id กลับไปให้
+                result = Site.objects.select_related().get(station_ip=payload['events'][0]['ip'])  # นำ ip มาเช็คกับตาราง Site และส่งเลข id กลับไปให้
                 # return JsonResponse({"site_id": result.id,
                 #                      "password": result.station_password,
                 #                      "station_monitor_device": result.station_monitor_device,
                 #                      "nozzles_activate": result.nozzle_mapping.nozzles_activate})  # ส่งเลข id กลับไปให้
                 return JsonResponse({"site_id": result.id,
-                                     "password": result.station_password,
-                                     "station_monitor_device": result.station_monitor_device
-                                     })  # ส่งเลข id กลับไปให้
+                                        "password": result.station_password,
+                                            "station_monitor_device": result.station_monitor_device
+                                                })  # ส่งเลข id กลับไปให้
             except Site.DoesNotExist:
                 return JsonResponse({"site_id": "failed"})  # ส่งเลข failed กลับไปให้เนื่องจากไม่พบเลข ip ที่ส่งเข้า
     return HttpResponse(200)

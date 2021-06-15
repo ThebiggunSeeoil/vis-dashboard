@@ -128,6 +128,7 @@ class Status(models.Model):
     NOZZLE_SN = models.CharField(max_length=255, default='None')
     NOZZLE_Last_conn = models.CharField(max_length=255, default='None')
     NOZZLE_Battery_Status = models.CharField(max_length=255, default='None')
+    NOZZLE_Battery_Status_Volts = models.CharField(max_length=255, default='3.50')
     NOZZLE_Battery_BatPrcnt = models.CharField(max_length=255, default='None')
     Timestramp = models.DateTimeField(auto_now_add=True, auto_now=False, blank=True)
 
@@ -139,6 +140,31 @@ class Status(models.Model):
         verbose_name = 'สถานะ'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
         verbose_name_plural = 'ข้อมูลสถานะ'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
 
+class battery_status (models.Model):
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True)
+    name_id = models.IntegerField(blank=True, null=True)
+    date_stamp = models.DateTimeField(null=True, blank=True)
+    mac = models.CharField(max_length=255, blank=True, null=True)
+    sn = models.CharField(max_length=255, blank=True, null=True)
+    fwtype = models.CharField(max_length=255, blank=True, null=True)
+    version = models.CharField(max_length=255, blank=True, null=True)
+    devtype = models.CharField(max_length=255, blank=True, null=True)
+    din = models.CharField(max_length=255, blank=True, null=True)
+    battery_vcclevel = models.CharField(max_length=255, blank=True, null=True)
+    battery_level = models.CharField(max_length=255, blank=True, null=True)
+    temp = models.CharField(max_length=255, blank=True, null=True)
+    fwu = models.CharField(max_length=255, blank=True, null=True)
+    
+    def __str__(self):
+        return str(self.sn)
+
+    class Meta:
+        ordering = ('date_stamp',)  # ทำหน้าที่เรียงลำดับการแสดงผลที่หน้าเวบ
+        verbose_name = 'แบตเตอร์รี่'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
+        verbose_name_plural = 'สถานะแบตเตอร์รี่'  # แปลงให้ข้อมูลหน้าเวบเป็นภาษาไทย
+    
+    
+    
 
 class Status_Error_logger(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True)

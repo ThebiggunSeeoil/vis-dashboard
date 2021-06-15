@@ -30,8 +30,7 @@ def prepare_nozzle (GET_VIS_DATA,GET_VIS_DATA_ALL,NOZZLE) :
     #ส่วนสำหรับ นำค่าที่ได้จากตาราง site ที่เป็น name_id เอามาเพิ่มข้อมูล 'Unit_log_address':[] เข้าไปเพื่อใช้ในการเก็บข้อมูลของ nozzle
     for data in GET_VIS_DATA:
         # print(data)
-        if data[
-            'name_id'] not in vis_check:  # ทำการเช็คว่า name_id มีเก็บไว้ใน vis_check = [] หรือไม่ถ้ายังไม่มีก็จะทำข้างล่างจนเสร็จก่อน แล้วค่อยนำ name_id ไปบันทึกไว้เพื่อป้องกันการ loop รอบอื่นๆมาทำซ้ำอีก
+        if data['name_id'] not in vis_check:  # ทำการเช็คว่า name_id มีเก็บไว้ใน vis_check = [] หรือไม่ถ้ายังไม่มีก็จะทำข้างล่างจนเสร็จก่อน แล้วค่อยนำ name_id ไปบันทึกไว้เพื่อป้องกันการ loop รอบอื่นๆมาทำซ้ำอีก
             vis_check.append(data['name_id'])  # ทำการนำ name_id ไปบันทึกไว้ที่ vis_check = []
             data = {'name_id': data['name_id'],
                     'log_address_check': [],
@@ -84,15 +83,8 @@ def prepare_nozzle (GET_VIS_DATA,GET_VIS_DATA_ALL,NOZZLE) :
     GET_NOZZLE_CHECK_STORE = [] #สำหรับเก็บค่า Unit_log_address เพื่อป้องกันไม่ให้มีการบันทึกซ้ำ
     for nozzle_check in vis_result  :
         for GET_VIS_DATA_ALL_CHECK in GET_VIS_DATA_ALL:
-
             if GET_VIS_DATA_ALL_CHECK['name_id'] == nozzle_check['name_id']:
                 log_check = str(GET_VIS_DATA_ALL_CHECK['name_id']) + str(GET_VIS_DATA_ALL_CHECK['Unit_log_address'])
-                # for index , loop_check in enumerate(nozzle_check['Unit_log_address']) :
-                #     if loop_check['Unit_log_address'] == GET_VIS_DATA_ALL_CHECK['Unit_log_address'] :
-                #         nozzle_check['Unit_log_address'][index]['nozzle'].append(GET_VIS_DATA_ALL_CHECK)
-                # if GET_VIS_DATA_ALL_CHECK['Unit_log_address'] == nozzle_check['Unit_log_address'][0]['Unit_log_address']:
-                    # if log_check not in GET_NOZZLE_CHECK_STORE:
-                    # GET_NOZZLE_CHECK_STORE.append(log_check)
                 value = {'Unit_log_address': GET_VIS_DATA_ALL_CHECK['Unit_log_address'] ,'nozzle':[]}
                 for nozzle_loop in nozzle_check['Unit_log_address'] :
                     if nozzle_loop['Unit_log_address'] == GET_VIS_DATA_ALL_CHECK['Unit_log_address']:
@@ -175,7 +167,7 @@ def index(request):
                 time_def_check = different_time_calculate(timezone.now(),data.VIS_last_time)
                 vis_result.append({'name':data.site,'ip_address':data.site.station_ip,'type':'VIS',
                                    'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
-                                    'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status ,
+                                    'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status_Volts ,
                                         'TEAM_ID':data.site.team_support.team ,
                                             'TEAM_NAME': data.site.team_support.team_name ,'TIME_UPDATE':timezone.now()})
         for data in GET_MWGT_DATA:
@@ -185,7 +177,7 @@ def index(request):
                 time_def_check = different_time_calculate(timezone.now(),data.MWGT_last_time)
                 mwgt_result.append({'name':data.site,'ip_address':data.site.station_ip,'type':'MWGT',
                                    'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
-                                    'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status ,
+                                    'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status_Volts ,
                                         'TEAM_ID':data.site.team_support.team ,
                                             'TEAM_NAME': data.site.team_support.team_name , 'TIME_UPDATE':timezone.now()})
                 # print('mwgt_result',mwgt_result)
@@ -195,7 +187,7 @@ def index(request):
             # print('time',data.MWGT_last_time)
             nozzle_result.append({'name':data.site,'ip_address':data.site.station_ip,'type':'NOZZLE',
                                'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
-                                'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status ,
+                                'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status_Volts ,
                                     'TEAM_ID':data.site.team_support.team ,
                                         'TEAM_NAME': data.site.team_support.team_name , 'NOZZLE_pump_log_address':data.NOZZLE_pump_log_address , 'NOZZLE_num':data.NOZZLE_num , 'TIME_UPDATE':timezone.now()})
             # print('mwgt_result',nozzle_result)
@@ -203,7 +195,7 @@ def index(request):
             time_def_check = different_time_calculate(timezone.now(),data.MWGT_last_time)
             battery_result.append({'name':data.site,'ip_address':data.site.station_ip,'type':'BATT',
                                'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
-                                'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status ,
+                                'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status_Volts ,
                                     'TEAM_ID':data.site.team_support.team ,
                                         'TEAM_NAME': data.site.team_support.team_name , 'NOZZLE_pump_log_address':data.NOZZLE_pump_log_address , 'NOZZLE_num':data.NOZZLE_num , 'TIME_UPDATE':timezone.now()})
             # print('mwgt_result',battery_result)
@@ -308,7 +300,7 @@ def pages(request):
 @login_required(login_url="/login/")
 def visstatus(request):
     data = []
-    data_site_name_id = Status.objects.values('name_id', 'site__station_name','site__station_ip','site__station_monitor_device' ,'MWGT_status','VIS_status','NOZZLE_status_check','BATTERY_status_check','VIS_last_time','Unit_log_address').annotate(dcount=Count('Unit_log_address')).filter(site__station_active=True).order_by('name_id')
+    data_site_name_id = Status.objects.values('name_id', 'site__station_name','site__station_ip','site__station_monitor_device' ,'MWGT_status','VIS_status','NOZZLE_status_check','NOZZLE_Battery_Status_Volts','VIS_last_time','Unit_log_address').annotate(dcount=Count('Unit_log_address')).filter(site__station_active=True).order_by('name_id')
     data_status = Status.objects.values().filter(site__station_active=True)
     nozzle_count = Nozzle.objects.values().filter(site__station_active=True)
     results = prepare_nozzle(data_site_name_id, data_status,nozzle_count)
@@ -326,7 +318,7 @@ def search (request):
     search =request.GET['title']
     data_site_name_id = Status.objects.values('name_id', 'site__station_name', 'site__station_ip',
                                               'site__station_monitor_device', 'MWGT_status', 'VIS_status',
-                                              'NOZZLE_status_check', 'BATTERY_status_check', 'VIS_last_time',
+                                              'NOZZLE_status_check', 'NOZZLE_Battery_Status_Volts', 'VIS_last_time',
                                               'Unit_log_address').annotate(dcount=Count('Unit_log_address')).filter(site__station_name__contains=search,
         site__station_active=True).order_by('name_id')
     data_status = Status.objects.values().filter(site__station_name__contains=search,site__station_active=True)

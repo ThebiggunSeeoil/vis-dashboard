@@ -1,7 +1,8 @@
 # สำหรับบันทึกข้อมูลที่ต้องการลงไปที่ DB
 from django.utils import timezone
+import dateutil.parser
 import datetime
-from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed
+from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed,battery_status
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from dateutil.relativedelta import relativedelta, SA, TH
 def SaveDataSendLineFailedToBD (request,site_profile): # สำหรับ save ข้อมูล line notify ที่ไม่สามารถส่งได้
@@ -161,6 +162,46 @@ def UpdateAllDataMWGT(request):
             save_record.site_id = data_nozzle['site_id']
             save_record.save(request)
     return HttpResponse(200)  # Response back to request
+
+def UpdateBatteryStatus(request):
+    payload = request['events'][0]['battery_detail']
+    name_id = request['events'][0]['name_id']
+    print ('payload battery is',payload)
+    for data_battery in payload :  # Loop each nozzle for update into database
+        new_date_stamp = datetime.datetime.now().strftime("%Y") + str((data_battery['date_stamp'][2:]))
+        # new_date_stamp ใช้สำหรับแปลงปี 21 ที่ส่งมาให้เป็น 2021 ตาม sql server format
+        try:
+            # Check if battery already in db or not if YES go next step
+            prepare_data = battery_status.objects.get(name_id=name_id,
+                                                            date_stamp=new_date_stamp,
+                                                                    sn=data_battery['SN'])
+            # If duplicate data no need to insert to db
+            print ('Duplicate data battery ')
+            return 200
+        except battery_status.DoesNotExist:  # Check if battery already in db or not if NO go next step to insert into
+            save_record = battery_status()
+            save_record.site_id = name_id
+            save_record.name_id = name_id
+            save_record.date_stamp = new_date_stamp
+            save_record.mac = data_battery['MAC']
+            save_record.sn = data_battery['SN']
+            save_record.fwtype = data_battery['FwType']
+            save_record.version = data_battery['Ver']
+            save_record.devtype = data_battery['DevType']
+            save_record.din = data_battery['DIN']
+            save_record.battery_vcclevel = data_battery['Battery_VccLevel']
+            save_record.battery_level = data_battery['BatLevel']
+            save_record.temp = data_battery['Temp']
+            save_record.fwu = data_battery['FWU']
+            save_record.save(request)
+
+        # ทำการ update สถานะ battery ไปที่ Status
+        try :
+            update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=data_battery['SN']).update(NOZZLE_Battery_Status_Volts=data_battery['BatLevel'])
+        except Status.DoesNotExist:
+            print ('Cannot update battery to status')
+            
+    return 200  # Response back to request
 
 
 
