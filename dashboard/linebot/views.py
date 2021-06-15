@@ -17,22 +17,14 @@ from linebot.calculate_function import *
 from linebot.connect_db_profile import *
 from linebot.line_tamplates import *
 from app.models import Site, Status, Status_Error_logger, Store_data_send_line_failed, PersanalDetaillogin
-
-
 Channel_access_token = settings.LINE_CHANNEL_ACCESS_TOKEN
-
-print('OK')
-
-
 def index(request):
     return HttpResponse("test!!")
-
 
 @csrf_exempt  # this is used for avoid csrf request from line server
 def callback(request):  # สำหรับส่งการแจ้งเตือนต่างไปที่ Line Notify and Line Bot
     if request.method == "POST":  # Check if method is POST
-        payload = json.loads(request.body.decode('utf-8')
-                             )  # Convert data to json
+        payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         print('first payload', payload)
         global name
         global company
@@ -57,8 +49,7 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                         if message == 'register':
                             User_id = payloads['events'][0]['source']['userId']
                             # active_user = PersanalDetaillogin.objects.values('member_status').filter(line_id=User_id).first()
-                            user_type = PersanalDetaillogin.objects.filter(
-                                line_id=User_id).first()
+                            user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
                             # print ('user_type is',user_type.user_type)
                             if user_type.member_status == True:
                                 print('user active ok')
@@ -69,68 +60,52 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                                         print('user_type check pass')
                                         if str(user_type.user_type) in ('customer', 'manager', 'user'):
                                             print('user  is manager ')
-                                            Link_rich_menu_to_user(
-                                                settings.SECOND_LEVEL, user_type.line_id)
-                                            updaterich_menu = PersanalDetaillogin.objects.filter(
-                                                line_id=User_id).update(richmenu_id=settings.SECOND_LEVEL)
-                                            ReplyMessage(
-                                                line_templates.login())
+                                            Link_rich_menu_to_user(settings.SECOND_LEVEL, user_type.line_id)
+                                            updaterich_menu = PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.SECOND_LEVEL)
+                                            ReplyMessage(line_templates.login())
                                         elif str(user_type.user_type) in ('call center', 'supervisor', 'technician'):
                                             print('user  is normal ')
-                                            Link_rich_menu_to_user(
-                                                settings.FIRST_LEVEL, user_type.line_id)
-                                            updaterich_menu = PersanalDetaillogin.objects.filter(
-                                                line_id=User_id).update(richmenu_id=settings.FIRST_LEVEL)
-                                            ReplyMessage(
-                                                line_templates.login())
+                                            Link_rich_menu_to_user(settings.FIRST_LEVEL, user_type.line_id)
+                                            updaterich_menu = PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.FIRST_LEVEL)
+                                            ReplyMessage(line_templates.login())
                                         print('end')
                                     else:
                                         print('NOT OK user_id')
-                                        ReplyMessage(
-                                            line_templates.re่ject_not_register())
-
+                                        ReplyMessage(line_templates.re่ject_not_register())
                                 except PersanalDetaillogin.DoesNotExist:
                                     print('NO DATA user_id')
                             else:
                                 print('active_user is', user_type.user_type)
-                                ReplyMessage(
-                                    line_templates.re่ject_not_register())
+                                ReplyMessage(line_templates.re่ject_not_register())
                         if message == 'REGISTER-OK':
                             User_id = payloads['events'][0]['source']['userId']
                             # ส่ง user_id ไปที่ line server เพื่อขอ name id
                             data_user = Get_profile(User_id)
                             # รับค่า display name
                             user_id_display_name = data_user['displayName']
-                            register_user = PersanalDetaillogin.objects.filter(name=name, company=company).update(
-                                member_status=True, line_id=User_id, line_id_name=user_id_display_name)
+                            register_user = PersanalDetaillogin.objects.filter(name=name, company=company).update(member_status=True, line_id=User_id, line_id_name=user_id_display_name)
                             ReplyMessage(line_templates.registed())
                         if message == 'logout':
                             try:
                                 User_id = payloads['events'][0]['source']['userId']
-                                user_type = PersanalDetaillogin.objects.filter(
-                                    line_id=User_id).first()
+                                user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
                                 # id_user = PersanalDetaillogin.objects.filter(line_id=User_id).first()
                                 if user_type != None:
                                     print('user_type check pass')
                                     if str(user_type.user_type) in ('customer', 'manager', 'user'):
                                         print('user  is manager ')
-                                        Link_rich_menu_to_user(
-                                            settings.FIRST_MENU, user_type.line_id)
-                                        updaterich_menu = PersanalDetaillogin.objects.filter(
-                                            line_id=User_id).update(richmenu_id=settings.FIRST_MENU)
+                                        Link_rich_menu_to_user(settings.FIRST_MENU, user_type.line_id)
+                                        updaterich_menu = PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.FIRST_MENU)
                                         ReplyMessage(line_templates.logout())
                                     elif str(user_type.user_type) in ('call center', 'supervisor', 'technician'):
                                         print('user  is normal ')
-                                        Link_rich_menu_to_user(
-                                            settings.FIRST_MENU, user_type.line_id)
-                                        updaterich_menu = PersanalDetaillogin.objects.filter(
-                                            line_id=User_id).update(richmenu_id=settings.FIRST_MENU)
+                                        Link_rich_menu_to_user(settings.FIRST_MENU, user_type.line_id)
+                                        updaterich_menu = PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.FIRST_MENU)
                                         ReplyMessage(line_templates.logout())
                                     print('end')
                                 else:
                                     print('NOT OK user_id')
-                                    ReplyMessage(
-                                        line_templates.re่ject_not_register())
+                                    ReplyMessage(line_templates.re่ject_not_register())
                             except PersanalDetaillogin.DoesNotExist:
                                 print('NO DATA user_id')
                         return HttpResponse(200)
@@ -153,23 +128,19 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                         print('message is', message)
                         if (message[0:5]).lower() == 'orpak':
                             print(message)
-                            command_payload = ((payload['events'][0]['message']['text'])[
-                                               0:5]).lower()+((payload['events'][0]['message']['text'])[5:])
+                            command_payload = ((payload['events'][0]['message']['text'])[0:5]).lower()+((payload['events'][0]['message']['text'])[5:])
                             print(command_payload)
                             code_login = (command_payload[5:])
                             print('code login is', code_login)
                             try:
-                                id_user = PersanalDetaillogin.objects.filter(
-                                    key_login=code_login).first()
+                                id_user = PersanalDetaillogin.objects.filter(key_login=code_login).first()
                                 if id_user != None:
                                     if id_user.member_status == False:
                                         name = id_user.name
                                         company = id_user.company
-                                        ReplyMessage(
-                                            line_templates.ensure_submit(id_user))
+                                        ReplyMessage(line_templates.ensure_submit(id_user))
                                     else:
-                                        ReplyMessage(
-                                            line_templates.alreadySubmit_code(id_user))
+                                        ReplyMessage(line_templates.alreadySubmit_code(id_user))
                                 else:
                                     ReplyMessage(line_templates.re่ject_code())
                             except PersanalDetaillogin.DoesNotExist:
@@ -182,8 +153,7 @@ def callback(request):  # สำหรับส่งการแจ้งเต
 @csrf_exempt  # this is used for avoid csrf request from line server
 def updatedb(request):
     if request.method == "POST":  # Check if method is POST
-        payload = json.loads(request.body.decode('utf-8')
-                             )  # Convert data to json
+        payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         # Check if request is VIS-Monitor to update in database
         if payload['events'][0]['type'] == 'VIS-MONITOR':
             if payload['events'][0]['update_type'] == 'update_all':
@@ -209,8 +179,7 @@ def updatedb(request):
 @csrf_exempt  # this is used for avoid csrf request from line server
 def update_battery(request):  # function สำหรับการ update สถานะ แบตเตอร์รี่ ไปที่ data base
     if request.method == "POST":  # Check if method is POST
-        payload = json.loads(request.body.decode('utf-8')
-                             )  # Convert data to json
+        payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         name_id = payload['events'][0]['name_id']
         # print (payload)
         # Check if request is VIS-Monitor to update in database
@@ -239,9 +208,8 @@ def permission_check(request):
                 #                      "station_monitor_device": result.station_monitor_device,
                 #                      "nozzles_activate": result.nozzle_mapping.nozzles_activate})  # ส่งเลข id กลับไปให้
                 return JsonResponse({"site_id": result.id,
-                                     "password": result.station_password,
-                                     "station_monitor_device": result.station_monitor_device
-                                     })  # ส่งเลข id กลับไปให้
+                                        "password": result.station_password,
+                                            "station_monitor_device": result.station_monitor_device})  # ส่งเลข id กลับไปให้
             except Site.DoesNotExist:
                 # ส่งเลข failed กลับไปให้เนื่องจากไม่พบเลข ip ที่ส่งเข้า
                 return JsonResponse({"site_id": "failed"})
@@ -319,7 +287,7 @@ def send_notify(message, token):
         LINE_ACCESS_TOKEN = Token
         url = 'https://notify-api.line.me/api/notify'
         headers = {'content-type': 'application/x-www-form-urlencoded',
-                   'Authorization': LINE_ACCESS_TOKEN}
+                        'Authorization': LINE_ACCESS_TOKEN}
         r = requests.post(url, headers=headers, data={'message': message})
         print(r.text)
         return True
