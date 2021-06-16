@@ -137,37 +137,7 @@ def index(request):
             battery_level_alarm_volt = setup_config['battery_level_alarm_volt']
             battery_level_low_volt = setup_config['battery_level_low_volt']
             battery_level_failed_volt = setup_config['battery_level_failed_volt']
-            
-        # print (STATUS_CONFIG)
-        # print (STATUS_CONFIG)
-        # data = Status.objects.values('name_id', 'Unit_log_address').annotate(dcount=Count('Unit_log_address')).filter(name_id=1221).order_by('name_id')
-        # for name_id in Site.objects.values_list('id', flat=True):
-        # for Unit_log_address in Status.objects.filter(site__station_active=True).values('Unit_log_address').annotate(dcount=Count('Unit_log_address')):
-        #         for nozzle in Status.objects.filter(Unit_log_address=Unit_log_address['Unit_log_address']) :
-        #             print(nozzle.NOZZLE_pump_log_address)
-        
-        # print (all)
         data_store = []
-
-        # for bb in aa :
-        #     print(bb)
-        #     Unit_log_address_loop = bb['Unit_log_address']
-        #     for loop1 in Unit_log_address_loop :
-        #         print(loop1)
-        #     nozzle_loop = bb['Unit_log_address'][0]['nozzle']
-        #     for loop2 in nozzle_loop :
-        #         print('nozzle ',loop2)
-        # for detail in data.iterator():
-        #     data_store.append(detail)
-        # print(data_store)
-        # log_addess_check_1 = []
-        # log_addess_check_2 = [{'name_id':'1224'},{'log_address':[]}]
-        # for detail in all :
-        #     if detail.Unit_log_address not in log_addess_check_1 :
-        #         log_addess_check_1.append(detail.Unit_log_address)
-        #         log_addess_check_2.append({'log_addess_check_1':detail.Unit_log_address})
-        #
-        # print(log_addess_check_2)
         vis_check = []
         mwgt_check = []
         vis_result = []
@@ -219,75 +189,6 @@ def index(request):
                                                         'VIS_DETAIL':vis_result ,'MWTG_DETAIL':mwgt_result ,'NOZZLE_DETAIL':nozzle_result ,'BATTERY_DETAIL':battery_result, 
                                                             'time_alert_alarm_hours':time_alert_alarm_hours,'time_alert_warning_hours':time_alert_warning_hours,'battery_level_alarm_volt':battery_level_alarm_volt,
                                                                 'battery_level_low_volt':battery_level_low_volt,'battery_level_failed_volt':battery_level_failed_volt})
-
-# def get_more_tables(request):
-#     if request.method == "GET":
-#         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
-#         MWGT_SUM_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
-#         TOTAL_SITE_ACTIVE = Site.objects.filter(station_active=True).values('station_ip').annotate(dcount=Count('station_ip')).count()
-#         MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
-#         NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).count()
-#         NOZZLE_LAST_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).latest('Timestramp')
-#         BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).count()
-#         BATTERY_LAST_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).latest('Timestramp')
-#         GET_VIS_DATA = Status.objects.select_related('site').filter(VIS_status='offline',site__station_active=True)
-#         GET_MWGT_DATA = Status.objects.select_related('site').filter(MWGT_status='offline', site__station_active=True)
-#         GET_NOZZLE_DATA = Status.objects.select_related('site').filter(NOZZLE_status_check='offline', site__station_active=True)
-#         GET_BATTERY_DATA = Status.objects.select_related('site').filter(BATTERY_status_check='low',site__station_active=True)
-#         vis_check = []
-#         mwgt_check = []
-#         update_all_result = []
-#         for data in GET_VIS_DATA:
-#             if data.DataUnitMap_IP not in vis_check:
-#                 vis_check.append(data.DataUnitMap_IP)
-#                 time_def_check = different_time_calculate(timezone.now(),data.VIS_last_time)
-#                 update_all_result.append( {'result':'vis_result', 'data' :{'name':str(data.site),'ip_address':str(data.site.station_ip),'type':'VIS',
-#                                    'NOZZLE_Last_conn':str(data.NOZZLE_Last_conn),'time_dif':{'day':str(time_def_check[0]),'hour':str(time_def_check[1]),'minutes':str(time_def_check[2])},
-#                                     'NOZZLE_Battery_Status':str(data.NOZZLE_Battery_Status) ,
-#                                         'TEAM_ID':str(data.site.team_support.team) ,
-#                                             'TEAM_NAME': str(data.site.team_support.team_name) ,'TIME_UPDATE':str(timezone.now())}})
-#
-#         # for data in GET_MWGT_DATA:
-#         #     if data.DataUnitMap_IP not in mwgt_check:
-#         #         mwgt_check.append(data.DataUnitMap_IP)
-#         #         # vis_check2.append(data)
-#         #         time_def_check = different_time_calculate(timezone.now(),data.MWGT_last_time)
-#         #         json_key = 'mwgt_result' + str(data.NOZZLE_SN)
-#         #         update_all_result.append({'mwgt_result':{'name':str(data.site),'ip_address':data.site.station_ip,'type':'MWGT',
-#         #                            'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
-#         #                             'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status ,
-#         #                                 'TEAM_ID':data.site.team_support.team ,
-#         #                                     'TEAM_NAME': data.site.team_support.team_name , 'TIME_UPDATE':str(timezone.now())}})
-#         #         # print('mwgt_result',mwgt_result)
-#         # for data in GET_NOZZLE_DATA:
-#         #     time_def_check = different_time_calculate(timezone.now(),data.MWGT_last_time)
-#         #     json_key = 'nozzle_result' + str(data.NOZZLE_SN)
-#         #     update_all_result.append({'nozzle_result':{'name':str(data.site),'ip_address':data.site.station_ip,'type':'NOZZLE',
-#         #                        'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
-#         #                         'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status ,
-#         #                             'TEAM_ID':data.site.team_support.team ,
-#         #                                 'TEAM_NAME': data.site.team_support.team_name , 'NOZZLE_pump_log_address':data.NOZZLE_pump_log_address , 'NOZZLE_num':data.NOZZLE_num , 'TIME_UPDATE':str(timezone.now())}})
-#         #     # print('mwgt_result',nozzle_result)
-#         # for data in GET_BATTERY_DATA:
-#         #     time_def_check = different_time_calculate(timezone.now(),data.MWGT_last_time)
-#         #     json_key = 'battery_result' + str(data.NOZZLE_SN)
-#         #     update_all_result.append({'battery_result':{'name':str(data.site),'ip_address':data.site.station_ip,'type':'BATT',
-#         #                        'NOZZLE_Last_conn':data.NOZZLE_Last_conn,'time_dif':{'day':time_def_check[0],'hour':time_def_check[1],'minutes':time_def_check[2]},
-#         #                         'NOZZLE_Battery_Status':data.NOZZLE_Battery_Status ,
-#         #                             'TEAM_ID':data.site.team_support.team ,
-#         #                                 'TEAM_NAME': data.site.team_support.team_name , 'NOZZLE_pump_log_address':data.NOZZLE_pump_log_address , 'NOZZLE_num':data.NOZZLE_num , 'TIME_UPDATE':str(timezone.now())}})
-#             # print('mwgt_result',battery_result)
-#         A = json.dumps(update_all_result)
-#         # qs_json = serializers.serialize('json', update_all_result)
-#         # print(qs_json)
-#         print('type of A',type(update_all_result))
-#         for I in update_all_result :
-#             print(I)
-#         return HttpResponse(update_all_result, content_type='application/json')
-# #         # return render(request,'index.html',{'VIS_SUM_OFFLINE':VIS_SUM_OFFLINE,'MWGT_SUM_OFFLINE':MWGT_SUM_OFFLINE,
-# #         #                                         'TOTAL_SITE_ACTIVE':TOTAL_SITE_ACTIVE,'MWGT_LAST_OFFLINE':MWGT_LAST_OFFLINE,'NOZZLE_OFFLINE':NOZZLE_OFFLINE,
-# #         #                                             'NOZZLE_LAST_OFFLINE':NOZZLE_LAST_OFFLINE,'BATTERY_OFFLINE':BATTERY_OFFLINE,'BATTERY_LAST_OFFLINE':BATTERY_LAST_OFFLINE,
-# #         #                                                 'VIS_DETAIL':vis_result ,'MWTG_DETAIL':mwgt_result ,'NOZZLE_DETAIL':nozzle_result ,'BATTERY_DETAIL':battery_result})
 
 @login_required(login_url="/login/")
 def pages(request):

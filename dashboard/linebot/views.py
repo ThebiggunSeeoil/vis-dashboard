@@ -12,11 +12,13 @@ import requests
 from django.utils import timezone
 from linebot.save_data_to_db import *
 from linebot.creating_line_data import *
+from linebot.creating_flex_messages import *
 from linebot.convert_xml import *
 from linebot.calculate_function import *
 from linebot.connect_db_profile import *
 from linebot.line_tamplates import *
 from app.models import Site, Status, Status_Error_logger, Store_data_send_line_failed, PersanalDetaillogin
+from django.db.models import OuterRef, Subquery, Count, Min 
 Channel_access_token = settings.LINE_CHANNEL_ACCESS_TOKEN
 def index(request):
     return HttpResponse("test!!")
@@ -46,7 +48,24 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                         message = payload['events'][0]['postback']['data']
                         if message == 'new_register':
                             ReplyMessage(line_templates.register_code())
-                        if message == 'register':
+                        elif message == 'GetAllStatus':
+                            dt = datetime.datetime.now().strftime("%d-%m-%d %H:%M")
+                            VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
+                            MWGT_SUM_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
+                            TOTAL_SITE_ACTIVE = Site.objects.filter(station_active=True).values('station_ip').annotate(dcount=Count('station_ip')).count()
+                            NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).count()
+                            BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).count()
+                            update_vis = CreateAllStatusVIS(dt,VIS_SUM_OFFLINE,MWGT_SUM_OFFLINE,NOZZLE_OFFLINE,BATTERY_OFFLINE,TOTAL_SITE_ACTIVE)
+                            ReplyMessage(update_vis)
+                            print ('GetAllStatus')
+                        elif message == 'vis_status':
+                            User_id = payloads['events'][0]['source']['userId']
+                            user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
+                            print ('user_id ',User_id)
+                            print ('name is',user_type.name)
+                            print ('user type',user_type.user_type)
+                            print ('user team',user_type.if_technician)
+                        elif message == 'register':
                             User_id = payloads['events'][0]['source']['userId']
                             # active_user = PersanalDetaillogin.objects.values('member_status').filter(line_id=User_id).first()
                             user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
@@ -77,7 +96,7 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                             else:
                                 print('active_user is', user_type.user_type)
                                 ReplyMessage(line_templates.re่ject_not_register())
-                        if message == 'REGISTER-OK':
+                        elif message == 'REGISTER-OK':
                             User_id = payloads['events'][0]['source']['userId']
                             # ส่ง user_id ไปที่ line server เพื่อขอ name id
                             data_user = Get_profile(User_id)
@@ -85,7 +104,7 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                             user_id_display_name = data_user['displayName']
                             register_user = PersanalDetaillogin.objects.filter(name=name, company=company).update(member_status=True, line_id=User_id, line_id_name=user_id_display_name)
                             ReplyMessage(line_templates.registed())
-                        if message == 'logout':
+                        elif message == 'logout':
                             try:
                                 User_id = payloads['events'][0]['source']['userId']
                                 user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
@@ -146,7 +165,6 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                             except PersanalDetaillogin.DoesNotExist:
                                 ReplyMessage(line_templates.re่ject_code())
                                 return None
-
     return HttpResponse(200)
 
 
