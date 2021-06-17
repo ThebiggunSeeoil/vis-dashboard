@@ -13,6 +13,7 @@ from django.utils import timezone
 from linebot.save_data_to_db import *
 from linebot.creating_line_data import *
 from linebot.creating_flex_messages import *
+from linebot.connect_data_to_db import *
 from linebot.convert_xml import *
 from linebot.calculate_function import *
 from linebot.connect_db_profile import *
@@ -46,25 +47,37 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                     payload['events'].insert(-1, payload_check)
                     if payload['events'][0]['type'] == 'postback':
                         message = payload['events'][0]['postback']['data']
+                        User_id = payloads['events'][0]['source']['userId']
+                        user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
                         if message == 'new_register':
                             ReplyMessage(line_templates.register_code())
                         elif message == 'GetAllStatus':
-                            dt = datetime.datetime.now().strftime("%d-%m-%d %H:%M")
-                            VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
-                            MWGT_SUM_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
-                            TOTAL_SITE_ACTIVE = Site.objects.filter(station_active=True).values('station_ip').annotate(dcount=Count('station_ip')).count()
-                            NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).count()
-                            BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).count()
-                            update_vis = CreateAllStatusVIS(dt,VIS_SUM_OFFLINE,MWGT_SUM_OFFLINE,NOZZLE_OFFLINE,BATTERY_OFFLINE,TOTAL_SITE_ACTIVE)
-                            ReplyMessage(update_vis)
-                            print ('GetAllStatus')
+                            ReplyMessage(connect_data_to_db.RequestDataDBForMGR())
                         elif message == 'vis_status':
-                            User_id = payloads['events'][0]['source']['userId']
-                            user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
-                            print ('user_id ',User_id)
-                            print ('name is',user_type.name)
-                            print ('user type',user_type.user_type)
-                            print ('user team',user_type.if_technician)
+                            if user_type.user_type.id == 6 : #6 คือ id ของ technician
+                                ReplyMessage(connect_data_to_db.RequestDataDBForTechnician(user_type,message))
+                            if user_type.user_type.id != 6 : # กรณีเป็น user ทั่่วไปที่ไม่ใช่ technician
+                                ReplyMessage(connect_data_to_db.RequestDataDBForAllUser(user_type,message))
+                        elif message == 'mwgt_status':
+                            if user_type.user_type.id == 6 : #6 คือ id ของ technician
+                                ReplyMessage(connect_data_to_db.RequestDataDBForTechnician(user_type,message))
+                            if user_type.user_type.id != 6 : # กรณีเป็น user ทั่่วไปที่ไม่ใช่ technician
+                                ReplyMessage(connect_data_to_db.RequestDataDBForAllUser(user_type,message))
+                        elif message == 'nozzle_status':
+                            if user_type.user_type.id == 6 : #6 คือ id ของ technician
+                                ReplyMessage(connect_data_to_db.RequestDataDBForTechnician(user_type,message))
+                            if user_type.user_type.id != 6 : # กรณีเป็น user ทั่่วไปที่ไม่ใช่ technician
+                                ReplyMessage(connect_data_to_db.RequestDataDBForAllUser(user_type,message))
+                        elif message == 'battery_status':
+                            if user_type.user_type.id == 6 : #6 คือ id ของ technician
+                                ReplyMessage(connect_data_to_db.RequestDataDBForTechnician(user_type,message))
+                            if user_type.user_type.id != 6 : # กรณีเป็น user ทั่่วไปที่ไม่ใช่ technician
+                                ReplyMessage(connect_data_to_db.RequestDataDBForAllUser(user_type,message))
+                        elif message == 'TechGetAllStatus':
+                            if user_type.user_type.id == 6 : #6 คือ id ของ technician
+                                ReplyMessage(connect_data_to_db.RequestAllDataForTechnician(user_type,message))
+                            if user_type.user_type.id != 6 : # กรณีเป็น user ทั่่วไปที่ไม่ใช่ technician
+                                ReplyMessage(connect_data_to_db.RequestAllDataForAllUser(user_type,message))
                         elif message == 'register':
                             User_id = payloads['events'][0]['source']['userId']
                             # active_user = PersanalDetaillogin.objects.values('member_status').filter(line_id=User_id).first()

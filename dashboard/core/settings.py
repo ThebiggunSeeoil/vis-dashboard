@@ -10,7 +10,7 @@ import dj_database_url
 import dj_database_url
 from django.utils import timezone
 import datetime
-
+# sudo lsof -t -i tcp:8000 | xargs kill -9 if port in use
 # Build paths ddddd inside test the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,7 +22,7 @@ SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # load production server from .env
-ALLOWED_HOSTS = ['537731da3be9.ngrok.io','119.59.112.130','seeoil-box.thddns.net','192.168.1.167','localhost', '127.0.0.1', '192.168.1.166', config('SERVER', default='127.0.0.1')]
+ALLOWED_HOSTS = ['abdebf4487d9.ngrok.io','119.59.112.130','seeoil-box.thddns.net','192.168.1.167','localhost', '127.0.0.1', '192.168.1.166', config('SERVER', default='127.0.0.1')]
 
 # Application definition
 
@@ -162,9 +162,9 @@ STATICFILES_DIRS = (
 )
 LINE_CHANNEL_ACCESS_TOKEN = "HiIGJRtQdpcaurQLUKse53RGjSxXrPor0Tx/kLCT26cXid0YH5LKPVpQvLnGXEFqW9Icxn4LsMFylcIePtchAG3b+yHqdmkc31CxUR6B2s9OEfziCXLtKk2U5LzsJdvyJ8AHIoAwGZ0RptLoMWw8/wdB04t89/1O/w1cDnyilFU="
 LINE_CHANNEL_SECRET = "1f3161681bb10c5a06350426f00c9c73"
-FIRST_MENU = 'richmenu-92dc2fc9bfe644eadcc702163eccd6d3'
+FIRST_MENU = 'richmenu-8db65e242d9c0b74d5dbc90f00aa1151'
 SECOND_LEVEL = 'richmenu-fc2463365441199552545387f8ca8837'
-FIRST_LEVEL = 'richmenu-c2925d95cdb5e44fb10b488356565d7c'
+FIRST_LEVEL = 'richmenu-1cf04547d98b191d2367af60c9d623c4'
 # DEFULT_RICH_MENU ="richmenu-a1266a264e8ad9fe600132eef3200825"
 # CBRE_MENU = "richmenu-098c9ee37d0eee2e2ff123ef8799c928"
 # CONTRACTOR_MENU = "richmenu-5f9022a3f1aa905d8a6860dd87f3414f"
