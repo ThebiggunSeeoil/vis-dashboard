@@ -80,27 +80,20 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                                 ReplyMessage(connect_data_to_db.RequestAllDataForAllUser(user_type,message))
                         elif message == 'register':
                             User_id = payloads['events'][0]['source']['userId']
-                            # active_user = PersanalDetaillogin.objects.values('member_status').filter(line_id=User_id).first()
                             user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
-                            # print ('user_type is',user_type.user_type)
                             if user_type.member_status == True:
-                                print('user active ok')
                                 try:
                                     User_id = payloads['events'][0]['source']['userId']
-                                    # id_user = PersanalDetaillogin.objects.filter(line_id=User_id).first()
                                     if user_type != None:
                                         print('user_type check pass')
                                         if str(user_type.user_type) in ('customer', 'manager', 'user'):
-                                            print('user  is manager ')
                                             Link_rich_menu_to_user(settings.SECOND_LEVEL, user_type.line_id)
                                             updaterich_menu = PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.SECOND_LEVEL)
                                             ReplyMessage(line_templates.login())
                                         elif str(user_type.user_type) in ('call center', 'supervisor', 'technician'):
-                                            print('user  is normal ')
                                             Link_rich_menu_to_user(settings.FIRST_LEVEL, user_type.line_id)
                                             updaterich_menu = PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.FIRST_LEVEL)
                                             ReplyMessage(line_templates.login())
-                                        print('end')
                                     else:
                                         print('NOT OK user_id')
                                         ReplyMessage(line_templates.re่ject_not_register())
@@ -121,22 +114,17 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                             try:
                                 User_id = payloads['events'][0]['source']['userId']
                                 user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
-                                # id_user = PersanalDetaillogin.objects.filter(line_id=User_id).first()
                                 if user_type != None:
-                                    print('user_type check pass')
                                     if str(user_type.user_type) in ('customer', 'manager', 'user'):
                                         print('user  is manager ')
                                         Link_rich_menu_to_user(settings.FIRST_MENU, user_type.line_id)
                                         updaterich_menu = PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.FIRST_MENU)
                                         ReplyMessage(line_templates.logout())
                                     elif str(user_type.user_type) in ('call center', 'supervisor', 'technician'):
-                                        print('user  is normal ')
                                         Link_rich_menu_to_user(settings.FIRST_MENU, user_type.line_id)
                                         updaterich_menu = PersanalDetaillogin.objects.filter(line_id=User_id).update(richmenu_id=settings.FIRST_MENU)
                                         ReplyMessage(line_templates.logout())
-                                    print('end')
                                 else:
-                                    print('NOT OK user_id')
                                     ReplyMessage(line_templates.re่ject_not_register())
                             except PersanalDetaillogin.DoesNotExist:
                                 print('NO DATA user_id')
@@ -157,6 +145,8 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                         return HttpResponse(200)
                     elif payload['events'][0]['type'] == 'message':
                         message = payload['events'][0]['message']['text']
+                        User_id = payloads['events'][0]['source']['userId']
+                        user_type = PersanalDetaillogin.objects.filter(line_id=User_id).first()
                         print('message is', message)
                         if (message[0:5]).lower() == 'orpak':
                             print(message)
@@ -178,6 +168,12 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                             except PersanalDetaillogin.DoesNotExist:
                                 ReplyMessage(line_templates.re่ject_code())
                                 return None
+                        elif (message[0:5]).lower() == 'check':
+                            ip_address_request = (message[5:])
+                            print (ip_address_request)
+                            # result = connect_data_to_db.RequestDataDBByUserRequestByIpAddress(user_type,ip_address_request)
+                            ReplyMessage(connect_data_to_db.RequestDataDBByUserRequestByIpAddress(user_type,ip_address_request))
+                            # print (result)
     return HttpResponse(200)
 
 
@@ -227,8 +223,7 @@ def update_battery(request):  # function สำหรับการ update ส�
 @csrf_exempt  # this is used for avoid csrf request from line server
 def permission_check(request):
     if request.method == "POST":  # Check if method is POST
-        payload = json.loads(request.body.decode('utf-8')
-                             )  # Convert data to json
+        payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         if payload['events'][0]['type'] == 'VIS-MONITOR':
             try:
                 # นำ ip มาเช็คกับตาราง Site และส่งเลข id กลับไปให้

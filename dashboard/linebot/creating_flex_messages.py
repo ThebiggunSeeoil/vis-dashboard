@@ -2,6 +2,475 @@ import datetime
 
 
 class creating_flex_messages():
+    def CreateFormDetailByIpAddress(results):
+        for site_detail in results :
+            print (site_detail['site_name'])
+            data = {"type": "flex",
+                    "altText": "Flex Message",
+                    "contents": {
+                        "type": "carousel",
+                        "contents": [
+                            {
+                                "type": "bubble",
+                                "hero": {
+                                    "type": "image",
+                                    "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                                    "align": "center",
+                                    "gravity": "bottom",
+                                    "size": "full",
+                                    "aspectRatio": "35:8",
+                                    "aspectMode": "fit",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "Line",
+                                        "uri": "https://linecorp.com/"
+                                    },
+                                    "position": "relative"
+                                },
+                                "body": {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": str(datetime.datetime.now().strftime("%d.%m.%y %H:%M")),
+                                            "weight": "bold",
+                                            "size": "sm",
+                                            "color": "#225508FF",
+                                            "align": "center",
+                                            "gravity": "bottom",
+                                            "contents": []
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": str(site_detail['site_name']),
+                                            "weight": "bold",
+                                            "size": "sm",
+                                            "color": "#225508FF",
+                                            "align": "center",
+                                            "gravity": "bottom",
+                                            "contents": []
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "VIS : IP " + str(site_detail['station_ip']),
+                                            "weight": "bold",
+                                            "size": "sm",
+                                            "color": "#225508FF",
+                                            "align": "center",
+                                            "margin": "xs",
+                                            "wrap": True,
+                                            "contents": []
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "MWGT " + str(site_detail['log_address_count']) + " Device",
+                                            "weight": "bold",
+                                            "size": "sm",
+                                            "color": "#225508FF",
+                                            "align": "center",
+                                            "margin": "xs",
+                                            "wrap": True,
+                                            "contents": []
+                                        },
+                                        {
+                                            "type": "separator",
+                                            "margin": "sm",
+                                            "color": "#165C3CFF"
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "vertical",
+                                            "spacing": "sm",
+                                            "margin": "lg",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "รายละเอียด",
+                                                    "weight": "bold",
+                                                    "size": "xs",
+                                                    "align": "center",
+                                                    "contents": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "margin": "xs",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "VisStatus",
+                                                    "size": "xs",
+                                                    "align": "start",
+                                                    "contents": []
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": str(site_detail['VIS_status']),
+                                                    "size": "xs",
+                                                    "align": "end",
+                                                    "contents": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "margin": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "LastConnect",
+                                                    "size": "xs",
+                                                    "align": "start",
+                                                    "contents": []
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": str(site_detail['VIS_last_time'].strftime("%d.%m.%y %H:%M")),
+                                                    "size": "xs",
+                                                    "align": "end",
+                                                    "contents": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "margin": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "LogAdds",
+                                                    "size": "xs",
+                                                    "align": "start",
+                                                    "contents": []
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": str(site_detail['log_address_count']),
+                                                    "size": "xs",
+                                                    "align": "end",
+                                                    "contents": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "margin": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "NozzleActive",
+                                                    "size": "xs",
+                                                    "align": "start",
+                                                    "contents": []
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": str('[' + str(site_detail['pump_log_address_count'])+ ' หน้า | ' + str(site_detail['nozzle_data_count'])+ ' มือจ่าย]'),
+                                                    "size": "xs",
+                                                    "align": "end",
+                                                    "contents": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "margin": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "MwgtStatus",
+                                                    "size": "xs",
+                                                    "align": "start",
+                                                    "contents": []
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": str(site_detail['MWGT_status']),
+                                                    "size": "xs",
+                                                    "align": "end",
+                                                    "contents": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "margin": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "NozzleStatus",
+                                                    "size": "xs",
+                                                    "align": "start",
+                                                    "contents": []
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": str(site_detail['NOZZLE_status_check']),
+                                                    "size": "xs",
+                                                    "align": "end",
+                                                    "contents": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "margin": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "BatteryStatus",
+                                                    "size": "xs",
+                                                    "align": "start",
+                                                    "contents": []
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": str(site_detail['BATTERY_status_check']),
+                                                    "size": "xs",
+                                                    "align": "end",
+                                                    "contents": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "separator",
+                                            "margin": "md",
+                                            "color": "#165C3CFF"
+                                        }
+                                    ]
+                                },
+                                "footer": {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "flex": 0,
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "button",
+                                            "action": {
+                                                "type": "uri",
+                                                "label": "www.orpak.com",
+                                                "uri": "https://www.orpak.com/"
+                                            },
+                                            "color": "#078025FF",
+                                            "margin": "none",
+                                            "height": "sm",
+                                            "style": "primary"
+                                        },
+                                        {
+                                            "type": "spacer",
+                                            "size": "sm"
+                                        }
+                                    ]
+                                }
+                            },
+                            # Body next
+                            
+                            # จบ ส่วน Body
+                        ]
+                    }}
+            
+            for log_address in site_detail['Unit_log_address'] : 
+                print ('log_address is ',log_address)
+                content_log_address = {
+                                    "type": "bubble",
+                                    "hero": {
+                                        "type": "image",
+                                        "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                                        "align": "center",
+                                        "gravity": "bottom",
+                                        "size": "full",
+                                        "aspectRatio": "35:8",
+                                        "aspectMode": "fit",
+                                        "action": {
+                                            "type": "uri",
+                                            "label": "Line",
+                                            "uri": "https://linecorp.com/"
+                                        },
+                                        "position": "relative"
+                                    },
+                                    "body": {
+                                        "type": "box",
+                                        "layout": "vertical",
+                                        "contents": [
+                                            {
+                                                "type": "text",
+                                                "text": 'MWGT Device' + str(log_address['Unit_log_address']),
+                                                "weight": "bold",
+                                                "size": "sm",
+                                                "color": "#225508FF",
+                                                "align": "center",
+                                                "gravity": "bottom",
+                                                "contents": []
+                                            },
+                                            {
+                                                "type": "text",
+                                                "text": 'IP ' + str(log_address['DataUnitMap_IP']),
+                                                "weight": "bold",
+                                                "size": "sm",
+                                                "color": "#225508FF",
+                                                "align": "center",
+                                                "margin": "xs",
+                                                "wrap": True,
+                                                "contents": []
+                                            },
+                                            {
+                                                "type": "separator",
+                                                "margin": "sm",
+                                                "color": "#165C3CFF"
+                                            },
+                                            {
+                                                "type": "box",
+                                                "layout": "vertical",
+                                                "spacing": "sm",
+                                                "margin": "lg",
+                                                "contents": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": "รายละเอียด",
+                                                        "weight": "bold",
+                                                        "size": "md",
+                                                        "align": "center",
+                                                        "contents": []
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "box",
+                                                "layout": "baseline",
+                                                "spacing": "sm",
+                                                "margin": "xs",
+                                                "contents": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": "Pump",
+                                                        "weight": "bold",
+                                                        "size": "xs",
+                                                        "align": "center",
+                                                        "contents": []
+                                                    },
+                                                    {
+                                                        "type": "text",
+                                                        "text": "Nozzle",
+                                                        "weight": "bold",
+                                                        "size": "xs",
+                                                        "align": "center",
+                                                        "contents": []
+                                                    },
+                                                    {
+                                                        "type": "text",
+                                                        "text": "BatV.",
+                                                        "weight": "bold",
+                                                        "size": "xs",
+                                                        "align": "center",
+                                                        "contents": []
+                                                    },
+                                                    {
+                                                        "type": "text",
+                                                        "text": "LastCon",
+                                                        "weight": "bold",
+                                                        "size": "xs",
+                                                        "flex": 2,
+                                                        "align": "end",
+                                                        "contents": []
+                                                    }
+                                                ]
+                                            },
+                                            #ส่วนแสดงรายละเอียดมือจ่าย
+                                            
+                                            
+                                            #จบ ส่วนแสดงรายละเอียดมือจ่าย
+                                            
+                                            {
+                                                "type": "separator",
+                                                "margin": "md",
+                                                "color": "#165C3CFF"
+                                            }
+                                        ]
+                                    },
+                                    "footer": {
+                                        "type": "box",
+                                        "layout": "vertical",
+                                        "flex": 0,
+                                        "spacing": "sm",
+                                        "contents": [
+                                            {
+                                                "type": "button",
+                                                "action": {
+                                                    "type": "uri",
+                                                    "label": "www.orpak.com",
+                                                    "uri": "https://www.orpak.com/"
+                                                },
+                                                "color": "#078025FF",
+                                                "margin": "none",
+                                                "height": "sm",
+                                                "style": "primary"
+                                            },
+                                            {
+                                                "type": "separator"
+                                            }
+                                        ]
+                                    }
+                                }
+                for nozzle_detail in log_address['nozzle']:
+                    content_nozzle = {
+                                                "type": "box",
+                                                "layout": "baseline",
+                                                "spacing": "sm",
+                                                "margin": "xs",
+                                                "contents": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": str(nozzle_detail['NOZZLE_pump_log_address']),
+                                                        "size": "xs",
+                                                        "align": "center",
+                                                        "contents": []
+                                                    },
+                                                    {
+                                                        "type": "text",
+                                                        "text": str(nozzle_detail['NOZZLE_num']),
+                                                        "size": "xs",
+                                                        "align": "center",
+                                                        "contents": []
+                                                    },
+                                                    {
+                                                        "type": "text",
+                                                        "text": str(nozzle_detail['NOZZLE_Battery_Status_Volts']),
+                                                        "size": "xxs",
+                                                        "align": "center",
+                                                        "contents": []
+                                                    },
+                                                    {
+                                                        "type": "text",
+                                                        "text": str(nozzle_detail['NOZZLE_Last_conn']),
+                                                        "size": "xxs",
+                                                        "flex": 2,
+                                                        "align": "end",
+                                                        "style": "normal",
+                                                        "contents": []
+                                                    }
+                                                ]
+                                            }
+                    content_log_address['body']['contents'].insert(-1,content_nozzle)
+                data['contents']['contents'].insert(1,content_log_address)
+        return (data)
+
     def CreateFormAllStatusForMGR(dt, VIS_SUM_OFFLINE, MWGT_SUM_OFFLINE, NOZZLE_OFFLINE, BATTERY_OFFLINE, TOTAL_SITE_ACTIVE):
         data = {"type": "flex",
                 "altText": "Flex Message",
@@ -210,8 +679,8 @@ class creating_flex_messages():
 
                 }}
         return data
-    
-    def CreateFormAllStatusForFirstLevel(dt, VIS_SUM_OFFLINE, MWGT_SUM_OFFLINE, NOZZLE_OFFLINE, BATTERY_OFFLINE, TOTAL_SITE_ACTIVE,user_type):
+
+    def CreateFormAllStatusForFirstLevel(dt, VIS_SUM_OFFLINE, MWGT_SUM_OFFLINE, NOZZLE_OFFLINE, BATTERY_OFFLINE, TOTAL_SITE_ACTIVE, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
                 "type": "text",
@@ -230,7 +699,7 @@ class creating_flex_messages():
                 "margin": "xs",
                 "contents": []
             }
-        
+
         data = {"type": "flex",
                 "altText": "Flex Message",
                 "contents":
@@ -1019,9 +1488,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -1087,9 +1556,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -1155,9 +1624,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -3363,4 +3832,3 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
-        
