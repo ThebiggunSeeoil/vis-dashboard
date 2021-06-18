@@ -5,6 +5,26 @@ class creating_flex_messages():
     def CreateFormDetailByIpAddress(results):
         for site_detail in results :
             print (site_detail['site_name'])
+            if site_detail['VIS_status'] == 'offline' :
+                coler_1 = '#EE2424FF'
+            else :
+                coler_1 = '#000000'
+                
+            if site_detail['MWGT_status'] == 'offline' :
+                coler_2 = '#EE2424FF'
+            else :
+                coler_2 = '#000000'
+                
+            if site_detail['NOZZLE_status_check'] == 'offline' :
+                coler_3 = '#EE2424FF'
+            else :
+                coler_3 = '#000000' 
+                
+            if site_detail['BATTERY_status_check'] == 'low' :
+                coler_4 = '#EE2424FF'
+            else :
+                coler_4 = '#000000'
+                
             data = {"type": "flex",
                     "altText": "Flex Message",
                     "contents": {
@@ -111,6 +131,7 @@ class creating_flex_messages():
                                                     "type": "text",
                                                     "text": str(site_detail['VIS_status']),
                                                     "size": "xs",
+                                                    "color" : coler_1,
                                                     "align": "end",
                                                     "contents": []
                                                 }
@@ -199,6 +220,7 @@ class creating_flex_messages():
                                                     "type": "text",
                                                     "text": str(site_detail['MWGT_status']),
                                                     "size": "xs",
+                                                    "color" : coler_2,
                                                     "align": "end",
                                                     "contents": []
                                                 }
@@ -221,6 +243,7 @@ class creating_flex_messages():
                                                     "type": "text",
                                                     "text": str(site_detail['NOZZLE_status_check']),
                                                     "size": "xs",
+                                                     "color" : coler_3,
                                                     "align": "end",
                                                     "contents": []
                                                 }
@@ -243,6 +266,7 @@ class creating_flex_messages():
                                                     "type": "text",
                                                     "text": str(site_detail['BATTERY_status_check']),
                                                     "size": "xs",
+                                                    "color" : coler_4,
                                                     "align": "end",
                                                     "contents": []
                                                 }
@@ -429,6 +453,11 @@ class creating_flex_messages():
                                     }
                                 }
                 for nozzle_detail in log_address['nozzle']:
+                    if nozzle_detail['NOZZLE_status_check'] == 'offline':
+                        coler = '#EE2424FF'
+                    else:
+                        coler = '#000000'
+                        
                     content_nozzle = {
                                                 "type": "box",
                                                 "layout": "baseline",
@@ -439,6 +468,7 @@ class creating_flex_messages():
                                                         "type": "text",
                                                         "text": str(nozzle_detail['NOZZLE_pump_log_address']),
                                                         "size": "xs",
+                                                        "color": coler,
                                                         "align": "center",
                                                         "contents": []
                                                     },
@@ -446,6 +476,7 @@ class creating_flex_messages():
                                                         "type": "text",
                                                         "text": str(nozzle_detail['NOZZLE_num']),
                                                         "size": "xs",
+                                                        "color": coler,
                                                         "align": "center",
                                                         "contents": []
                                                     },
@@ -453,6 +484,7 @@ class creating_flex_messages():
                                                         "type": "text",
                                                         "text": str(nozzle_detail['NOZZLE_Battery_Status_Volts']),
                                                         "size": "xxs",
+                                                        "color": coler,
                                                         "align": "center",
                                                         "contents": []
                                                     },
@@ -460,6 +492,7 @@ class creating_flex_messages():
                                                         "type": "text",
                                                         "text": str(nozzle_detail['NOZZLE_Last_conn']),
                                                         "size": "xxs",
+                                                        "color": coler,
                                                         "flex": 2,
                                                         "align": "end",
                                                         "style": "normal",
@@ -2219,9 +2252,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -2287,9 +2320,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -2355,9 +2388,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -2950,9 +2983,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -3018,9 +3051,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -3086,9 +3119,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -3681,9 +3714,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -3749,9 +3782,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }
@@ -3817,9 +3850,9 @@ class creating_flex_messages():
                             "color": "#EC1019FF",
                             "align": "end",
                             "action": {
-                                "type": "postback",
-                                "text": "กำลังจัดส่งรายละเอียด",
-                                "data": "check"+str(ip_address['ip_address'])
+                                "type": "message",
+                                "text": "check"+str(ip_address['ip_address'])
+
                             },
                             "contents": []
                         }

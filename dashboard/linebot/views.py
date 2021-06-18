@@ -17,6 +17,7 @@ from linebot.connect_data_to_db import *
 from linebot.convert_xml import *
 from linebot.calculate_function import *
 from linebot.connect_db_profile import *
+from linebot.start_job_check_status import *
 from linebot.line_tamplates import *
 from app.models import Site, Status, Status_Error_logger, Store_data_send_line_failed, PersanalDetaillogin
 from django.db.models import OuterRef, Subquery, Count, Min 
@@ -170,10 +171,11 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                                 return None
                         elif (message[0:5]).lower() == 'check':
                             ip_address_request = (message[5:])
-                            print (ip_address_request)
-                            # result = connect_data_to_db.RequestDataDBByUserRequestByIpAddress(user_type,ip_address_request)
                             ReplyMessage(connect_data_to_db.RequestDataDBByUserRequestByIpAddress(user_type,ip_address_request))
-                            # print (result)
+                        elif message in ('list','รายชื่อ'):
+                            print (message)
+                            # ip_address_request = (message[5:])
+                            # ReplyMessage(connect_data_to_db.RequestDataDBByUserRequestByIpAddress(user_type,ip_address_request))
     return HttpResponse(200)
 
 
@@ -202,6 +204,18 @@ def updatedb(request):
                 print(payload)
     return HttpResponse(200)
 
+@csrf_exempt
+def task_jobs(request): # ส่วนสำหรับ job ในการเช็คสถานะ VIS Nozzle Battery
+    if request.method == "POST":  # Check if method is POST
+        payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
+        if payload['events'][0]['type'] == 'TASK_JOBS':
+            JOB = payload['events'][0]['job_request']
+            if JOB  == 'check_vis' :
+                start_job_check_status.start_check_vis()
+            elif JOB  == 'check_battery' :
+                start_job_check_status.start_check_battery()
+        
+    return HttpResponse (200)
 
 @csrf_exempt  # this is used for avoid csrf request from line server
 def update_battery(request):  # function สำหรับการ update สถานะ แบตเตอร์รี่ ไปที่ data base

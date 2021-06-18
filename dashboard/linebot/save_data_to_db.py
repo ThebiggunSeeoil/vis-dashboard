@@ -2,9 +2,10 @@
 from django.utils import timezone
 import dateutil.parser
 import datetime
-from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed,battery_status,LinegroupId
+from app.models import Site, Status , Status_Error_logger,Store_data_send_line_failed,battery_status,LinegroupId,Setup_Config
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from dateutil.relativedelta import relativedelta, SA, TH
+
 def SaveDataSendLineFailedToBD (request,site_profile): # สำหรับ save ข้อมูล line notify ที่ไม่สามารถส่งได้
     result_site = site_profile[0]
     result_status = site_profile[1]
@@ -22,7 +23,6 @@ def SaveDataSendLineFailedToBD (request,site_profile): # สำหรับ save
     except :
         print('Cannot SaveDataSendLineFailedToBD')
         return False
-
 def SaveRecordStatusErrorLogger (request): #สำหรับ save record สำหรับ ERROR ต่างๆ
     try :
         # บันทึก Error ไปที่ database
@@ -36,8 +36,7 @@ def SaveRecordStatusErrorLogger (request): #สำหรับ save record ส�
         save_record.save(request)
         return  save_record # return save_record ออกไปเพื่อให้ return ID ล่าสุดที่ทำการบันทึกออกไป
     except :
-        print('Cannot SaveRecordStatusErrorLogger /linebot/save_data_to_db/')
-
+        print('Cannot SaveRecordStatusErrorLogger /linebot/save_data_to_db/')      
 def UpdateRecordStatusErrorLogger (request): #สำหรับ save record สำหรับ ERROR ต่างๆ
     try:
         Status_Error_logger.objects.filter(id=request['events'][0]['Logger_id']).update(Error_stop=timezone.now()) # ทำการ Update Error_stop time ไปที่ db
@@ -48,7 +47,6 @@ def UpdateRecordStatusErrorLogger (request): #สำหรับ save record ส
         # Do something such send line notify
         print('Cannot UpdateRecordStatusErrorLogger /linebot/save_data_to_db/')
         return False
-
 def UpdateStatusLoggerBackToOnline(request):
     try :
         payload = request
@@ -63,7 +61,6 @@ def UpdateStatusLoggerBackToOnline(request):
         # Do something such send line notify
         print("Don't find site id for update MWGT Failed ")
         return False
-
 def UpdateMWGT_OFFLINE(request):
     payload = request
     try:
@@ -75,7 +72,6 @@ def UpdateMWGT_OFFLINE(request):
         # Do something such send line notify
         print("Don't find site id for update MWGT Failed ")
         return False
-
 def UpdateMWGT_ONLINE(request):
     payload = request
     try:
@@ -87,7 +83,6 @@ def UpdateMWGT_ONLINE(request):
         # Do something such send line notify
         print("Don't find site id for update MWGT Failed ")
         return False
-
 def UpdateAllDataMWGT(request):
     payload = request
     print ('payload nozzle is',request)
@@ -162,11 +157,19 @@ def UpdateAllDataMWGT(request):
             save_record.site_id = data_nozzle['site_id']
             save_record.save(request)
     return HttpResponse(200)  # Response back to request
-
 def UpdateBatteryStatus(request):
     payload = request['events'][0]['battery_detail']
     name_id = request['events'][0]['name_id']
-    print ('payload battery is',payload)
+    # ตรวจสอบข้อมูลการตั้งค่า Battery เพื่อกำหนดค่า low normal alarm
+    try :
+        for setup in Setup_Config.objects.all() :
+            low = setup.battery_level_low_volt
+            alarm = setup.battery_level_alarm_volt
+            failed = setup.battery_level_failed_volt
+            print (low,alarm,failed)
+    except :
+        print ('Cannot get battery config')
+        
     for data_battery in payload :  # Loop each nozzle for update into database
         new_date_stamp = datetime.datetime.now().strftime("%Y") + str((data_battery['date_stamp'][2:]))
         # new_date_stamp ใช้สำหรับแปลงปี 21 ที่ส่งมาให้เป็น 2021 ตาม sql server format
@@ -194,26 +197,20 @@ def UpdateBatteryStatus(request):
             save_record.temp = data_battery['Temp']
             save_record.fwu = data_battery['FWU']
             save_record.save(request)
-
-        # ทำการ update สถานะ battery ไปที่ Status
-        # print (data_battery['SN'])
-        # print (data_battery['SN'].strip())
-        # print (len(data_battery['SN']))
-        # print (len(data_battery['SN'].strip()))
+            
+        if float(data_battery['BatLevel'].strip()) > float(low) :
+            battery_type = 'normal'
+        elif float(data_battery['BatLevel'].strip()) <= float(alarm) :
+            battery_type = 'low'
+        elif float(data_battery['BatLevel'].strip()) <= float(failed) :
+            battery_type = 'failed'
+        
         try :
-            update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=data_battery['SN'].strip()).update(NOZZLE_Battery_Status_Volts=data_battery['BatLevel'].strip())
+            update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=data_battery['SN'].strip()).update(NOZZLE_Battery_Status_Volts=data_battery['BatLevel'].strip(),BATTERY_status_check=battery_status)
             print ('update_battery_to_status is',update_battery_to_status)
-            print ('Update battery to status Succeed')
         except Status.DoesNotExist:
             print ('Cannot update battery to status')
-            
     return 200  # Response back to request
-
-{'destination': 'Ud1d574db1a010fa89cf41e891e10f6bd', 
- 'events': [{'type': 'join', 'timestamp': 1623757824955, 'source': 
-     {'type': 'group', 'groupId': 'C6f08cd7ac176721b1be16ddca5fbec0b'}, 
-     'replyToken': 'f8ec604ea462418a82391cbcd02aee2a', 'mode': 'active'}]}
-
 def CreateLineGroup(request,group_name):
     group_id = request['events'][0]['source']['groupId']
     try:

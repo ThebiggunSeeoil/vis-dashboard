@@ -19,6 +19,7 @@ urlpatterns = [
     path('vis-status-test/',views.visstatus_test,name='vis-status-test'),
     path('search/',views.search,name='search'),
     path('update_battery/', include('linebot.urls')),
+    path('task_jobs/', include('linebot.urls')),
 
     # path('get_more_tables',views.get_more_tables,name='get_more_tables'),
 

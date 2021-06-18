@@ -7,5 +7,6 @@ urlpatterns = [
     path('updatedb/', views.updatedb, name='updatedb'), # send request to view for update data to db
     path('permission_check/', views.permission_check, name='permission_check'), # send request to view for update data to db
     path('update_battery/', views.update_battery, name='update_battery'),
+    path('task_jobs/', views.task_jobs, name='task_jobs'),
     
 ]

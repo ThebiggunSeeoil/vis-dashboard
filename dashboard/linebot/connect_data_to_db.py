@@ -17,7 +17,7 @@ class connect_data_to_db ():
     def prepare_nozzle (GET_VIS_DATA,GET_VIS_DATA_ALL,NOZZLE) :
         vis_check = [] #สำหรับเก็บค่า name_id เพื่อป้องกันไม่ให้มีการบันทึกซ้ำ
         vis_result = []
-    #ส่วนสำหรับ นำค่าที่ได้จากตาราง site ที่เป็น name_id เอามาเพิ่มข้อมูล 'Unit_log_address':[] เข้าไปเพื่อใช้ในการเก็บข้อมูลของ nozzle
+        #ส่วนสำหรับ นำค่าที่ได้จากตาราง site ที่เป็น name_id เอามาเพิ่มข้อมูล 'Unit_log_address':[] เข้าไปเพื่อใช้ในการเก็บข้อมูลของ nozzle
         for data in GET_VIS_DATA:
             # print(data)
             if data['name_id'] not in vis_check:  # ทำการเช็คว่า name_id มีเก็บไว้ใน vis_check = [] หรือไม่ถ้ายังไม่มีก็จะทำข้างล่างจนเสร็จก่อน แล้วค่อยนำ name_id ไปบันทึกไว้เพื่อป้องกันการ loop รอบอื่นๆมาทำซ้ำอีก
@@ -79,17 +79,13 @@ class connect_data_to_db ():
                             nozzle_loop['nozzle'].append(GET_VIS_DATA_ALL_CHECK)
         # print(vis_result)
         return (vis_result)
-    
     def RequestDataDBByUserRequestByIpAddress(user_type,ip_address_request):
         data = []
         data_site_name_id = Status.objects.values('name_id', 'site__station_name','site__station_ip','site__station_monitor_device' ,'MWGT_status','VIS_status','NOZZLE_status_check','BATTERY_status_check','VIS_last_time','Unit_log_address').annotate(dcount=Count('Unit_log_address')).filter(site__station_active=True,site__station_ip=ip_address_request).order_by('name_id')
         data_status = Status.objects.values().filter(site__station_active=True,site__station_ip=ip_address_request)
         nozzle_count = Nozzle.objects.values().filter(site__station_active=True,site__station_ip=ip_address_request)
         results = connect_data_to_db.prepare_nozzle(data_site_name_id, data_status,nozzle_count)
-        return creating_flex_messages.CreateFormDetailByIpAddress(results)
-    
-    
-    
+        return creating_flex_messages.CreateFormDetailByIpAddress(results)  
     def different_time_calculate(TimeZone,TimeCalculate):
         # print(TimeCalculate)
         # TimeCalculateDetail = TimeCalculate[1].MWGT_last_time
@@ -111,8 +107,7 @@ class connect_data_to_db ():
         # print('minutes_loss',minutes_loss)
         # print('datetime_now',datetime_now)
         # print('MWGT_last_time',MWGT_last_time)
-        return day_loss , hours_loss , minutes_loss , hours_deff
-    
+        return day_loss , hours_loss , minutes_loss , hours_deff 
     def RequestDataDBForMGR():
         dt = datetime.datetime.now().strftime("%d-%m-%d %H:%M")
         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
@@ -121,7 +116,6 @@ class connect_data_to_db ():
         NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).count()
         BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).count()
         return creating_flex_messages.CreateFormAllStatusForMGR(dt,VIS_SUM_OFFLINE,MWGT_SUM_OFFLINE,NOZZLE_OFFLINE,BATTERY_OFFLINE,TOTAL_SITE_ACTIVE)
-    
     def RequestAllDataForTechnician(user_type,message):
         dt = datetime.datetime.now().strftime("%d-%m-%d %H:%M")
         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True,site__team_support=user_type.if_technician).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
@@ -130,7 +124,6 @@ class connect_data_to_db ():
         NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True,site__team_support=user_type.if_technician).count()
         BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True,site__team_support=user_type.if_technician).count()
         return creating_flex_messages.CreateFormAllStatusForFirstLevel(dt,VIS_SUM_OFFLINE,MWGT_SUM_OFFLINE,NOZZLE_OFFLINE,BATTERY_OFFLINE,TOTAL_SITE_ACTIVE,user_type)
-    
     def RequestAllDataForAllUser(user_type,message):
         dt = datetime.datetime.now().strftime("%d-%m-%d %H:%M")
         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
@@ -139,7 +132,6 @@ class connect_data_to_db ():
         NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).count()
         BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).count()
         return creating_flex_messages.CreateFormAllStatusForFirstLevel(dt,VIS_SUM_OFFLINE,MWGT_SUM_OFFLINE,NOZZLE_OFFLINE,BATTERY_OFFLINE,TOTAL_SITE_ACTIVE,user_type)
-    
     def RequestDataDBForTechnician(user_type,message):
         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True,site__team_support=user_type.if_technician).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
         MWGT_SUM_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True,site__team_support=user_type.if_technician).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
@@ -225,7 +217,6 @@ class connect_data_to_db ():
             return creating_flex_messages.CreateFormNozzleFlexMessageDetail(data,user_type)
         elif message == 'battery_status':
             return creating_flex_messages.CreateFormBatteryFlexMessageDetail(data,user_type)
-    
     def RequestDataDBForAllUser(user_type,message):
         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
         MWGT_SUM_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()

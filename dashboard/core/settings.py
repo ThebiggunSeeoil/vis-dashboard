@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'linebot.apps.LinebotConfig',
     'import_export',
     'admin_auto_filters',
+    
     'django.contrib.humanize',
     'app', # Enable the inner app
 ]
@@ -114,6 +115,7 @@ DATABASES = {
         },
     },
 }
+
 
 # On widows use ODBC 13  xxxxxxxxxxxxxx
 # Password validation

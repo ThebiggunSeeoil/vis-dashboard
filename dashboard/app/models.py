@@ -130,7 +130,7 @@ class Status(models.Model):
     NOZZLE_Battery_Status = models.CharField(max_length=255, default='None')
     NOZZLE_Battery_Status_Volts = models.FloatField(max_length=255, default=3.50)
     NOZZLE_Battery_BatPrcnt = models.CharField(max_length=255, default='None')
-    Timestramp = models.DateTimeField(auto_now_add=True, auto_now=False, blank=True)
+    Timestramp = models.DateTimeField(auto_now_add=False, auto_now=True, blank=True)
 
     def __str__(self):
         return str(self.name_id)
