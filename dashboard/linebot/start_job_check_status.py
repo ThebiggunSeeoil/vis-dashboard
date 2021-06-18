@@ -5,6 +5,7 @@ from django.template import loader
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django import template
+from linebot.calculate_function import *
 import json
 import datetime
 from django.utils import timezone
@@ -30,7 +31,8 @@ class start_job_check_status :
         for vis_site in VIS_TIME_NOW : # ถ้าพบว่ามี name_id ไหนที่ขาดการ update time เกินค่าที่กำหนดไว้ ให้เข้ามาทำงานต่อด้านล่างนี้ 
             try : # หากมีสถานีในมีเวลาเกินกว่าที่กำหนด ให้เข้ามาทำด้านล่างนี้ ด้วยการ Update VIS_status='offline'
                 set_vis_to_offline = Status.objects.filter(name_id=vis_site['name_id']).update(VIS_status='offline',Timestramp=timezone.now())
-                send_line_notify = creating_flex_messages.Line_Creating_VIS_OFFLINE(vis_site)
+                # result_calculate_time = calculate_function.different_time_calculate(timezone.now(),site_profile[1].MWGT_last_time) #ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].MWGT_last_time คือ MWGT ที่ติดต่อได้ครั้้งล่าสุุด)
+                # send_line_notify = creating_flex_messages.Line_Creating_VIS_OFFLINE(vis_site)
                 # go to line notify
                 # go to add to vis offline log
                 print ('set offline success for ',vis_site['name_id'])
@@ -38,4 +40,4 @@ class start_job_check_status :
                 print ('cannot set offline for',vis_site['name_id'])      
         return 200
     
-    
+    # 

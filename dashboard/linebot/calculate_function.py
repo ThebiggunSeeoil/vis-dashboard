@@ -2,7 +2,7 @@
 import datetime
 from dateutil.relativedelta import relativedelta, SA, TH
 
-class different_time_calculate ():
+class calculate_function ():
     def different_time_calculate(TimeZone,TimeCalculate):
         print(TimeCalculate)
         # TimeCalculateDetail = TimeCalculate[1].MWGT_last_time

@@ -204,7 +204,7 @@ def updatedb(request):
                 print(payload['events'][0]['data'])
                 site_profile = connect_db_profile.get_site_profile(payload,'notify_MWGT_OFFLINE') #ส่งไป get data profile ที่ connect_db_profile
                 SaveRecord= save_data_to_db.SaveRecordStatusErrorLogger(payload)
-                result_calculate_time = different_time_calculate.different_time_calculate(timezone.now(),site_profile[1].MWGT_last_time) #ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].MWGT_last_time คือ MWGT ที่ติดต่อได้ครั้้งล่าสุุด)
+                result_calculate_time = calculate_function.different_time_calculate(timezone.now(),site_profile[1].MWGT_last_time) #ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].MWGT_last_time คือ MWGT ที่ติดต่อได้ครั้้งล่าสุุด)
                 line_notify_preparing = creating_line_data.Line_Creating_MWGT_OFFLINE(result_calculate_time,site_profile)#ส่งไปทำงานที่ linebot/creating_line_data/Line_Creating_MWGT_OFFLINE ร
                 result_notify = send_notify(line_notify_preparing[0], line_notify_preparing[1]) #line_notify_preparing[1] คือ line token index[0] คือ messages ที่ต้องการจะส่ง
                 if result_notify == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
@@ -218,7 +218,7 @@ def updatedb(request):
                 update_status_error = save_data_to_db.UpdateStatusLoggerBackToOnline(payload) #ส่งค่าที่ได้รับ ไป update ที่ linebot/save_data_to_db/UpdateStatusLoggerBackToOnline
                 if update_status_error == True :
                     site_profile = connect_db_profile.get_site_profile(payload,'notify_MWGT_ONLINE')  # ส่งไป get data site ต่าง ๆ เพื่อนำไปจัดเตรียมข้อมูลตอนส่ง line notify
-                    result_calculate_time = different_time_calculate.different_time_calculate(site_profile[2].Error_stop,site_profile[2].Error_start)  # ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].Error_start คือ MWGT ที่เริ่มมีการ offline)
+                    result_calculate_time = calculate_function.different_time_calculate(site_profile[2].Error_stop,site_profile[2].Error_start)  # ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].Error_start คือ MWGT ที่เริ่มมีการ offline)
                     print(result_calculate_time)
                     UpdateRecord   = save_data_to_db.UpdateRecordStatusErrorLogger(payload)
                     if UpdateRecord == True :
@@ -229,6 +229,7 @@ def updatedb(request):
                             result_save = save_data_to_db.SaveDataSendLineFailedToBD(site_profile, line_notify_preparing[0])  # ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
                             if result_save == True:
                                 return None
+          
     return HttpResponse(200)
 
 @csrf_exempt
