@@ -28,8 +28,11 @@ class start_job_check_status :
         time_threshold = timezone.now() - datetime.timedelta(hours=1)
         VIS_TIME_NOW = Status.objects.all().filter(~Q(VIS_status='offline'),site__station_active=True,VIS_last_time__lte=time_threshold).values('name_id').distinct() #values('name_id').distinct() กำหนดให้มีการดึงค่าที่ซ้ำกัน คือค่า name_id มาแค่ 1 ค่า ข้อสำคัญคือใ .values ใส่ได้แค่ 1 ค่าเท่านั้น ~Q(VIS_status='offline') เลือกเป็นค่าที่ไม่เท่ากับ
         for vis_site in VIS_TIME_NOW : # ถ้าพบว่ามี name_id ไหนที่ขาดการ update time เกินค่าที่กำหนดไว้ ให้เข้ามาทำงานต่อด้านล่างนี้ 
-            try :
+            try : # หากมีสถานีในมีเวลาเกินกว่าที่กำหนด ให้เข้ามาทำด้านล่างนี้ ด้วยการ Update VIS_status='offline'
                 set_vis_to_offline = Status.objects.filter(name_id=vis_site['name_id']).update(VIS_status='offline',Timestramp=timezone.now())
+                send_line_notify = creating_flex_messages.Line_Creating_VIS_OFFLINE(vis_site)
+                # go to line notify
+                # go to add to vis offline log
                 print ('set offline success for ',vis_site['name_id'])
             except Status.DoesNotExist:
                 print ('cannot set offline for',vis_site['name_id'])      
