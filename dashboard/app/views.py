@@ -121,11 +121,22 @@ def index(request):
         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
         MWGT_SUM_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
         TOTAL_SITE_ACTIVE = Site.objects.filter(station_active=True).values('station_ip').annotate(dcount=Count('station_ip')).count()
-        MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
         NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).count()
-        NOZZLE_LAST_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).latest('Timestramp')
         BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).count()
-        BATTERY_LAST_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).latest('Timestramp')
+        try :
+            BATTERY_LAST_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).latest('Timestramp')
+        except Status.DoesNotExist:
+            BATTERY_LAST_OFFLINE = None
+        try :
+            MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
+        except Status.DoesNotExist:
+            MWGT_LAST_OFFLINE = None
+        try :
+            NOZZLE_LAST_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).latest('Timestramp')
+        except Status.DoesNotExist:
+            NOZZLE_LAST_OFFLINE = None
+            
+            
         GET_VIS_DATA = Status.objects.select_related('site').filter(VIS_status='offline',site__station_active=True)
         GET_MWGT_DATA = Status.objects.select_related('site').filter(MWGT_status='offline', site__station_active=True)
         GET_NOZZLE_DATA = Status.objects.select_related('site').filter(NOZZLE_status_check='offline', site__station_active=True)

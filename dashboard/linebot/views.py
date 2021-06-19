@@ -260,8 +260,6 @@ def updatedb(request):
                         if result_save == True:
                             return None
                 return HttpResponse (200)
-    
-    
     return HttpResponse(200)
 
 @csrf_exempt
@@ -288,7 +286,6 @@ def update_battery(request):  # function สำหรับการ update ส�
         if payload['events'][0]['type'] == 'VIS-MONITOR':
             # Check request ว่าใช่ update_battery หรือไม่
             if payload['events'][0]['update_type'] == 'update_battery':
-                # print(payload)
                 update_BATTEY_Data = save_data_to_db.UpdateBatteryStatus(payload)
                 if update_BATTEY_Data == 200:
                     return HttpResponse(200)

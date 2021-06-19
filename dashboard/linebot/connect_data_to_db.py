@@ -232,7 +232,6 @@ class connect_data_to_db ():
             # return vis_last_status['VIS_status'] # สำหรับเช็ค status vis ล่าสุดเพื่อตอบกลับไปให้เครื่อง VIS ดำเนินการต่อ
         except Status.DoesNotExist:
             print ('Cannot sent battery back to Decive')
-           
     def RequestDataDBForAllUser(user_type,message):
         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
         MWGT_SUM_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()

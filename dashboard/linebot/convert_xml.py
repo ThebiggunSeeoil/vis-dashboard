@@ -8,8 +8,8 @@ class convert_xml ():
         request_type = 'MRGetMapping'
         data_xml_type = data_xml_type_check['events'][0]['data']
         site_id = data_xml_type_check['events'][0]['name_id']
-        print('site_id is',site_id)
-        print('data_xml_type is',data_xml_type)
+        # print('site_id is',site_id)
+        # print('data_xml_type is',data_xml_type)
         if request_type == 'DeviceList':
             Device_rtc = data_xml_type['soap:Envelope']['soap:Body']['MRGetDeviceListResponse']['MRGetDeviceListResult']['rc']
             Device_rc_desc = data_xml_type['soap:Envelope']['soap:Body']['MRGetDeviceListResponse']['MRGetDeviceListResult']['rc_desc']
@@ -53,7 +53,7 @@ class convert_xml ():
             Mapping_DataUnit_Units_status_desc = data_xml_type['soap:Envelope']['soap:Body']['MRGetMappingResponse']['MRGetMappingResult']['DataUnits']['DataUnitMap']['Units']['Unit']['status_desc']
             try :
                 for I in Mapping_DataUnit_Units_Nozzles:
-                    print('data nozzle is',I)
+                    # print('data nozzle is',I)
                     data_main = {"name_id":site_id ,
                                     "MWGT_last_time": datetime_now,
                                         "VIS_last_time": datetime_now,
