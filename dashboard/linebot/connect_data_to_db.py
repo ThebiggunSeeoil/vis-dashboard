@@ -139,9 +139,9 @@ class connect_data_to_db ():
             TOTAL_SITE_ACTIVE = Nozzle.objects.filter(site__station_active=True,active_nozzle=True,site__team_support=user_type.if_technician).values('id').count()
         if message not in ('nozzle_status','battery_status') :
             TOTAL_SITE_ACTIVE = Site.objects.filter(station_active=True,team_support=user_type.if_technician).values('station_ip').annotate(dcount=Count('station_ip')).count()
-        MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
+        # MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
         NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True,site__team_support=user_type.if_technician).count()
-        NOZZLE_LAST_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).latest('Timestramp')
+        # NOZZLE_LAST_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).latest('Timestramp')
         BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True,site__team_support=user_type.if_technician).count()
         # BATTERY_LAST_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).latest('Timestramp')
         GET_VIS_DATA = Status.objects.select_related('site').filter(VIS_status='offline',site__station_active=True,site__team_support=user_type.if_technician)
@@ -204,7 +204,7 @@ class connect_data_to_db ():
                                         'NOZZLE_Battery_Status_Volts':data.NOZZLE_Battery_Status_Volts,'TEAM_NAME': data.site.team_support.team_name , 'NOZZLE_pump_log_address':data.NOZZLE_pump_log_address , 'NOZZLE_num':data.NOZZLE_num , 'TIME_UPDATE':timezone.now()})
             # print('mwgt_result',battery_result)
         data = {'user_type':user_type,'TIME_UPDATE':timezone.now(),'VIS_SUM_OFFLINE':VIS_SUM_OFFLINE,'MWGT_SUM_OFFLINE':MWGT_SUM_OFFLINE,
-                                                'TOTAL_SITE_ACTIVE':TOTAL_SITE_ACTIVE,'MWGT_LAST_OFFLINE':MWGT_LAST_OFFLINE,'NOZZLE_OFFLINE':NOZZLE_OFFLINE,
+                                                'TOTAL_SITE_ACTIVE':TOTAL_SITE_ACTIVE,'NOZZLE_OFFLINE':NOZZLE_OFFLINE,
                                                     'BATTERY_OFFLINE':BATTERY_OFFLINE,
                                                         'VIS_DETAIL':vis_result ,'MWTG_DETAIL':mwgt_result ,'NOZZLE_DETAIL':nozzle_result ,'BATTERY_DETAIL':battery_result, 
                                                             'time_alert_alarm_hours':time_alert_alarm_hours,'time_alert_warning_hours':time_alert_warning_hours,'battery_level_alarm_volt':battery_level_alarm_volt,
@@ -239,8 +239,8 @@ class connect_data_to_db ():
             TOTAL_SITE_ACTIVE = Nozzle.objects.filter(site__station_active=True,active_nozzle=True,).values('id').count()
         if message not in ('nozzle_status','battery_status') :
             TOTAL_SITE_ACTIVE = Site.objects.filter(station_active=True).values('station_ip').annotate(dcount=Count('station_ip')).count()
-        MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
-        MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
+        # MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
+        # MWGT_LAST_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).latest('Timestramp')
         NOZZLE_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).count()
         # NOZZLE_LAST_OFFLINE = Status.objects.filter(NOZZLE_status_check='offline',site__station_active=True).latest('Timestramp')
         BATTERY_OFFLINE = Status.objects.filter(BATTERY_status_check='low', site__station_active=True).count()
@@ -304,7 +304,7 @@ class connect_data_to_db ():
                                         'TEAM_NAME': data.site.team_support.team_name , 'NOZZLE_pump_log_address':data.NOZZLE_pump_log_address , 'NOZZLE_num':data.NOZZLE_num , 'TIME_UPDATE':timezone.now()})
             # print('mwgt_result',battery_result)
         data = {'user_type':user_type,'TIME_UPDATE':timezone.now(),'VIS_SUM_OFFLINE':VIS_SUM_OFFLINE,'MWGT_SUM_OFFLINE':MWGT_SUM_OFFLINE,
-                                                'TOTAL_SITE_ACTIVE':TOTAL_SITE_ACTIVE,'MWGT_LAST_OFFLINE':MWGT_LAST_OFFLINE,'NOZZLE_OFFLINE':NOZZLE_OFFLINE,
+                                                'TOTAL_SITE_ACTIVE':TOTAL_SITE_ACTIVE,'NOZZLE_OFFLINE':NOZZLE_OFFLINE,
                                                     'BATTERY_OFFLINE':BATTERY_OFFLINE,
                                                         'VIS_DETAIL':vis_result ,'MWTG_DETAIL':mwgt_result ,'NOZZLE_DETAIL':nozzle_result ,'BATTERY_DETAIL':battery_result, 
                                                             'time_alert_alarm_hours':time_alert_alarm_hours,'time_alert_warning_hours':time_alert_warning_hours,'battery_level_alarm_volt':battery_level_alarm_volt,

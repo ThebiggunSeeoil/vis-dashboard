@@ -98,22 +98,21 @@ class save_data_to_db ():
             print("Don't find site id for update MWGT Failed ")
             return False
     def UpdateStatusNozzleBackToOnline(request):
-        # try :
-        
-        payload = request
-        print ('payload',payload)
-        # print(payload)
-        # print(payload['events'][0]['data'])
-        # print(payload['events'][0]['Logger_id'])
-        data = Status_Error_logger.objects.filter(name_id=request['name_id'],NOZZLE_SN=request['SN'],Error_type='NOZZLE-OFFLINE',Error_stop__isnull=True).update(Error_stop=timezone.now()) # ทำการ Update Error_stop time ไปที่ db
-        print ('data ',data)
-        # Do something such send line notify
-        print("SUCCESS Update NOZZLE Back to ONLINE Succeed for name_id {} Nozzle log {} Nozzle dp {} ".format(request['name_id'],request['pump_log_address'],request['nozzle_num']))
-        return True
-        # except Status.DoesNotExist:
-        #     # Do something such send line notify
-        #     print("FAILED Update NOZZLE Back to ONLINE Failed for name_id {} Nozzle log {} Nozzle dp {} ".format(request['name_id'],request['pump_log_address'],request['nozzle_num']))
-        #     return False
+        try :
+            payload = request
+            print ('payload',payload)
+            # print(payload)
+            # print(payload['events'][0]['data'])
+            # print(payload['events'][0]['Logger_id'])
+            data = Status_Error_logger.objects.filter(name_id=request['name_id'],NOZZLE_SN=request['SN'],Error_type='NOZZLE-OFFLINE',Error_stop__isnull=True).update(Error_stop=timezone.now()) # ทำการ Update Error_stop time ไปที่ db
+            print ('data ',data)
+            # Do something such send line notify
+            print("SUCCESS Update NOZZLE Back to ONLINE Succeed for name_id {} Nozzle log {} Nozzle dp {} ".format(request['name_id'],request['pump_log_address'],request['nozzle_num']))
+            return True
+        except Status.DoesNotExist:
+            # Do something such send line notify
+            print("FAILED Update NOZZLE Back to ONLINE Failed for name_id {} Nozzle log {} Nozzle dp {} ".format(request['name_id'],request['pump_log_address'],request['nozzle_num']))
+            return False
     def UpdateStatusLoggerBATTERYBackToNormal(request,NOZZLE_SN):
         try :
             Status_Error_logger.objects.filter(Error_stop__isnull=True,name_id=request,Error_type = 'BATTERY_LOW',NOZZLE_SN=NOZZLE_SN.strip()).update(Error_stop=timezone.now()) # ทำการ Update Error_stop time ไปที่ db
@@ -174,7 +173,6 @@ class save_data_to_db ():
             return False
     def UpdateAllDataMWGT(request):
         payload = request
-        
         for data_nozzle in (payload):  # Loop each nozzle for update into database
             # query last nozzle status to check if offline or not 
             print ('payload nozzle is',data_nozzle)
@@ -334,9 +332,7 @@ class save_data_to_db ():
                     save_record.NOZZLE_Battery_BatPrcnt = data_nozzle['BatPrcnt']
                     save_record.site_id = data_nozzle['site_id']
                     save_record.save(request)
-                print ('SUCCESS Update MWGT DATA  AFTER Offline for name_id {} Nozzle {} DP {}'.format(data_nozzle['name_id'],data_nozzle['pump_log_address'],data_nozzle['nozzle_num']))
-                
-        
+                print ('SUCCESS Update MWGT DATA  AFTER Offline for name_id {} Nozzle {} DP {}'.format(data_nozzle['name_id'],data_nozzle['pump_log_address'],data_nozzle['nozzle_num']))  
     def UpdateStatusAfterBatteryLastCheck(name_id,battery_volt,NOZZLE_SN,battery_detail):
         battery_volt = battery_volt.strip()
         name_id = name_id
