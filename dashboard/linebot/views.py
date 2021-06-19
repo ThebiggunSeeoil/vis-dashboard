@@ -178,6 +178,7 @@ def callback(request):  # สำหรับส่งการแจ้งเต
                             # ReplyMessage(connect_data_to_db.RequestDataDBByUserRequestByIpAddress(user_type,ip_address_request))
     return HttpResponse(200)
 
+
 @csrf_exempt  # this is used for avoid csrf request from line server
 def updatedb(request):
     if request.method == "POST":  # Check if method is POST
@@ -186,28 +187,41 @@ def updatedb(request):
             if payload['events'][0]['update_type'] == 'update_all':
                 # data_convert = convert_xml_json(payload)
                 update_MWGT_AllData = convert_xml.convert_xml_json(payload)
-                if update_MWGT_AllData == 200:
-                    return 200
+                get_last_vis_status = connect_data_to_db.RequestLastVisStatusRecord(payload)#เข้าไปขอ สถานะ vis_status ล่าสุดเพื่อส่งไปที่ VIS console
+                print ('vis last status ',get_last_vis_status)
+                # print ('update_MWGT_AllData ',update_MWGT_AllData)
+                # return HttpResponse(200)
+                return JsonResponse({"vis_status": get_last_vis_status })# ส่ง id ที่ logger save กลับไปให้เครื่องลูกเพื่อบันทึกเป็น record
+            elif payload['events'][0]['update_type'] == 'get_status':
+                get_last_vis_status = connect_data_to_db.RequestLastVisStatusRecord(payload)#เข้าไปขอ สถานะ vis_status ล่าสุดเพื่อส่งไปที่ VIS console
+                print ('vis last status ',get_last_vis_status)
+                return JsonResponse({"vis_status": get_last_vis_status })# ส่ง id ที่ logger save กลับไปให้เครื่องลูกเพื่อบันทึกเป็น record
             # ทำการ Update ให้เป็น offline
             elif payload['events'][0]['update_type'] == 'update_MWGT_OFFLINE':
                 update_MWGT_OFFLINE = save_data_to_db.UpdateMWGT_OFFLINE(payload)
-                if update_MWGT_OFFLINE == True:
-                    return None
+                # if update_MWGT_OFFLINE == True:
+                #     return None
             # ทำการ Update ให้เป็น online
             elif payload['events'][0]['update_type'] == 'update_MWGT_ONLINE':
                 update_MWGT_ONLINE = save_data_to_db.UpdateMWGT_ONLINE(payload)
-                if update_MWGT_ONLINE == True:
-                    return None
-                print(payload)
+                # if update_MWGT_ONLINE == True:
+                #     return None
+                # print(payload)
+            # ทำการ Update ให้เป็น online
+            elif payload['events'][0]['update_type'] == 'update_VIS_ONLINE':
+                update_VIS_ONLINE = save_data_to_db.UpdateVIS_ONLINE(payload)
+                # if update_VIS_ONLINE == True:
+                #     return None
+                # print(payload)
             # แจ้งเตือน line notify ไปที่ line group at OFFLINE
             elif payload['events'][0]['update_type'] == 'notify_MWGT_OFFLINE':     #เมื่อมีการ POST แจ้ง MWGT OFFLINE เข้า
                 print(payload['events'][0]['data'])
                 site_profile = connect_db_profile.get_site_profile(payload,'notify_MWGT_OFFLINE') #ส่งไป get data profile ที่ connect_db_profile
-                SaveRecord= save_data_to_db.SaveRecordStatusErrorLogger(payload)
+                SaveRecord= save_data_to_db.SaveRecordStatusErrorLogger(site_profile[1].name_id,'MWGT-OFFLINE') #ส่งค่า 'MWGT-OFFLINE' ไป save ลง DB
                 result_calculate_time = calculate_function.different_time_calculate(timezone.now(),site_profile[1].MWGT_last_time) #ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].MWGT_last_time คือ MWGT ที่ติดต่อได้ครั้้งล่าสุุด)
                 line_notify_preparing = creating_line_data.Line_Creating_MWGT_OFFLINE(result_calculate_time,site_profile)#ส่งไปทำงานที่ linebot/creating_line_data/Line_Creating_MWGT_OFFLINE ร
-                result_notify = send_notify(line_notify_preparing[0], line_notify_preparing[1]) #line_notify_preparing[1] คือ line token index[0] คือ messages ที่ต้องการจะส่ง
-                if result_notify == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
+                # result_notify = send_notify(line_notify_preparing[0], line_notify_preparing[1]) #line_notify_preparing[1] คือ line token index[0] คือ messages ที่ต้องการจะส่ง
+                if line_notify_preparing == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
                     result_save = save_data_to_db.SaveDataSendLineFailedToBD(site_profile,line_notify_preparing[0]) #ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
                     if result_save == True :
                         return None
@@ -217,19 +231,37 @@ def updatedb(request):
             elif payload['events'][0]['update_type'] == 'notify_MWGT_ONLINE': #เมื่อมีการ POST แจ้ง MWGT กลับมา ONLINE แล้ว
                 update_status_error = save_data_to_db.UpdateStatusLoggerBackToOnline(payload) #ส่งค่าที่ได้รับ ไป update ที่ linebot/save_data_to_db/UpdateStatusLoggerBackToOnline
                 if update_status_error == True :
-                    site_profile = connect_db_profile.get_site_profile(payload,'notify_MWGT_ONLINE')  # ส่งไป get data site ต่าง ๆ เพื่อนำไปจัดเตรียมข้อมูลตอนส่ง line notify
+                    site_profile = connect_db_profile.get_site_profile(payload,'notify_MWGT_ONLINE')  # ส่งไป get data profile ที่ connect_db_profile
                     result_calculate_time = calculate_function.different_time_calculate(site_profile[2].Error_stop,site_profile[2].Error_start)  # ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].Error_start คือ MWGT ที่เริ่มมีการ offline)
                     print(result_calculate_time)
-                    UpdateRecord   = save_data_to_db.UpdateRecordStatusErrorLogger(payload)
-                    if UpdateRecord == True :
-                        line_notify_preparing = creating_line_data.Line_Creating_MWGT_ONLINE(result_calculate_time,site_profile)  # ส่งไปทำงานที่ linebot/creating_line_data/Line_Creating_MWGT_ONLINE
-                        print(line_notify_preparing)
-                        result_notify = send_notify(line_notify_preparing[0], line_notify_preparing[1])  # line_notify_preparing[1] คือ line token index[0] คือ messages ที่ต้องการจะส่ง
-                        if result_notify == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
-                            result_save = save_data_to_db.SaveDataSendLineFailedToBD(site_profile, line_notify_preparing[0])  # ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
-                            if result_save == True:
-                                return None
-          
+                    # UpdateRecord   = save_data_to_db.UpdateRecordStatusErrorLogger(payload)
+                    # if UpdateRecord == True :
+                    line_notify_preparing = creating_line_data.Line_Creating_MWGT_ONLINE(result_calculate_time,site_profile)  # ส่งไปทำงานที่ linebot/creating_line_data/Line_Creating_MWGT_ONLINE
+                    # print(line_notify_preparing)
+                    # result_notify = send_notify(line_notify_preparing[0], line_notify_preparing[1])  # line_notify_preparing[1] คือ line token index[0] คือ messages ที่ต้องการจะส่ง
+                    if line_notify_preparing == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
+                        result_save = save_data_to_db.SaveDataSendLineFailedToBD(site_profile, line_notify_preparing[0])  # ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
+                        if result_save == True:
+                            return None
+                return HttpResponse (200)
+            elif payload['events'][0]['update_type'] == 'notify_VIS_ONLINE': #เมื่อมีการ POST แจ้ง MWGT กลับมา ONLINE แล้ว
+                update_status_error = save_data_to_db.UpdateStatusVISBackToOnline(payload) #ส่งค่าที่ได้รับ ไป update ที่ linebot/save_data_to_db/UpdateStatusLoggerBackToOnline
+                if update_status_error == True :
+                    site_profile = connect_db_profile.get_site_profile(payload,'notify_VIS_ONLINE')  # ส่งไป get data profile ที่ connect_db_profile
+                    result_calculate_time = calculate_function.different_time_calculate(site_profile[2].Error_stop,site_profile[2].Error_start)  # ส่งไปทำงานที่ linebot/calculate เพือ get data ต่างๆที่เกี่ยวข้องกับเวลา site_profile[1].Error_start คือ MWGT ที่เริ่มมีการ offline)
+                    print(result_calculate_time)
+                    # UpdateRecord   = save_data_to_db.UpdateRecordStatusErrorLogger(payload)
+                    # if UpdateRecord == True :
+                    line_notify_preparing = creating_line_data.Line_Creating_VIS_ONLINE(result_calculate_time,site_profile)  # ส่งไปทำงานที่ linebot/creating_line_data/Line_Creating_MWGT_ONLINE
+                    # print(line_notify_preparing)
+                    # result_notify = send_notify(line_notify_preparing[0], line_notify_preparing[1])  # line_notify_preparing[1] คือ line token index[0] คือ messages ที่ต้องการจะส่ง
+                    if line_notify_preparing == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
+                        result_save = save_data_to_db.SaveDataSendLineFailedToBD(site_profile, line_notify_preparing[0])  # ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
+                        if result_save == True:
+                            return None
+                return HttpResponse (200)
+    
+    
     return HttpResponse(200)
 
 @csrf_exempt
@@ -238,10 +270,11 @@ def task_jobs(request): # ส่วนสำหรับ job ในการเ�
         payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         if payload['events'][0]['type'] == 'TASK_JOBS':
             JOB = payload['events'][0]['job_request']
-            if JOB  == 'check_vis' :
-                start_job_check_status.start_check_vis()
-            elif JOB  == 'check_battery' :
-                start_job_check_status.start_check_battery()
+            if JOB  == 'start_check_device' :
+                start_job_check_status.start_check_device()
+            elif JOB  == 'check_nozzle' :
+                start_job_check_status.start_check_nozzle()
+            
         
     return HttpResponse (200)
 
@@ -256,7 +289,7 @@ def update_battery(request):  # function สำหรับการ update ส�
             # Check request ว่าใช่ update_battery หรือไม่
             if payload['events'][0]['update_type'] == 'update_battery':
                 # print(payload)
-                update_BATTEY_Data = UpdateBatteryStatus(payload)
+                update_BATTEY_Data = save_data_to_db.UpdateBatteryStatus(payload)
                 if update_BATTEY_Data == 200:
                     return HttpResponse(200)
                 # return HttpResponse (200)
@@ -291,6 +324,7 @@ def Get_profile(User_ID):
     print('Already setup defult richmenu', data)
     return data
 
+
 def Get_groupProfile(GroupId):
     LINE_API = 'https://api.line.me/v2/bot/group/' + GroupId+'/summary'
     Authorization = 'Bearer {}'.format(Channel_access_token)
@@ -299,6 +333,7 @@ def Get_groupProfile(GroupId):
     data = r.json()
     # print('Already setup defult richmenu', data)
     return data
+
 
 def ReplyMessage(TextMessage):
     Token = Channel_access_token
@@ -322,6 +357,7 @@ def ReplyMessage(TextMessage):
     print(r)
     return 200
 
+
 def PushMessage(push_new_messasge, user_id):
     Token = Channel_access_token
     LINE_API = 'https://api.line.me/v2/bot/message/push'
@@ -343,6 +379,7 @@ def PushMessage(push_new_messasge, user_id):
     print(r)
     return 200
 
+
 def send_notify(message, token):
     try:
         Token = 'Bearer ' + token
@@ -356,6 +393,7 @@ def send_notify(message, token):
     except requests.ConnectionError as err:
         print("Connected to Line notify fail")
         return False
+
 
 def PushMessage_group(push_new_messasge, Token, group_id_site):
     LINE_API = 'https://api.line.me/v2/bot/message/push'

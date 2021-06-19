@@ -104,7 +104,10 @@ class Status(models.Model):
     MWGT_last_time = models.DateTimeField(default=now)
     MWGT_status = models.CharField(max_length=255, blank=True, null=True)
     NOZZLE_status_check = models.CharField(max_length=255, default='online')
+    NOZZLE_notify_check = models.CharField(max_length=255, default=False)
     BATTERY_status_check = models.CharField(max_length=255, default='normal')
+    BATTERY_notify_low = models.CharField(max_length=255, default=False)
+    BATTERY_notify_alarm = models.CharField(max_length=255, default=False)
     VIS_last_time = models.DateTimeField(default=now)
     VIS_status = models.CharField(max_length=255, blank=True, null=True)
     RTC = models.CharField(max_length=255, blank=True, null=True)
@@ -172,6 +175,10 @@ class Status_Error_logger(models.Model):
     Error_type = models.CharField(max_length=255, blank=True, null=True)
     Error_start = models.DateTimeField(default=now)
     Error_stop = models.DateTimeField(null=True, blank=True)
+    NOZZLE_SN = models.CharField(max_length=255, blank=True, null=True)
+    NOZZLE_num = models.CharField(max_length=255, blank=True, null=True)
+    Unit_log_LgAddr = models.CharField(max_length=255, blank=True, null=True)
+    NOZZLE_Battery_Status_Volts = models.FloatField(max_length=255,blank=True, null=True )
     Timestramp = models.DateTimeField(auto_now_add=True, auto_now=False, blank=True)
 
     def __str__(self):

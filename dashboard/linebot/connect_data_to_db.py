@@ -217,6 +217,22 @@ class connect_data_to_db ():
             return creating_flex_messages.CreateFormNozzleFlexMessageDetail(data,user_type)
         elif message == 'battery_status':
             return creating_flex_messages.CreateFormBatteryFlexMessageDetail(data,user_type)
+    def RequestLastVisStatusRecord(name_id): # สำหรับเช็ค status vis ล่าสุดเพื่อตอบกลับไปให้เครื่อง VIS ดำเนินการต่อ
+        # for vis_check in (payload):  # Loop each nozzle for update into database
+        name_id = name_id['events'][0]['name_id']
+        try :
+            vis_last_status = Status.objects.filter(name_id=name_id).values('VIS_status').distinct().first()
+            if vis_last_status != None :
+                return vis_last_status['VIS_status'] # หากค้นหาข้อมูลเจอ หรือเคยมีการบันทึกไว้ก่อนหน้า
+            else :
+                vis_last_status = 'not_found'
+                return vis_last_status # หากค้นหาไม่เจอ หรือ สถานีใหม่ ที่ยังไม่เคยรับข้อมูลเข้า
+            # for i in vis_last_status :
+            #     print (i)
+            # return vis_last_status['VIS_status'] # สำหรับเช็ค status vis ล่าสุดเพื่อตอบกลับไปให้เครื่อง VIS ดำเนินการต่อ
+        except Status.DoesNotExist:
+            print ('Cannot sent battery back to Decive')
+           
     def RequestDataDBForAllUser(user_type,message):
         VIS_SUM_OFFLINE = Status.objects.filter(VIS_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
         MWGT_SUM_OFFLINE = Status.objects.filter(MWGT_status='offline',site__station_active=True).values('DataUnitMap_IP').annotate(dcount=Count('DataUnitMap_IP')).count()
