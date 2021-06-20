@@ -1,30 +1,78 @@
+# -*- coding: utf-8 -*-
+# !/usr/bin/env python
 import datetime
-
+import requests
+import json
+from django.conf import settings
+Channel_access_token = settings.LINE_CHANNEL_ACCESS_TOKEN
+from app.models import Site, Status, Status_Error_logger, Store_data_send_line_failed, PersanalDetaillogin
 
 class creating_flex_messages():
+    def PushMessage(messages, user_id):
+        Token = Channel_access_token
+        LINE_API = 'https://api.line.me/v2/bot/message/push'
+        # print('line API {}'.format(push_new_messasge))
+
+        Authorization = 'Bearer {}'.format(Token)
+        headers = {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': Authorization
+        }
+
+        data = {
+            "to": user_id,
+            "messages": [messages], }
+
+        # print('data to line {}'.format(data))
+        data = json.dumps(data)
+        r = requests.post(LINE_API, headers=headers, data=data)
+        print(r)
+        return 200
+    def CheckPermissionBeforeSendLine(technician_team_name,messages):
+        # start to check permission before send
+        technician_detail = PersanalDetaillogin.objects.select_related().filter(need_to_notify=True,if_technician__team=technician_team_name)
+        if technician_detail.exists():
+            for detail in technician_detail :
+                user_id = detail.line_id
+                name = detail.name
+                creating_flex_messages.PushMessage(messages,user_id)
+            print ('SUCCESS TO SEND LINE TO Technician need to send line flex_message for team_name {} line_id{}'.format(name,user_id))
+        else :
+            print ('DO NOT FOUND Technician need to send line flex_message for team_name {}'.format(technician_team_name))
+            
+        supervisor_detail = PersanalDetaillogin.objects.select_related().filter(need_to_notify=True,user_type__id__in=[2])
+        if supervisor_detail.exists():
+            for detail in technician_detail :
+                user_id = detail.line_id
+                name = detail.name
+                creating_flex_messages.PushMessage(messages,user_id)
+            print ('SUCCESS TO SEND LINE TO Supervisor need to send line flex_message for Supervisor Name {} line_id{}'.format(name,user_id))
+        else :
+            print ('DO NOT FOUND LINE TO Supervisor need to send line flex_message for Team Name {}'.format(technician_team_name))
+        
     def CreateFormDetailByIpAddress(results):
-        for site_detail in results :
-            print (site_detail['site_name'])
-            if site_detail['VIS_status'] == 'offline' :
+        for site_detail in results:
+            print(site_detail['site_name'])
+            if site_detail['VIS_status'] == 'offline':
                 coler_1 = '#EE2424FF'
-            else :
+            else:
                 coler_1 = '#000000'
-                
-            if site_detail['MWGT_status'] == 'offline' :
+
+            if site_detail['MWGT_status'] == 'offline':
                 coler_2 = '#EE2424FF'
-            else :
+            else:
                 coler_2 = '#000000'
-                
-            if site_detail['NOZZLE_status_check'] == 'offline' :
+
+            if site_detail['NOZZLE_status_check'] == 'offline':
                 coler_3 = '#EE2424FF'
-            else :
-                coler_3 = '#000000' 
-                
-            if site_detail['BATTERY_status_check'] == 'low' :
+            else:
+                coler_3 = '#000000'
+
+            if site_detail['BATTERY_status_check'] == 'low':
                 coler_4 = '#EE2424FF'
-            else :
+            else:
                 coler_4 = '#000000'
-                
+
             data = {"type": "flex",
                     "altText": "Flex Message",
                     "contents": {
@@ -131,7 +179,7 @@ class creating_flex_messages():
                                                     "type": "text",
                                                     "text": str(site_detail['VIS_status']),
                                                     "size": "xs",
-                                                    "color" : coler_1,
+                                                    "color": coler_1,
                                                     "align": "end",
                                                     "contents": []
                                                 }
@@ -196,7 +244,7 @@ class creating_flex_messages():
                                                 },
                                                 {
                                                     "type": "text",
-                                                    "text": str('[' + str(site_detail['pump_log_address_count'])+ ' หน้า | ' + str(site_detail['nozzle_data_count'])+ ' มือจ่าย]'),
+                                                    "text": str('[' + str(site_detail['pump_log_address_count']) + ' หน้า | ' + str(site_detail['nozzle_data_count']) + ' มือจ่าย]'),
                                                     "size": "xs",
                                                     "align": "end",
                                                     "contents": []
@@ -220,7 +268,7 @@ class creating_flex_messages():
                                                     "type": "text",
                                                     "text": str(site_detail['MWGT_status']),
                                                     "size": "xs",
-                                                    "color" : coler_2,
+                                                    "color": coler_2,
                                                     "align": "end",
                                                     "contents": []
                                                 }
@@ -243,7 +291,7 @@ class creating_flex_messages():
                                                     "type": "text",
                                                     "text": str(site_detail['NOZZLE_status_check']),
                                                     "size": "xs",
-                                                     "color" : coler_3,
+                                                    "color": coler_3,
                                                     "align": "end",
                                                     "contents": []
                                                 }
@@ -266,7 +314,7 @@ class creating_flex_messages():
                                                     "type": "text",
                                                     "text": str(site_detail['BATTERY_status_check']),
                                                     "size": "xs",
-                                                    "color" : coler_4,
+                                                    "color": coler_4,
                                                     "align": "end",
                                                     "contents": []
                                                 }
@@ -305,203 +353,204 @@ class creating_flex_messages():
                                 }
                             },
                             # Body next
-                            
+
                             # จบ ส่วน Body
                         ]
                     }}
-            
-            for log_address in site_detail['Unit_log_address'] : 
-                print ('log_address is ',log_address)
+
+            for log_address in site_detail['Unit_log_address']:
+                print('log_address is ', log_address)
                 content_log_address = {
-                                    "type": "bubble",
-                                    "hero": {
-                                        "type": "image",
-                                        "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                    "type": "bubble",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                        "align": "center",
+                        "gravity": "bottom",
+                        "size": "full",
+                        "aspectRatio": "35:8",
+                        "aspectMode": "fit",
+                        "action": {
+                            "type": "uri",
+                            "label": "Line",
+                            "uri": "https://linecorp.com/"
+                        },
+                        "position": "relative"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {
+                                "type": "text",
+                                "text": 'MWGT Device' + str(log_address['Unit_log_address']),
+                                "weight": "bold",
+                                "size": "sm",
+                                "color": "#225508FF",
+                                "align": "center",
+                                "gravity": "bottom",
+                                "contents": []
+                            },
+                            {
+                                "type": "text",
+                                "text": 'IP ' + str(log_address['DataUnitMap_IP']),
+                                "weight": "bold",
+                                "size": "sm",
+                                "color": "#225508FF",
+                                "align": "center",
+                                "margin": "xs",
+                                "wrap": True,
+                                "contents": []
+                            },
+                            {
+                                "type": "separator",
+                                "margin": "sm",
+                                "color": "#165C3CFF"
+                            },
+                            {
+                                "type": "box",
+                                "layout": "vertical",
+                                "spacing": "sm",
+                                "margin": "lg",
+                                "contents": [
+                                    {
+                                        "type": "text",
+                                        "text": "รายละเอียด",
+                                        "weight": "bold",
+                                        "size": "md",
                                         "align": "center",
-                                        "gravity": "bottom",
-                                        "size": "full",
-                                        "aspectRatio": "35:8",
-                                        "aspectMode": "fit",
-                                        "action": {
-                                            "type": "uri",
-                                            "label": "Line",
-                                            "uri": "https://linecorp.com/"
-                                        },
-                                        "position": "relative"
-                                    },
-                                    "body": {
-                                        "type": "box",
-                                        "layout": "vertical",
-                                        "contents": [
-                                            {
-                                                "type": "text",
-                                                "text": 'MWGT Device' + str(log_address['Unit_log_address']),
-                                                "weight": "bold",
-                                                "size": "sm",
-                                                "color": "#225508FF",
-                                                "align": "center",
-                                                "gravity": "bottom",
-                                                "contents": []
-                                            },
-                                            {
-                                                "type": "text",
-                                                "text": 'IP ' + str(log_address['DataUnitMap_IP']),
-                                                "weight": "bold",
-                                                "size": "sm",
-                                                "color": "#225508FF",
-                                                "align": "center",
-                                                "margin": "xs",
-                                                "wrap": True,
-                                                "contents": []
-                                            },
-                                            {
-                                                "type": "separator",
-                                                "margin": "sm",
-                                                "color": "#165C3CFF"
-                                            },
-                                            {
-                                                "type": "box",
-                                                "layout": "vertical",
-                                                "spacing": "sm",
-                                                "margin": "lg",
-                                                "contents": [
-                                                    {
-                                                        "type": "text",
-                                                        "text": "รายละเอียด",
-                                                        "weight": "bold",
-                                                        "size": "md",
-                                                        "align": "center",
-                                                        "contents": []
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "type": "box",
-                                                "layout": "baseline",
-                                                "spacing": "sm",
-                                                "margin": "xs",
-                                                "contents": [
-                                                    {
-                                                        "type": "text",
-                                                        "text": "Pump",
-                                                        "weight": "bold",
-                                                        "size": "xs",
-                                                        "align": "center",
-                                                        "contents": []
-                                                    },
-                                                    {
-                                                        "type": "text",
-                                                        "text": "Nozzle",
-                                                        "weight": "bold",
-                                                        "size": "xs",
-                                                        "align": "center",
-                                                        "contents": []
-                                                    },
-                                                    {
-                                                        "type": "text",
-                                                        "text": "BatV.",
-                                                        "weight": "bold",
-                                                        "size": "xs",
-                                                        "align": "center",
-                                                        "contents": []
-                                                    },
-                                                    {
-                                                        "type": "text",
-                                                        "text": "LastCon",
-                                                        "weight": "bold",
-                                                        "size": "xs",
-                                                        "flex": 2,
-                                                        "align": "end",
-                                                        "contents": []
-                                                    }
-                                                ]
-                                            },
-                                            #ส่วนแสดงรายละเอียดมือจ่าย
-                                            
-                                            
-                                            #จบ ส่วนแสดงรายละเอียดมือจ่าย
-                                            
-                                            {
-                                                "type": "separator",
-                                                "margin": "md",
-                                                "color": "#165C3CFF"
-                                            }
-                                        ]
-                                    },
-                                    "footer": {
-                                        "type": "box",
-                                        "layout": "vertical",
-                                        "flex": 0,
-                                        "spacing": "sm",
-                                        "contents": [
-                                            {
-                                                "type": "button",
-                                                "action": {
-                                                    "type": "uri",
-                                                    "label": "www.orpak.com",
-                                                    "uri": "https://www.orpak.com/"
-                                                },
-                                                "color": "#078025FF",
-                                                "margin": "none",
-                                                "height": "sm",
-                                                "style": "primary"
-                                            },
-                                            {
-                                                "type": "separator"
-                                            }
-                                        ]
+                                        "contents": []
                                     }
-                                }
+                                ]
+                            },
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "margin": "xs",
+                                "contents": [
+                                    {
+                                        "type": "text",
+                                        "text": "Pump",
+                                        "weight": "bold",
+                                        "size": "xs",
+                                        "align": "center",
+                                        "contents": []
+                                    },
+                                    {
+                                        "type": "text",
+                                        "text": "Nozzle",
+                                        "weight": "bold",
+                                        "size": "xs",
+                                        "align": "center",
+                                        "contents": []
+                                    },
+                                    {
+                                        "type": "text",
+                                        "text": "BatV.",
+                                        "weight": "bold",
+                                        "size": "xs",
+                                        "align": "center",
+                                        "contents": []
+                                    },
+                                    {
+                                        "type": "text",
+                                        "text": "LastCon",
+                                        "weight": "bold",
+                                        "size": "xs",
+                                        "flex": 2,
+                                        "align": "end",
+                                        "contents": []
+                                    }
+                                ]
+                            },
+                            # ส่วนแสดงรายละเอียดมือจ่าย
+
+
+                            # จบ ส่วนแสดงรายละเอียดมือจ่าย
+
+                            {
+                                "type": "separator",
+                                "margin": "md",
+                                "color": "#165C3CFF"
+                            }
+                        ]
+                    },
+                    "footer": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "flex": 0,
+                        "spacing": "sm",
+                        "contents": [
+                            {
+                                "type": "button",
+                                "action": {
+                                    "type": "uri",
+                                    "label": "www.orpak.com",
+                                    "uri": "https://www.orpak.com/"
+                                },
+                                "color": "#078025FF",
+                                "margin": "none",
+                                "height": "sm",
+                                "style": "primary"
+                            },
+                            {
+                                "type": "separator"
+                            }
+                        ]
+                    }
+                }
                 for nozzle_detail in log_address['nozzle']:
                     if nozzle_detail['NOZZLE_status_check'] == 'offline':
                         coler = '#EE2424FF'
                     else:
                         coler = '#000000'
-                        
+
                     content_nozzle = {
-                                                "type": "box",
-                                                "layout": "baseline",
-                                                "spacing": "sm",
-                                                "margin": "xs",
-                                                "contents": [
-                                                    {
-                                                        "type": "text",
-                                                        "text": str(nozzle_detail['NOZZLE_pump_log_address']),
-                                                        "size": "xs",
-                                                        "color": coler,
-                                                        "align": "center",
-                                                        "contents": []
-                                                    },
-                                                    {
-                                                        "type": "text",
-                                                        "text": str(nozzle_detail['NOZZLE_num']),
-                                                        "size": "xs",
-                                                        "color": coler,
-                                                        "align": "center",
-                                                        "contents": []
-                                                    },
-                                                    {
-                                                        "type": "text",
-                                                        "text": str(nozzle_detail['NOZZLE_Battery_Status_Volts']),
-                                                        "size": "xxs",
-                                                        "color": coler,
-                                                        "align": "center",
-                                                        "contents": []
-                                                    },
-                                                    {
-                                                        "type": "text",
-                                                        "text": str(nozzle_detail['NOZZLE_Last_conn']),
-                                                        "size": "xxs",
-                                                        "color": coler,
-                                                        "flex": 2,
-                                                        "align": "end",
-                                                        "style": "normal",
-                                                        "contents": []
-                                                    }
-                                                ]
-                                            }
-                    content_log_address['body']['contents'].insert(-1,content_nozzle)
-                data['contents']['contents'].insert(1,content_log_address)
+                        "type": "box",
+                        "layout": "baseline",
+                        "spacing": "sm",
+                        "margin": "xs",
+                        "contents": [
+                            {
+                                "type": "text",
+                                "text": str(nozzle_detail['NOZZLE_pump_log_address']),
+                                "size": "xs",
+                                "color": coler,
+                                "align": "center",
+                                "contents": []
+                            },
+                            {
+                                "type": "text",
+                                "text": str(nozzle_detail['NOZZLE_num']),
+                                "size": "xs",
+                                "color": coler,
+                                "align": "center",
+                                "contents": []
+                            },
+                            {
+                                "type": "text",
+                                "text": str(nozzle_detail['NOZZLE_Battery_Status_Volts']),
+                                "size": "xxs",
+                                "color": coler,
+                                "align": "center",
+                                "contents": []
+                            },
+                            {
+                                "type": "text",
+                                "text": str(nozzle_detail['NOZZLE_Last_conn']),
+                                "size": "xxs",
+                                "color": coler,
+                                "flex": 2,
+                                "align": "end",
+                                "style": "normal",
+                                "contents": []
+                            }
+                        ]
+                    }
+                    content_log_address['body']['contents'].insert(
+                        -1, content_nozzle)
+                data['contents']['contents'].insert(1, content_log_address)
         return (data)
 
     def CreateFormAllStatusForMGR(dt, VIS_SUM_OFFLINE, MWGT_SUM_OFFLINE, NOZZLE_OFFLINE, BATTERY_OFFLINE, TOTAL_SITE_ACTIVE):
@@ -3865,3 +3914,253 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
+
+    def CreateNotifyFormVisOffline(line_data,site_profile):
+        datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
+        result_site = site_profile # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
+        day_loss = line_data[0] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
+        hours_loss = line_data[1] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 1
+        minutes_loss = line_data[2] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
+        datetime_now = line_data[3] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
+        MWGT_last_time = line_data[4] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
+        technician_team_name = result_site.site.team_support.team
+        messages = 'VIS Status ' + '\n' + \
+                        'Type : ' + ' การติดต่อ : ไม่ปกติ ' + '\n' \
+                            'สถานี : ' + result_site.site.station_name + '\n' + \
+                                'IP : ' + result_site.site.station_ip + '\n' + \
+                                    'ติดต่อไม่ได้เมื่อ : ' + datetime_now + '\n' + \
+                                        'ติดต่อครั้งล่าสุด : ' + MWGT_last_time + '\n' + \
+                                            'ขาดการติดต่อนาน : ' + str(day_loss) + \
+                                                ' วัน ' + str(hours_loss) + \
+                                                    ' ชม ' + str(minutes_loss) + \
+                                                        ' นาที' + '\n' + 'ช่างเขต : ' + result_site.site.team_support.team_name
+        content = {"type": "flex",
+                   "altText": "VIS OFFLINE",
+                   "contents":
+                   {
+                       "type": "carousel",
+                       "contents": [{
+                           "type": "bubble",
+                           "hero": {
+                               "type": "image",
+                               "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                               "align": "center",
+                               "gravity": "bottom",
+                               "size": "full",
+                               "aspectRatio": "35:8",
+                               "aspectMode": "fit",
+                               "action": {
+                                   "type": "uri",
+                                   "label": "Line",
+                                   "uri": "https://linecorp.com/"
+                               },
+                               "position": "relative"
+                           },
+                           "body": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "contents": [
+                                   {
+                                       "type": "text",
+                                       "text": str(datetime_now),
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": result_site.site.station_name,
+                                       "weight": "bold",
+                                       "size": "md",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "VIS : IP " + result_site.site.station_ip,
+                                       "weight": "bold",
+                                       "size": "sm",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "VIS OFFLINE",
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#DE3A13FF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "sm",
+                                       "color": "#165C3CFF"
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "xs",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "สถานะ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "Offline",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อไม่ได้เมื่อ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(datetime_now),
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+                                               
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อครั้งล่าสุด",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(MWGT_last_time),
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+                                               
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ขาดการติดต่อนาน",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(day_loss) + " วัน " + str(hours_loss) + " ชม " + str(minutes_loss) + " นาที",
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+                                               
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ช่างเขต",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "คุณ " + str(result_site.site.team_support.team_name),
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "md",
+                                       "color": "#165C3CFF"
+                                   }
+                               ]
+                           },
+                           "footer": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "flex": 0,
+                               "spacing": "sm",
+                               "contents": [
+                                   {
+                                       "type": "button",
+                                       "action": {
+                                           "type": "uri",
+                                           "label": "www.orpak.co.th",
+                                           "uri": "https://www.orpak.com/"
+                                       },
+                                       "color": "#078025FF",
+                                       "margin": "none",
+                                       "height": "sm",
+                                       "style": "secondary"
+                                   },
+                                   {
+                                       "type": "spacer",
+                                       "size": "sm"
+                                   }
+                               ]
+                           }
+                       }]}}
+        return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name,content)

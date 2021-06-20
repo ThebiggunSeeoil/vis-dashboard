@@ -43,8 +43,7 @@ class start_job_check_status :
                 except Status.DoesNotExist:
                     print ('cannot set offline for',vis_site['name_id'])
         else :
-            print ('NOT FOUND VIS offline NOW')
-            
+            print ('NOT FOUND VIS offline NOW')       
     def start_check_nozzle ():
         print ('Start to nozzle VIS')
         time_threshold = timezone.now() - datetime.timedelta(hours=1)

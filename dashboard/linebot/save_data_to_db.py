@@ -175,12 +175,12 @@ class save_data_to_db ():
         payload = request
         for data_nozzle in (payload):  # Loop each nozzle for update into database
             # query last nozzle status to check if offline or not 
-            print ('payload nozzle is',data_nozzle)
+            # print ('payload nozzle is',data_nozzle)
             nozzle_check = Status.objects.filter(name_id=data_nozzle['name_id'],NOZZLE_SN=data_nozzle['SN']).values('NOZZLE_status_check')
-            print ('nozzle_check is',nozzle_check)
+            # print ('nozzle_check is',nozzle_check)
             site_detail = Status.objects.select_related().get(name_id=data_nozzle['name_id'],NOZZLE_SN=data_nozzle['SN'])
             if nozzle_check[0]['NOZZLE_status_check'] == 'online' :
-                    print ('ONLINE')
+                    # print ('ONLINE')
                     try:
                         # Check if nozzle already in db or not if YES go next step
                         prepare_data = Status.objects.get(name_id=data_nozzle['name_id'],
@@ -250,7 +250,7 @@ class save_data_to_db ():
                         save_record.NOZZLE_Battery_BatPrcnt = data_nozzle['BatPrcnt']
                         save_record.site_id = data_nozzle['site_id']
                         save_record.save(request)
-                    print ('SUCCESS Update MWGT DATA for name_id {} Nozzle {} DP {}'.format(data_nozzle['name_id'],data_nozzle['pump_log_address'],data_nozzle['nozzle_num']))
+                    print ('SUCCESS Update MWGT DATA for name_id {} Nozzle {} DP {} ON {}'.format(data_nozzle['name_id'],data_nozzle['pump_log_address'],data_nozzle['nozzle_num'],datetime.datetime.now().strftime("%d.%m.%Y %H:%M")))
                         
             if nozzle_check[0]['NOZZLE_status_check'] == 'offline' :# for vis_check in (payload):  # Loop each nozzle for update into database
                 print ('OFFLINE')
@@ -332,7 +332,7 @@ class save_data_to_db ():
                     save_record.NOZZLE_Battery_BatPrcnt = data_nozzle['BatPrcnt']
                     save_record.site_id = data_nozzle['site_id']
                     save_record.save(request)
-                print ('SUCCESS Update MWGT DATA  AFTER Offline for name_id {} Nozzle {} DP {}'.format(data_nozzle['name_id'],data_nozzle['pump_log_address'],data_nozzle['nozzle_num']))  
+                print ('SUCCESS Update MWGT DATA  AFTER Offline for name_id {} Nozzle {} DP {}'.format(data_nozzle['name_id'],data_nozzle['pump_log_address'],data_nozzle['nozzle_num'],datetime.datetime.now().strftime("%d.%m.%Y %H:%M"))) 
     def UpdateStatusAfterBatteryLastCheck(name_id,battery_volt,NOZZLE_SN,battery_detail):
         battery_volt = battery_volt.strip()
         name_id = name_id
@@ -440,7 +440,7 @@ class save_data_to_db ():
                                                                 date_stamp=new_date_stamp,
                                                                         sn=data_battery['SN'])
                 # If duplicate data no need to insert to db
-                print ('Duplicate data battery ')
+                print ('Duplicate data battery update for Name_id {} Nozzle_SN {} Volt {}  ON {}'.format(name_id,data_battery['SN'],data_battery['BatLevel'],datetime.datetime.now().strftime("%d.%m.%Y %H:%M")))
                 
             except battery_status.DoesNotExist:  # Check if battery already in db or not if NO go next step to insert into
                 save_record = battery_status()
@@ -461,6 +461,7 @@ class save_data_to_db ():
                 # ส่ง record ไปทำการ update status at table Status for update battery_status_check
                 save_data_to_db.UpdateStatusAfterBatteryLastCheck(name_id,data_battery['BatLevel'],data_battery['SN'].strip(),data_battery)
                 # save_data_to_db.UpdateStatusAfterBatteryLastCheck(name_id,'3.6',data_battery['SN'].strip(),data_battery) # จำลองส่งค่า bat ต่ำๆเข้าไป
+                print ('UPDATED NEW data battery for Name_id {} Nozzle_SN {} Volt {}  ON {}'.format(name_id,data_battery['SN'],data_battery['BatLevel'],datetime.datetime.now().strftime("%d.%m.%Y %H:%M")))
         return 200  # Response back to request
     def CreateLineGroup(request,group_name):
         group_id = request['events'][0]['source']['groupId']

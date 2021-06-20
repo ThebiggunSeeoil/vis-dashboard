@@ -254,6 +254,7 @@ class PersanalDetaillogin (models.Model):
     line_id_name=models.CharField(max_length=255,blank=True, null=True)
     group_line_id= models.ForeignKey(LinegroupId,on_delete=models.CASCADE, null=True)
     if_technician = models.ForeignKey(Team,on_delete=models.CASCADE, null=True)
+    need_to_notify = models.BooleanField(default=False)
     richmenu_id=models.CharField(max_length=255,blank=True,null=True)
     member_status=models.BooleanField(default=False)
     timestramp=models.DateTimeField(auto_now_add=True)

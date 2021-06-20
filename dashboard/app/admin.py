@@ -110,7 +110,7 @@ class LinegroupIdListAdmin(ImportExportModelAdmin):
 class PersanalDetailloginListAdmin(ImportExportModelAdmin):
     # search_fields = ('time_alert_alarm_day', 'time_alert_warning_day','battery_level_alarm_hours','battery_level_low_hours','battery_level_failed_hours') # สร้าง tab ในการค้นหาข้อมูลต่างที่ต้องการ
     # list_filter = ['station_name']
-    list_display = ('company', 'user_type','name')
+    list_display = ('company', 'user_type','name','need_to_notify')
     exclude = ('richmenu_id','line_id','line_id_name','member_status') # ซ่อนในหน้า Admain หากไม่ต้องการให้แสดง
     list_per_page = 30
     # This will help you to disbale add functionality
