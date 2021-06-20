@@ -185,12 +185,8 @@ def updatedb(request):
         payload = json.loads(request.body.decode('utf-8'))  # Convert data to json
         if payload['events'][0]['type'] == 'VIS-MONITOR': # Check if request is VIS-Monitor to update in database
             if payload['events'][0]['update_type'] == 'update_all':
-                # data_convert = convert_xml_json(payload)
                 update_MWGT_AllData = convert_xml.convert_xml_json(payload)
                 get_last_vis_status = connect_data_to_db.RequestLastVisStatusRecord(payload)#เข้าไปขอ สถานะ vis_status ล่าสุดเพื่อส่งไปที่ VIS console
-                print ('vis last status ',get_last_vis_status)
-                # print ('update_MWGT_AllData ',update_MWGT_AllData)
-                # return HttpResponse(200)
                 return JsonResponse({"vis_status": get_last_vis_status })# ส่ง id ที่ logger save กลับไปให้เครื่องลูกเพื่อบันทึกเป็น record
             elif payload['events'][0]['update_type'] == 'get_status':
                 get_last_vis_status = connect_data_to_db.RequestLastVisStatusRecord(payload)#เข้าไปขอ สถานะ vis_status ล่าสุดเพื่อส่งไปที่ VIS console
@@ -311,7 +307,6 @@ def permission_check(request):
                 # ส่งเลข failed กลับไปให้เนื่องจากไม่พบเลข ip ที่ส่งเข้า
                 return JsonResponse({"site_id": "failed"})
     return HttpResponse(200)
-
 def Get_profile(User_ID):
     LINE_API = 'https://api.line.me/v2/bot/profile/' + User_ID
     Authorization = 'Bearer {}'.format(Channel_access_token)
@@ -320,8 +315,6 @@ def Get_profile(User_ID):
     data = r.json()
     print('Already setup defult richmenu', data)
     return data
-
-
 def Get_groupProfile(GroupId):
     LINE_API = 'https://api.line.me/v2/bot/group/' + GroupId+'/summary'
     Authorization = 'Bearer {}'.format(Channel_access_token)
@@ -330,8 +323,6 @@ def Get_groupProfile(GroupId):
     data = r.json()
     # print('Already setup defult richmenu', data)
     return data
-
-
 def ReplyMessage(TextMessage):
     Token = Channel_access_token
     Reply_token_line = Reply_token
@@ -353,8 +344,6 @@ def ReplyMessage(TextMessage):
     r = requests.post(LINE_API, headers=headers, data=data)
     print(r)
     return 200
-
-
 def PushMessage(push_new_messasge, user_id):
     Token = Channel_access_token
     LINE_API = 'https://api.line.me/v2/bot/message/push'
@@ -375,8 +364,6 @@ def PushMessage(push_new_messasge, user_id):
     r = requests.post(LINE_API, headers=headers, data=data)
     print(r)
     return 200
-
-
 def send_notify(message, token):
     try:
         Token = 'Bearer ' + token
@@ -390,8 +377,6 @@ def send_notify(message, token):
     except requests.ConnectionError as err:
         print("Connected to Line notify fail")
         return False
-
-
 def PushMessage_group(push_new_messasge, Token, group_id_site):
     LINE_API = 'https://api.line.me/v2/bot/message/push'
     Authorization = 'Bearer {}'.format(Token)  # ที่ยาวๆ
