@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 # python manage.py migrate --fake 'appname' zero ใช้สำหรับ fake ตัวข้อมูลกรณีระบบไม่ยอม migrate ให้
 from django.utils import timezone
-from django.db import models
+from django.db import models 
 from django.utils.timezone import now
 from django.contrib.auth.models import User , Group
 
@@ -197,6 +197,8 @@ class Store_data_send_line_failed(models.Model):
     date_failed = models.DateTimeField(default=now)
     date_pass = models.DateTimeField(null=True, blank=True)
     messages = models.TextField(null=True, blank=True)
+    file_save = models.CharField(max_length=255, blank=True, null=True)
+    json_data = models.TextField(blank=True, null=True)
     status_send = models.CharField(max_length=255, blank=True, null=True)
     last_update = models.DateTimeField(auto_now_add=True, auto_now=False, blank=True)
 

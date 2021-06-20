@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
+from app.models import Site, Status, Status_Error_logger, Store_data_send_line_failed, PersanalDetaillogin
 import datetime
 import requests
 import json
 from django.conf import settings
 Channel_access_token = settings.LINE_CHANNEL_ACCESS_TOKEN
-from app.models import Site, Status, Status_Error_logger, Store_data_send_line_failed, PersanalDetaillogin
+
 
 class creating_flex_messages():
     def PushMessage(messages, user_id):
@@ -28,28 +29,33 @@ class creating_flex_messages():
         r = requests.post(LINE_API, headers=headers, data=data)
         print(r)
         return 200
-    def CheckPermissionBeforeSendLine(technician_team_name,messages):
+    def CheckPermissionBeforeSendLine(technician_team_name, messages):
         # start to check permission before send
-        technician_detail = PersanalDetaillogin.objects.select_related().filter(need_to_notify=True,if_technician__team=technician_team_name)
+        technician_detail = PersanalDetaillogin.objects.select_related().filter(
+            need_to_notify=True, if_technician__team=technician_team_name)
         if technician_detail.exists():
-            for detail in technician_detail :
+            for detail in technician_detail:
                 user_id = detail.line_id
                 name = detail.name
-                creating_flex_messages.PushMessage(messages,user_id)
-            print ('SUCCESS TO SEND LINE TO Technician need to send line flex_message for team_name {} line_id{}'.format(name,user_id))
-        else :
-            print ('DO NOT FOUND Technician need to send line flex_message for team_name {}'.format(technician_team_name))
-            
-        supervisor_detail = PersanalDetaillogin.objects.select_related().filter(need_to_notify=True,user_type__id__in=[2])
+                creating_flex_messages.PushMessage(messages, user_id)
+            print('SUCCESS TO SEND LINE TO Technician need to send line flex_message for team_name {} line_id{}'.format(
+                name, user_id))
+        else:
+            print('DO NOT FOUND Technician need to send line flex_message for team_name {}'.format(
+                technician_team_name))
+
+        supervisor_detail = PersanalDetaillogin.objects.select_related().filter(
+            need_to_notify=True, user_type__id__in=[2])
         if supervisor_detail.exists():
-            for detail in technician_detail :
+            for detail in technician_detail:
                 user_id = detail.line_id
                 name = detail.name
-                creating_flex_messages.PushMessage(messages,user_id)
-            print ('SUCCESS TO SEND LINE TO Supervisor need to send line flex_message for Supervisor Name {} line_id{}'.format(name,user_id))
-        else :
-            print ('DO NOT FOUND LINE TO Supervisor need to send line flex_message for Team Name {}'.format(technician_team_name))
-        
+                creating_flex_messages.PushMessage(messages, user_id)
+            print('SUCCESS TO SEND LINE TO Supervisor need to send line flex_message for Supervisor Name {} line_id{}'.format(
+                name, user_id))
+        else:
+            print('DO NOT FOUND LINE TO Supervisor need to send line flex_message for Team Name {}'.format(
+                technician_team_name))
     def CreateFormDetailByIpAddress(results):
         for site_detail in results:
             print(site_detail['site_name'])
@@ -552,7 +558,6 @@ class creating_flex_messages():
                         -1, content_nozzle)
                 data['contents']['contents'].insert(1, content_log_address)
         return (data)
-
     def CreateFormAllStatusForMGR(dt, VIS_SUM_OFFLINE, MWGT_SUM_OFFLINE, NOZZLE_OFFLINE, BATTERY_OFFLINE, TOTAL_SITE_ACTIVE):
         data = {"type": "flex",
                 "altText": "Flex Message",
@@ -761,7 +766,6 @@ class creating_flex_messages():
 
                 }}
         return data
-
     def CreateFormAllStatusForFirstLevel(dt, VIS_SUM_OFFLINE, MWGT_SUM_OFFLINE, NOZZLE_OFFLINE, BATTERY_OFFLINE, TOTAL_SITE_ACTIVE, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -990,7 +994,6 @@ class creating_flex_messages():
 
                 }}
         return data
-
     def CreateFormVisFlexMessageDetail(data, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -1721,7 +1724,6 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
-
     def CreateFormMwgtFlexMessageDetail(data, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -2452,7 +2454,6 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
-
     def CreateFormNozzleFlexMessageDetail(data, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -3183,7 +3184,6 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
-
     def CreateFormBatteryFlexMessageDetail(data, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -3914,26 +3914,23 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
-
-    def CreateNotifyFormVisOffline(line_data,site_profile):
+    def CreateNotifyFormVisOffline(line_data, site_profile):
+        print ('site_profile',site_profile)
+        print (type(site_profile))
         datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
-        result_site = site_profile # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
-        day_loss = line_data[0] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
-        hours_loss = line_data[1] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 1
-        minutes_loss = line_data[2] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
-        datetime_now = line_data[3] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
-        MWGT_last_time = line_data[4] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
+        # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
+        result_site = site_profile
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
+        day_loss = line_data[0]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 1
+        hours_loss = line_data[1]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
+        minutes_loss = line_data[2]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
+        datetime_now = line_data[3]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
+        VIS_last_time = line_data[4]
         technician_team_name = result_site.site.team_support.team
-        messages = 'VIS Status ' + '\n' + \
-                        'Type : ' + ' การติดต่อ : ไม่ปกติ ' + '\n' \
-                            'สถานี : ' + result_site.site.station_name + '\n' + \
-                                'IP : ' + result_site.site.station_ip + '\n' + \
-                                    'ติดต่อไม่ได้เมื่อ : ' + datetime_now + '\n' + \
-                                        'ติดต่อครั้งล่าสุด : ' + MWGT_last_time + '\n' + \
-                                            'ขาดการติดต่อนาน : ' + str(day_loss) + \
-                                                ' วัน ' + str(hours_loss) + \
-                                                    ' ชม ' + str(minutes_loss) + \
-                                                        ' นาที' + '\n' + 'ช่างเขต : ' + result_site.site.team_support.team_name
         content = {"type": "flex",
                    "altText": "VIS OFFLINE",
                    "contents":
@@ -4051,7 +4048,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "sm",
                                                "align": "end",
-                                               
+
                                                "contents": []
                                            }
                                        ]
@@ -4072,11 +4069,11 @@ class creating_flex_messages():
                                            },
                                            {
                                                "type": "text",
-                                               "text": str(MWGT_last_time),
+                                               "text": str(VIS_last_time),
                                                "weight": "bold",
                                                "size": "sm",
                                                "align": "end",
-                                               
+
                                                "contents": []
                                            }
                                        ]
@@ -4101,7 +4098,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "sm",
                                                "align": "end",
-                                               
+
                                                "contents": []
                                            }
                                        ]
@@ -4126,7 +4123,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                
+
                                                "contents": []
                                            }
                                        ]
@@ -4163,4 +4160,741 @@ class creating_flex_messages():
                                ]
                            }
                        }]}}
-        return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name,content)
+        return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name, content)
+    def CreateNotifyFormVisOnline(line_data, site_profile):
+        datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
+        # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
+        result_site = site_profile[1]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
+        day_loss = line_data[0]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 1
+        hours_loss = line_data[1]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
+        minutes_loss = line_data[2]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
+        datetime_now = line_data[3]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
+        VIS_last_time = line_data[4]
+        Error_start = site_profile[2].Error_start.strftime("%d.%m.%y %H:%M")
+        technician_team_name = result_site.site.team_support.team
+        content = {"type": "flex",
+                   "altText": "VIS OFFLINE",
+                   "contents":
+                   {
+                       "type": "carousel",
+                       "contents": [{
+                           "type": "bubble",
+                           "hero": {
+                               "type": "image",
+                               "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                               "align": "center",
+                               "gravity": "bottom",
+                               "size": "full",
+                               "aspectRatio": "35:8",
+                               "aspectMode": "fit",
+                               "action": {
+                                   "type": "uri",
+                                   "label": "Line",
+                                   "uri": "https://linecorp.com/"
+                               },
+                               "position": "relative"
+                           },
+                           "body": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "contents": [
+                                   {
+                                       "type": "text",
+                                       "text": str(datetime_now),
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": result_site.site.station_name,
+                                       "weight": "bold",
+                                       "size": "md",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "VIS : IP " + result_site.site.station_ip,
+                                       "weight": "bold",
+                                       "size": "sm",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "VIS ONLINE",
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#20970EFF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "sm",
+                                       "color": "#165C3CFF"
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "xs",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "สถานะ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "Online",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อไม่ได้เมื่อ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(Error_start),
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อได้แล้วเมื่อ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(datetime_now),
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ขาดการติดต่อรวมs",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(day_loss) + " วัน " + str(hours_loss) + " ชม " + str(minutes_loss) + " นาที",
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ช่างเขต",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "คุณ " + str(result_site.site.team_support.team_name),
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "md",
+                                       "color": "#165C3CFF"
+                                   }
+                               ]
+                           },
+                           "footer": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "flex": 0,
+                               "spacing": "sm",
+                               "contents": [
+                                   {
+                                       "type": "button",
+                                       "action": {
+                                           "type": "uri",
+                                           "label": "www.orpak.co.th",
+                                           "uri": "https://www.orpak.com/"
+                                       },
+                                       "color": "#078025FF",
+                                       "margin": "none",
+                                       "height": "sm",
+                                       "style": "secondary"
+                                   },
+                                   {
+                                       "type": "spacer",
+                                       "size": "sm"
+                                   }
+                               ]
+                           }
+                       }]}}
+        return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name, content)
+    def CreateNotifyFormMwgtOffline(line_data, site_profile):
+        datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
+        # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
+        result_site = site_profile[1]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
+        day_loss = line_data[0]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 1
+        hours_loss = line_data[1]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
+        minutes_loss = line_data[2]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
+        datetime_now = line_data[3]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
+        VIS_last_time = line_data[4]
+        technician_team_name = result_site.site.team_support.team
+        content = {"type": "flex",
+                   "altText": "MWGT OFFLINE",
+                   "contents":
+                   {
+                       "type": "carousel",
+                       "contents": [{
+                           "type": "bubble",
+                           "hero": {
+                               "type": "image",
+                               "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                               "align": "center",
+                               "gravity": "bottom",
+                               "size": "full",
+                               "aspectRatio": "35:8",
+                               "aspectMode": "fit",
+                               "action": {
+                                   "type": "uri",
+                                   "label": "Line",
+                                   "uri": "https://linecorp.com/"
+                               },
+                               "position": "relative"
+                           },
+                           "body": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "contents": [
+                                   {
+                                       "type": "text",
+                                       "text": str(datetime_now),
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": result_site.site.station_name,
+                                       "weight": "bold",
+                                       "size": "md",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "MWGT : IP " + result_site.site.mwgt_ip,
+                                       "weight": "bold",
+                                       "size": "sm",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "MWGT OFFLINE",
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#DE3A13FF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "sm",
+                                       "color": "#165C3CFF"
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "xs",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "สถานะ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "Offline",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อไม่ได้เมื่อ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(datetime_now),
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อครั้งล่าสุด",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(VIS_last_time),
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ขาดการติดต่อนาน",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(day_loss) + " วัน " + str(hours_loss) + " ชม " + str(minutes_loss) + " นาที",
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ช่างเขต",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "คุณ " + str(result_site.site.team_support.team_name),
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "md",
+                                       "color": "#165C3CFF"
+                                   }
+                               ]
+                           },
+                           "footer": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "flex": 0,
+                               "spacing": "sm",
+                               "contents": [
+                                   {
+                                       "type": "button",
+                                       "action": {
+                                           "type": "uri",
+                                           "label": "www.orpak.co.th",
+                                           "uri": "https://www.orpak.com/"
+                                       },
+                                       "color": "#078025FF",
+                                       "margin": "none",
+                                       "height": "sm",
+                                       "style": "secondary"
+                                   },
+                                   {
+                                       "type": "spacer",
+                                       "size": "sm"
+                                   }
+                               ]
+                           }
+                       }]}}
+        return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name, content)
+    def CreateNotifyFormMwgtOnline(line_data, site_profile):
+        datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
+        # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
+        result_site = site_profile[1]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
+        day_loss = line_data[0]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 1
+        hours_loss = line_data[1]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
+        minutes_loss = line_data[2]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
+        datetime_now = line_data[3]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
+        VIS_last_time = line_data[4]
+        Error_start = site_profile[2].Error_start.strftime("%d.%m.%y %H:%M")
+        technician_team_name = result_site.site.team_support.team
+        content = {"type": "flex",
+                   "altText": "MWGT ONLINE",
+                   "contents":
+                   {
+                       "type": "carousel",
+                       "contents": [{
+                           "type": "bubble",
+                           "hero": {
+                               "type": "image",
+                               "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                               "align": "center",
+                               "gravity": "bottom",
+                               "size": "full",
+                               "aspectRatio": "35:8",
+                               "aspectMode": "fit",
+                               "action": {
+                                   "type": "uri",
+                                   "label": "Line",
+                                   "uri": "https://linecorp.com/"
+                               },
+                               "position": "relative"
+                           },
+                           "body": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "contents": [
+                                   {
+                                       "type": "text",
+                                       "text": str(datetime_now),
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": result_site.site.station_name,
+                                       "weight": "bold",
+                                       "size": "md",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "MWGT : IP " + result_site.site.mwgt_ip,
+                                       "weight": "bold",
+                                       "size": "sm",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "MWGT ONLINE",
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#20970EFF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "sm",
+                                       "color": "#165C3CFF"
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "xs",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "สถานะ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "Online",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อไม่ได้เมื่อ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(Error_start),
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อได้แล้วเมื่อ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(datetime_now),
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ขาดการติดต่อรวม",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(day_loss) + " วัน " + str(hours_loss) + " ชม " + str(minutes_loss) + " นาที",
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ช่างเขต",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "คุณ " + str(result_site.site.team_support.team_name),
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "md",
+                                       "color": "#165C3CFF"
+                                   }
+                               ]
+                           },
+                           "footer": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "flex": 0,
+                               "spacing": "sm",
+                               "contents": [
+                                   {
+                                       "type": "button",
+                                       "action": {
+                                           "type": "uri",
+                                           "label": "www.orpak.co.th",
+                                           "uri": "https://www.orpak.com/"
+                                       },
+                                       "color": "#078025FF",
+                                       "margin": "none",
+                                       "height": "sm",
+                                       "style": "secondary"
+                                   },
+                                   {
+                                       "type": "spacer",
+                                       "size": "sm"
+                                   }
+                               ]
+                           }
+                       }]}}
+        return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name, content)

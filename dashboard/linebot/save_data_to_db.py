@@ -9,23 +9,25 @@ from dateutil.relativedelta import relativedelta, SA, TH
 from linebot.calculate_function import *
 
 class save_data_to_db ():
-    def SaveDataSendLineFailedToBD (request,site_profile): # สำหรับ save ข้อมูล line notify ที่ไม่สามารถส่งได้
-        result_site = site_profile[0]
-        result_status = site_profile[1]
-        message_save = request
-        try :
-            save_record = Store_data_send_line_failed()
-            save_record.site = result_site.name
-            save_record.name_id = result_site.name_id
-            save_record.team_name = result_site.team_support.team
-            save_record.date_failed = timezone.now()
-            save_record.messages = message_save
-            save_record.status_send = 'failed'
-            save_record.save(request)
-            return True
-        except :
-            print('Cannot SaveDataSendLineFailedToBD')
-            return False
+    def SaveDataSendLineFailedToBD (request,path,message,site_profile): # สำหรับ save ข้อมูล line notify ที่ไม่สามารถส่งได้
+        if request == 'LINE_NOTIFY' :
+            result_site = site_profile
+            result_status = site_profile
+            message_save = request
+            try :
+                save_record = Store_data_send_line_failed()
+                save_record.name_id = result_site.name_id
+                save_record.date_failed = timezone.now()
+                save_record.messages = message
+                save_record.site = result_site.site.station_name
+                save_record.status_send = 'failed'
+                save_record.site_id = result_site.name_id
+                save_record.team_name = result_site.site.team_support.team_name
+                save_record.save(request)
+                return True
+            except :
+                print('Cannot SaveDataSendLineFailedToBD')
+                return False
     def SaveRecordStatusErrorLogger (request,type_save): #สำหรับ save record สำหรับ ERROR ต่างๆ
         try :
             # บันทึก Error ไปที่ database
@@ -478,7 +480,7 @@ class save_data_to_db ():
             save_record.group_name = group_name
             save_record.save(request)
         return HttpResponse(200)  # Response back to request
-
+    
 
 
 
