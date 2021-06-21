@@ -141,7 +141,7 @@ class creating_line_data ():
             messages_header = 'NOZZLE-OFFLINE : '+'สถานี : ' + str(result_site.site.station_name)
             path_save=creating_picture_for_line_notify.CreatingPictureForNOZZLE('NOZZLE',line_data,site_profile,'OFF-LINE') #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
             result_notify=creating_line_data.send_notify_picture(path_save, result_site.site.team_support.line_notify_token,messages_header,site_profile)
-            # return creating_flex_messages.CreateNotifyFormMwgtOnline(line_data,site_profile)
+            return creating_flex_messages.CreateNotifyFormNozzleOffline(line_data,site_profile)
         def Line_Creating_NOZZLE_ONLINE (line_data,site_profile):
             result_site = site_profile # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
             day_loss = line_data[0] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
