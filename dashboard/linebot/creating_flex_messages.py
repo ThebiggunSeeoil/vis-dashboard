@@ -4925,7 +4925,7 @@ class creating_flex_messages():
         datetime_now = line_data[3]
         # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
         VIS_last_time = line_data[4]
-     
+
         technician_team_name = result_site.site.team_support.team_name
         station_name = result_site.site.station_name
         mwgt_ip = result_site.site.mwgt_ip
@@ -5054,7 +5054,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5079,7 +5079,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5104,7 +5104,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5129,7 +5129,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5154,7 +5154,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                               
+
                                                "contents": []
                                            }
                                        ]
@@ -5179,7 +5179,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5204,7 +5204,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5229,7 +5229,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "sm",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5254,7 +5254,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                               
+
                                                "contents": []
                                            }
                                        ]
@@ -5293,6 +5293,7 @@ class creating_flex_messages():
                        }]}}
         print('content ', content)
         return creating_flex_messages.CheckPermissionBeforeSendLine(result_site.site.team_support.team, content)
+
     def CreateNotifyFormNozzleOffline(line_data, site_profile):
         # print('Nozzle')
         datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
@@ -5306,7 +5307,7 @@ class creating_flex_messages():
         datetime_now = line_data[3]
         # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
         VIS_last_time = line_data[4]
-     
+
         technician_team_name = result_site.site.team_support.team_name
         station_name = result_site.site.station_name
         mwgt_ip = result_site.site.mwgt_ip
@@ -5435,7 +5436,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5460,7 +5461,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5485,7 +5486,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5510,7 +5511,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5535,7 +5536,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                               
+
                                                "contents": []
                                            }
                                        ]
@@ -5560,7 +5561,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5585,7 +5586,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5610,7 +5611,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "sm",
                                                "align": "end",
-                                              
+
                                                "contents": []
                                            }
                                        ]
@@ -5635,7 +5636,7 @@ class creating_flex_messages():
                                                "weight": "bold",
                                                "size": "md",
                                                "align": "end",
-                                               
+
                                                "contents": []
                                            }
                                        ]
@@ -5673,4 +5674,328 @@ class creating_flex_messages():
                            }
                        }]}}
         print('content ', content)
+        return creating_flex_messages.CheckPermissionBeforeSendLine(result_site.site.team_support.team, content)
+
+    def CreateNotifyFormBatteryStatus(type_alarm, site_profile):
+        # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
+        datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
+        result_site = site_profile
+        if type_alarm == 'NORMAL':
+            Header_status = 'BATTERY NORMAL'
+            Battery_status = 'Normal'
+            color_status = '#279510FF'
+        elif type_alarm == 'LOW':
+            Header_status = 'BATTERY LOW'
+            color_status = '#EAD447FF'
+            Battery_status = 'Low'
+        elif type_alarm == 'ALARM':
+            Header_status = 'BATTERY ALARM'
+            Battery_status = 'Alarm'
+            color_status = '#E71913FF'
+
+        messages = 'BATTERY Status ' + '\n' + \
+            'Type : ' + ' Battery : NORMAL ' + '\n' \
+            'สถานี : ' + str(result_site.site.station_name) + '\n' + \
+            'IP : ' + str(result_site.site.station_ip) + '\n' + \
+            'Serial : ' + str(result_site.NOZZLE_SN) + '\n' + \
+            'หน้าที่ : ' + str(result_site.NOZZLE_pump_log_address) + '\n' + \
+            'มือจ่าย  : ' + str(result_site.NOZZLE_num) + '\n' + \
+            'ระดับแรงดัน : ' + str(result_site.NOZZLE_Battery_Status_Volts) + ' V.' + '\n' \
+            + 'ช่างเขต : ' + result_site.site.team_support.team_name
+
+        content = {"type": "flex",
+                   "altText": Header_status,
+                   "contents":
+                   {
+                       "type": "carousel",
+                       "contents": [{
+                           "type": "bubble",
+                           "hero": {
+                               "type": "image",
+                               "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                               "align": "center",
+                               "gravity": "bottom",
+                               "size": "full",
+                               "aspectRatio": "35:8",
+                               "aspectMode": "fit",
+                               "action": {
+                                   "type": "uri",
+                                   "label": "Line",
+                                   "uri": "https://linecorp.com/"
+                               },
+                               "position": "relative"
+                           },
+                           "body": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "contents": [
+                                   {
+                                       "type": "text",
+                                       "text": datetime_now,
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": str(result_site.site.station_name),
+                                       "weight": "bold",
+                                       "size": "md",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "MWGT : IP " + str(result_site.site.mwgt_ip),
+                                       "weight": "bold",
+                                       "size": "sm",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": Header_status,
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": color_status,
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "sm",
+                                       "color": "#165C3CFF"
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "xs",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "สถานะ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": Battery_status,
+                                               "size": "sm",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ตำแหน่งหน้าจ่าย",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(result_site.NOZZLE_pump_log_address),
+                                               "size": "sm",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ตำแหน่งมือจ่าย",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(result_site.NOZZLE_num),
+                                               "size": "sm",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "BatteryVolt",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(result_site.NOZZLE_Battery_Status_Volts),
+                                               "size": "sm",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "SerialNo.",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(result_site.NOZZLE_SN),
+                                               "size": "sm",
+                                               "align": "end",
+                                               "action": {
+                                                   "type": "postback",
+                                                   "text": "กำลังจัดส่งรายละเอียด",
+                                                   "data": "10.23.0.130"
+                                               },
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "LastCon.",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(result_site.NOZZLE_Last_conn),
+                                               "size": "sm",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "การติดต่อล่าสุด",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(result_site.Timestramp.strftime("%d.%m.%y %H:%M")),
+                                               "size": "sm",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ช่างเขต",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "คุณ " + str(result_site.site.team_support.team_name),
+                                               "size": "sm",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "md",
+                                       "color": "#165C3CFF"
+                                   }
+                               ]
+                           },
+                           "footer": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "flex": 0,
+                               "spacing": "sm",
+                               "contents": [
+                                   {
+                                       "type": "button",
+                                       "action": {
+                                           "type": "uri",
+                                           "label": "www.orpak.co.th",
+                                           "uri": "https://www.orpak.com/"
+                                       },
+                                       "color": "#078025FF",
+                                       "margin": "none",
+                                       "height": "sm",
+                                       "style": "secondary"
+                                   },
+                                   {
+                                       "type": "spacer",
+                                       "size": "sm"
+                                   }
+                               ]
+                           }
+                       }]}}
+
         return creating_flex_messages.CheckPermissionBeforeSendLine(result_site.site.team_support.team, content)

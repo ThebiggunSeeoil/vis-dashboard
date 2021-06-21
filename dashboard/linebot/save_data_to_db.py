@@ -350,35 +350,35 @@ class save_data_to_db ():
             print (low,alarm,failed)
         if float(battery_volt) > float(low) :
             battery_type = 'normal'
-            try :
-                notify_check = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).values('BATTERY_status_check')
-                site_detail = Status.objects.select_related().get(name_id=name_id,NOZZLE_SN=NOZZLE_SN)
-                print ('notify_check',notify_check)
-                print ('check_status_battery_first ',notify_check[0]['BATTERY_status_check'])
-                if notify_check[0]['BATTERY_status_check'] == 'normal' :
-                    try :
-                        update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=battery_volt)
-                        if update_battery_to_status > 0 :
-                            print ('SECCESS Update battery status for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
-                            return True
-                        else :
-                            print ('FAILED Update battery status for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
-                            return True
-                    except Status.DoesNotExist:
-                        print ('No data filed to update battery to status')
-                elif notify_check[0]['BATTERY_status_check'] != 'normal' :
-                    # result_status_error_logger = Status_Error_logger.objects.all().filter(name_id=name_id,Error_type='BATTERY_LOW').order_by('-Timestramp').first()
-                    send_line_notify = creating_line_data.Line_Creating_BATTERY_NORMAL(site_detail)
-                    if send_line_notify == True :
-                        print ('SECCESS send notify battery back to normal for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
-                    elif send_line_notify != False :
-                        print ('FAILED send notify battery back to normal  for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
-                    Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=battery_volt,BATTERY_notify_low=False,BATTERY_notify_alarm=False)
-                    print ('SUCCESS update status Line Notify to False  for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
-                    save_data_to_db.UpdateStatusLoggerBATTERYBackToNormal(name_id,NOZZLE_SN)
-                    print ('SUCCESS update battery to status back to normal  for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
-            except :
-                print ('ERROR update battery to status back to normal  for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))   
+            # try :
+            notify_check = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).values('BATTERY_status_check')
+            site_detail = Status.objects.select_related().get(name_id=name_id,NOZZLE_SN=NOZZLE_SN)
+            print ('notify_check',notify_check)
+            print ('check_status_battery_first ',notify_check[0]['BATTERY_status_check'])
+            if notify_check[0]['BATTERY_status_check'] == 'normal' :
+                try :
+                    update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=float(battery_volt))
+                    if update_battery_to_status > 0 :
+                        print ('SECCESS Update battery status for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
+                        return True
+                    else :
+                        print ('FAILED Update battery status for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
+                        return True
+                except Status.DoesNotExist:
+                    print ('No data filed to update battery to status')
+            elif notify_check[0]['BATTERY_status_check'] != 'normal' :
+                # result_status_error_logger = Status_Error_logger.objects.all().filter(name_id=name_id,Error_type='BATTERY_LOW').order_by('-Timestramp').first()
+                send_line_notify = creating_line_data.Line_Creating_BATTERY_NORMAL(site_detail)
+                if send_line_notify == True :
+                    print ('SECCESS send notify battery back to normal for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
+                elif send_line_notify != False :
+                    print ('FAILED send notify battery back to normal  for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
+                Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=float(battery_volt),BATTERY_notify_low=False,BATTERY_notify_alarm=False)
+                print ('SUCCESS update status Line Notify to False  for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
+                save_data_to_db.UpdateStatusLoggerBATTERYBackToNormal(name_id,NOZZLE_SN)
+                print ('SUCCESS update battery to status back to normal  for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
+            # except :
+            #     print ('ERROR update battery to status back to normal  for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))   
         elif float(battery_volt) >= float(alarm) :
             battery_type = 'low'
             try :
@@ -395,12 +395,12 @@ class save_data_to_db ():
                             print ('SECCESS send notify battery low for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
                         elif send_line_notify != False :
                             print ('FAILED send notify battery low for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
-                        update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_notify_low=True,BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=battery_volt)
+                        update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_notify_low=True,BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=float(battery_volt))
                         print ('SUCCESS update battery to status is low for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
                     except Status.DoesNotExist:
                         print ('ERROR update battery to status is low for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN)) 
                 elif notify_check[0]['BATTERY_notify_low'] == 'True' :
-                    update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_notify_low=True,BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=battery_volt)
+                    update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_notify_low=True,BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=float(battery_volt))
                     return True
             except Status.DoesNotExist:
                 print ('DO NOT FOUND data for update battery for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN)) 
@@ -420,12 +420,12 @@ class save_data_to_db ():
                             print ('SECCESS send notify battery failed for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
                         elif send_line_notify != False :
                             print ('FAILED send notify battery failed for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
-                        update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_notify_alarm=True,BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=battery_volt)
+                        update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_notify_alarm=True,BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=float(battery_volt))
                         print ('SUCCESS update battery to status is failed for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN))
                     except Status.DoesNotExist:
                         print ('ERROR update battery to status is failed for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN)) 
                 elif notify_check[0]['BATTERY_notify_low'] == 'True' :
-                    update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_notify_alarm=True,BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=battery_volt)
+                    update_battery_to_status = Status.objects.filter(name_id=name_id,NOZZLE_SN=NOZZLE_SN).update(BATTERY_notify_alarm=True,BATTERY_status_check=battery_type,NOZZLE_Battery_Status_Volts=float(battery_volt))
                     return True
             except Status.DoesNotExist:
                 print ('DO NOT FOUND data for update battery for name_id {} nozzle_sn {}'.format(name_id,NOZZLE_SN)) 
@@ -462,7 +462,7 @@ class save_data_to_db ():
                 save_record.save(request)
                 # ส่ง record ไปทำการ update status at table Status for update battery_status_check
                 save_data_to_db.UpdateStatusAfterBatteryLastCheck(name_id,data_battery['BatLevel'],data_battery['SN'].strip(),data_battery)
-                # save_data_to_db.UpdateStatusAfterBatteryLastCheck(name_id,'3.6',data_battery['SN'].strip(),data_battery) # จำลองส่งค่า bat ต่ำๆเข้าไป
+                # save_data_to_db.UpdateStatusAfterBatteryLastCheck(name_id,'3.8',data_battery['SN'].strip(),data_battery) # จำลองส่งค่า bat ต่ำๆเข้าไป
                 print ('UPDATED NEW data battery for Name_id {} Nozzle_SN {} Volt {}  ON {}'.format(name_id,data_battery['SN'],data_battery['BatLevel'],datetime.datetime.now().strftime("%d.%m.%Y %H:%M")))
         return 200  # Response back to request
     def CreateLineGroup(request,group_name):

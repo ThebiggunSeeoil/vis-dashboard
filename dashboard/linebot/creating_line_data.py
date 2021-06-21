@@ -87,7 +87,7 @@ class creating_line_data ():
             # minutes_loss = line_data[2] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
             # datetime_now = line_data[3] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
             # Error_start = line_data[4] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
-            messages = 'BATTERY Status ' + '\n' + \
+            messages = 'BATTERY Status LOW ' + '\n' + \
                             'Type : ' + ' Battery : LOW ' + '\n' \
                                 'สถานี : ' + result_site.site.station_name + '\n' + \
                                     'IP : ' + str(result_site.site.station_ip) + '\n' + \
@@ -96,7 +96,10 @@ class creating_line_data ():
                                                 'มือจ่าย  : ' + str(result_site.NOZZLE_num) + '\n' + \
                                             'ระดับแรงดัน : ' + str(result_site.NOZZLE_Battery_Status_Volts) + ' V.'+ '\n' \
                                                     + 'ช่างเขต : ' + result_site.site.team_support.team_name
-            return creating_line_data.send_notify(messages , result_site.site.team_support.line_notify_token) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            messages_header = 'BATTERY : LOW '+'สถานี : ' + str(result_site.site.station_name)
+            path_save=creating_picture_for_line_notify.CreatingPictureForBATTERY('LOW',result_site) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            result_notify=creating_line_data.send_notify_picture(path_save, result_site.site.team_support.line_notify_token,messages_header,site_profile)
+            return creating_flex_messages.CreateNotifyFormBatteryStatus('LOW',site_profile)
         def Line_Creating_BATTERY_FAILED (site_profile):
             result_site = site_profile # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
             # day_loss = line_data[0] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
@@ -104,7 +107,7 @@ class creating_line_data ():
             # minutes_loss = line_data[2] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
             # datetime_now = line_data[3] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
             # Error_start = line_data[4] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
-            messages = 'BATTERY Status ' + '\n' + \
+            messages = 'BATTERY Status ALARM ' + '\n' + \
                             'Type : ' + ' Battery : FAILED ' + '\n' \
                                 'สถานี : ' + result_site.site.station_name + '\n' + \
                                     'IP : ' + str(result_site.site.station_ip) + '\n' + \
@@ -113,7 +116,10 @@ class creating_line_data ():
                                                 'มือจ่าย  : ' + str(result_site.NOZZLE_num) + '\n' + \
                                             'ระดับแรงดัน : ' + str(result_site.NOZZLE_Battery_Status_Volts) + ' V.'+ '\n' \
                                                     + 'ช่างเขต : ' + result_site.site.team_support.team_name
-            return creating_line_data.send_notify(messages , result_site.site.team_support.line_notify_token) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            messages_header = 'BATTERY : ALARM '+'สถานี : ' + str(result_site.site.station_name)
+            path_save=creating_picture_for_line_notify.CreatingPictureForBATTERY('ALARM',result_site) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            result_notify=creating_line_data.send_notify_picture(path_save, result_site.site.team_support.line_notify_token,messages_header,site_profile)
+            return creating_flex_messages.CreateNotifyFormBatteryStatus('ALARM',site_profile)
         def Line_Creating_BATTERY_NORMAL (site_profile):
             result_site = site_profile # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
             # day_loss = line_data[0] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
@@ -130,7 +136,11 @@ class creating_line_data ():
                                                 'มือจ่าย  : ' + str(result_site.NOZZLE_num) + '\n' + \
                                             'ระดับแรงดัน : ' + str(result_site.NOZZLE_Battery_Status_Volts) + ' V.'+ '\n' \
                                                     + 'ช่างเขต : ' + result_site.site.team_support.team_name
-            return creating_line_data.send_notify(messages , result_site.site.team_support.line_notify_token) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token       
+            # return creating_line_data.send_notify(messages , result_site.site.team_support.line_notify_token) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token       
+            messages_header = 'BATTERY : NORMAL'+'สถานี : ' + str(result_site.site.station_name)
+            path_save=creating_picture_for_line_notify.CreatingPictureForBATTERY('NORMAL',result_site) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            result_notify=creating_line_data.send_notify_picture(path_save, result_site.site.team_support.line_notify_token,messages_header,site_profile)
+            return creating_flex_messages.CreateNotifyFormBatteryStatus('NORMAL',site_profile)
         def Line_Creating_NOZZLE_OFFLINE (line_data,site_profile):
             result_site = site_profile # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
             day_loss = line_data[0] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
