@@ -41,7 +41,7 @@ class creating_line_data ():
                     return True
                 elif r.status_code != 200 :
                     datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
-                    save_data_to_db.SaveDataSendLineFailedToBD('LINE_NOTIFY',path,message,site_profile)
+                    # save_data_to_db.SaveDataSendLineFailedToBD('LINE_NOTIFY',path,message,site_profile)
                     print ('FAILED SEND LINE GO TO SAVE PICTURE FOR MESSAGES {} ON {}'.format(message,datetime_now))
                     return True
             else:
@@ -138,19 +138,10 @@ class creating_line_data ():
             minutes_loss = line_data[2] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
             datetime_now = line_data[3] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
             Error_start = line_data[4] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
-            messages = 'NOZZLE Status ' + '\n' + \
-                            'Type : ' + ' การติดต่อ : ไม่ปกติ' + '\n'\
-                                'สถานี : ' + result_site.site.station_name + '\n' + \
-                                    'IP : ' + result_site.site.station_ip + '\n' + \
-                                        'หน้าจ่ายที่  : ' + result_site.NOZZLE_pump_log_address + '\n' + \
-                                            'มืือจ่าย : ' + result_site.NOZZLE_num + '\n' + \
-                                        'ติดต่อไม่ได้เมื่อ : ' + Error_start + '\n' + \
-                                            'ติดต่อได้ล่าสุด : ' + datetime_now + '\n' + \
-                                                'ขาดการติดต่อนาน : ' + str(day_loss) + \
-                                                    ' วัน ' + str(hours_loss) + \
-                                                        ' ชม ' + str(minutes_loss) + \
-                                                            ' นาที' + '\n' + 'ช่างเขต : ' + result_site.site.team_support.team_name
-            return creating_line_data.send_notify(messages , result_site.site.team_support.line_notify_token) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            messages_header = 'NOZZLE-OFFLINE : '+'สถานี : ' + str(result_site.site.station_name)
+            path_save=creating_picture_for_line_notify.CreatingPictureForNOZZLE('NOZZLE',line_data,site_profile,'OFF-LINE') #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            result_notify=creating_line_data.send_notify_picture(path_save, result_site.site.team_support.line_notify_token,messages_header,site_profile)
+            # return creating_flex_messages.CreateNotifyFormMwgtOnline(line_data,site_profile)
         def Line_Creating_NOZZLE_ONLINE (line_data,site_profile):
             result_site = site_profile # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
             day_loss = line_data[0] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
@@ -158,16 +149,8 @@ class creating_line_data ():
             minutes_loss = line_data[2] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
             datetime_now = line_data[3] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
             Error_start = line_data[4] # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
-            messages = 'NOZZLE Status ' + '\n' + \
-                            'Type : ' + ' การติดต่อ : ปกติ' + '\n'\
-                                'สถานี : ' + result_site.site.station_name + '\n' + \
-                                    'IP : ' + result_site.site.station_ip + '\n' + \
-                                        'หน้าจ่ายที่  : ' + result_site.NOZZLE_pump_log_address + '\n' + \
-                                            'มืือจ่าย : ' + result_site.NOZZLE_num + '\n' + \
-                                        'ติดต่อไม่ได้เมื่อ : ' + Error_start + '\n' + \
-                                            'ติดต่อได้ล่าสุด : ' + datetime_now + '\n' + \
-                                                'ขาดการติดต่อรวม : ' + str(day_loss) + \
-                                                    ' วัน ' + str(hours_loss) + \
-                                                        ' ชม ' + str(minutes_loss) + \
-                                                            ' นาที' + '\n' + 'ช่างเขต : ' + result_site.site.team_support.team_name
-            return creating_line_data.send_notify(messages , result_site.site.team_support.line_notify_token) #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            messages_header = 'NOZZLE-ONLINE : '+'สถานี : ' + str(result_site.site.station_name)
+            path_save=creating_picture_for_line_notify.CreatingPictureForNOZZLE('NOZZLE',line_data,site_profile,'ON-LINE') #result_site.team_support.line_notify_token คือ อ้างอิงจาก site_profile --> อ้างไปที่ ตาราง Site -- > team_support --> อ้างไปที่ ตาราง Team --> line_notify_token
+            result_notify=creating_line_data.send_notify_picture(path_save, result_site.site.team_support.line_notify_token,messages_header,site_profile)
+            
+            return creating_flex_messages.CreateNotifyFormNozzleOnline(line_data,site_profile)

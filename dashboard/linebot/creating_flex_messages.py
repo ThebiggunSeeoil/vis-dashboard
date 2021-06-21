@@ -10,6 +10,7 @@ Channel_access_token = settings.LINE_CHANNEL_ACCESS_TOKEN
 
 class creating_flex_messages():
     def PushMessage(messages, user_id):
+        print('Nozzle 2')
         Token = Channel_access_token
         LINE_API = 'https://api.line.me/v2/bot/message/push'
         # print('line API {}'.format(push_new_messasge))
@@ -29,6 +30,7 @@ class creating_flex_messages():
         r = requests.post(LINE_API, headers=headers, data=data)
         print(r)
         return 200
+
     def CheckPermissionBeforeSendLine(technician_team_name, messages):
         # start to check permission before send
         technician_detail = PersanalDetaillogin.objects.select_related().filter(
@@ -56,6 +58,7 @@ class creating_flex_messages():
         else:
             print('DO NOT FOUND LINE TO Supervisor need to send line flex_message for Team Name {}'.format(
                 technician_team_name))
+
     def CreateFormDetailByIpAddress(results):
         for site_detail in results:
             print(site_detail['site_name'])
@@ -558,6 +561,7 @@ class creating_flex_messages():
                         -1, content_nozzle)
                 data['contents']['contents'].insert(1, content_log_address)
         return (data)
+
     def CreateFormAllStatusForMGR(dt, VIS_SUM_OFFLINE, MWGT_SUM_OFFLINE, NOZZLE_OFFLINE, BATTERY_OFFLINE, TOTAL_SITE_ACTIVE):
         data = {"type": "flex",
                 "altText": "Flex Message",
@@ -766,6 +770,7 @@ class creating_flex_messages():
 
                 }}
         return data
+
     def CreateFormAllStatusForFirstLevel(dt, VIS_SUM_OFFLINE, MWGT_SUM_OFFLINE, NOZZLE_OFFLINE, BATTERY_OFFLINE, TOTAL_SITE_ACTIVE, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -994,6 +999,7 @@ class creating_flex_messages():
 
                 }}
         return data
+
     def CreateFormVisFlexMessageDetail(data, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -1724,6 +1730,7 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
+
     def CreateFormMwgtFlexMessageDetail(data, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -2454,6 +2461,7 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
+
     def CreateFormNozzleFlexMessageDetail(data, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -3184,6 +3192,7 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
+
     def CreateFormBatteryFlexMessageDetail(data, user_type):
         if user_type.user_type.id == 6:
             content_tech = {
@@ -3914,9 +3923,10 @@ class creating_flex_messages():
                 "altText": "Flex Message",
                 "contents": content}
         return data
+
     def CreateNotifyFormVisOffline(line_data, site_profile):
-        print ('site_profile',site_profile)
-        print (type(site_profile))
+        print('site_profile', site_profile)
+        print(type(site_profile))
         datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
         # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
         result_site = site_profile
@@ -4161,6 +4171,7 @@ class creating_flex_messages():
                            }
                        }]}}
         return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name, content)
+
     def CreateNotifyFormVisOnline(line_data, site_profile):
         datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
         # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
@@ -4407,6 +4418,7 @@ class creating_flex_messages():
                            }
                        }]}}
         return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name, content)
+
     def CreateNotifyFormMwgtOffline(line_data, site_profile):
         datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
         # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
@@ -4652,6 +4664,7 @@ class creating_flex_messages():
                            }
                        }]}}
         return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name, content)
+
     def CreateNotifyFormMwgtOnline(line_data, site_profile):
         datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
         # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
@@ -4706,7 +4719,7 @@ class creating_flex_messages():
                                    },
                                    {
                                        "type": "text",
-                                       "text": result_site.site.station_name,
+                                       "text": str(result_site.site.station_name),
                                        "weight": "bold",
                                        "size": "md",
                                        "color": "#225508FF",
@@ -4716,7 +4729,7 @@ class creating_flex_messages():
                                    },
                                    {
                                        "type": "text",
-                                       "text": "MWGT : IP " + result_site.site.mwgt_ip,
+                                       "text": "MWGT : IP " + str(result_site.site.mwgt_ip),
                                        "weight": "bold",
                                        "size": "sm",
                                        "color": "#225508FF",
@@ -4898,3 +4911,399 @@ class creating_flex_messages():
                            }
                        }]}}
         return creating_flex_messages.CheckPermissionBeforeSendLine(technician_team_name, content)
+
+    def CreateNotifyFormNozzleOnline(line_data, site_profile):
+        # print('Nozzle')
+        datetime_now = datetime.datetime.now().strftime("%d.%m.%y %H:%M")
+        # รับค่า return มาจาก linebot/connect_db_profile/get_site_profile ใน index ที่ 0
+        print(line_data)
+        # print ('Error_start',site_profile[2])
+        print(type(site_profile))
+        print('Check xxxxxxxxxxxxxxxxxxx', site_profile)
+        print(type(site_profile))
+        result_site = site_profile
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 0
+        # print ('Check xxxxxxxxxxxxxxxxxxx')
+        print('result is', result_site.site.station_name)
+
+        day_loss = line_data[0]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 1
+        hours_loss = line_data[1]
+        # print ('Check')
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 2
+        minutes_loss = line_data[2]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 3
+        datetime_now = line_data[3]
+        # รับค่า return มาจาก linebot/calculate_function/different_time_calculate โดย return มาทั้งหมด 5 index 4
+        VIS_last_time = line_data[4]
+        # print ('Error_start',site_profile[2])
+        # Error_start = site_profile[2].Error_start.strftime("%d.%m.%y %H:%M")
+        # print ('Error_start ',Error_start)
+        technician_team_name = result_site.site.team_support.team_name
+        print('technician_team_name', result_site.site.team_support.team)
+        station_name = result_site.site.station_name
+        mwgt_ip = result_site.site.mwgt_ip
+        Error_start = datetime_now
+        Loss_times = str(day_loss) + " วัน " + str(hours_loss) + \
+            " ชม " + str(minutes_loss) + " นาที"
+        team_name = result_site.site.team_support.team_name
+
+        print(technician_team_name, station_name,
+              mwgt_ip, Error_start, Loss_times, team_name)
+
+        content = {"type": "flex",
+                   "altText": "NOZZLE ONLINE",
+                   "contents":
+                   {
+                       "type": "carousel",
+                       "contents": [{
+                           "type": "bubble",
+                           "hero": {
+                               "type": "image",
+                               "url": "https://seeoil-web.com/picture_logo/VIS-MONITOR/vis.png",
+                               "align": "center",
+                               "gravity": "bottom",
+                               "size": "full",
+                               "aspectRatio": "35:8",
+                               "aspectMode": "fit",
+                               "action": {
+                                   "type": "uri",
+                                   "label": "Line",
+                                   "uri": "https://linecorp.com/"
+                               },
+                               "position": "relative"
+                           },
+                           "body": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "contents": [
+                                   {
+                                       "type": "text",
+                                       "text": datetime_now,
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": station_name,
+                                       "weight": "bold",
+                                       "size": "md",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "gravity": "bottom",
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "VIS : IP " + mwgt_ip,
+                                       "weight": "bold",
+                                       "size": "sm",
+                                       "color": "#225508FF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "text",
+                                       "text": "NOZZLE ONLINE",
+                                       "weight": "bold",
+                                       "size": "lg",
+                                       "color": "#20970EFF",
+                                       "align": "center",
+                                       "margin": "xs",
+                                       "wrap": True,
+                                       "contents": []
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "sm",
+                                       "color": "#165C3CFF"
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "xs",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "สถานะ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "Online",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ตำแหน่งหน้าจ่าย",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": site_profile.NOZZLE_pump_log_address,
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                              
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ตำแหน่งมือจ่าย",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": site_profile.NOZZLE_num,
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                              
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "BatteryVolt",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(site_profile.NOZZLE_Battery_Status_Volts),
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                              
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "SerialNo.",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": site_profile.NOZZLE_SN,
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                              
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "LastCon.",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": site_profile.NOZZLE_Last_conn,
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                               
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อไม่ได้เมื่อ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": str(site_profile.Timestramp.strftime("%d.%m.%y %H:%M")),
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                              
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ติดต่อได้เมื่อ ",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": datetime_now,
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                              
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ขาดการติดต่อรวม",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": Loss_times,
+                                               "weight": "bold",
+                                               "size": "sm",
+                                               "align": "end",
+                                              
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "box",
+                                       "layout": "baseline",
+                                       "spacing": "sm",
+                                       "margin": "sm",
+                                       "contents": [
+                                           {
+                                               "type": "text",
+                                               "text": "ช่างเขต",
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "start",
+                                               "contents": []
+                                           },
+                                           {
+                                               "type": "text",
+                                               "text": "คุณ " + site_profile.site.team_support.team_name,
+                                               "weight": "bold",
+                                               "size": "md",
+                                               "align": "end",
+                                               
+                                               "contents": []
+                                           }
+                                       ]
+                                   },
+                                   {
+                                       "type": "separator",
+                                       "margin": "md",
+                                       "color": "#165C3CFF"
+                                   }
+                               ]
+                           },
+                           "footer": {
+                               "type": "box",
+                               "layout": "vertical",
+                               "flex": 0,
+                               "spacing": "sm",
+                               "contents": [
+                                   {
+                                       "type": "button",
+                                       "action": {
+                                           "type": "uri",
+                                           "label": "www.orpak.co.th",
+                                           "uri": "https://www.orpak.com/"
+                                       },
+                                       "color": "#078025FF",
+                                       "margin": "none",
+                                       "height": "sm",
+                                       "style": "secondary"
+                                   },
+                                   {
+                                       "type": "spacer",
+                                       "size": "sm"
+                                   }
+                               ]
+                           }
+                       }]}}
+        print('content ', content)
+        return creating_flex_messages.CheckPermissionBeforeSendLine(result_site.site.team_support.team, content)

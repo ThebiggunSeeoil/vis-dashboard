@@ -259,10 +259,10 @@ class save_data_to_db ():
                 SaveRecord= save_data_to_db.UpdateStatusNozzleBackToOnline(data_nozzle)# for local testing
                 result_calculate_time = calculate_function.different_time_calculate(timezone.now(),site_detail.Timestramp)
                 line_notify_preparing = creating_line_data.Line_Creating_NOZZLE_ONLINE(result_calculate_time,site_detail)
-                if line_notify_preparing == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
-                    result_save = save_data_to_db.SaveDataSendLineFailedToBD(site_detail,line_notify_preparing[0]) #ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
-                    if result_save == True :
-                        return None
+                # if line_notify_preparing == False:  # ถ้าส่ง Line ไม่ผ่านให้เข้ามาด้านล่าง
+                #     result_save = save_data_to_db.SaveDataSendLineFailedToBD(site_detail,line_notify_preparing[0]) #ส่งไป line notify data ไป save ที่ linebot/save_data_to_db/SaveDataSendLineFailedToBD
+                #     if result_save == True :
+                #         return None
                 try:
                     # Check if nozzle already in db or not if YES go next step
                     prepare_data = Status.objects.get(name_id=data_nozzle['name_id'],
