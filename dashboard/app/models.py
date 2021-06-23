@@ -247,7 +247,6 @@ class PersanalDetaillogin (models.Model):
     Orpak = "orpak"
     Customer = "Customer"
     compamy_choices = ((Orpak,"orpak"),(Customer,"customer"))
-    
     name=models.CharField(max_length=200)
     user_type=models.ForeignKey(Group,on_delete=models.CASCADE, null=True)
     company=models.CharField(max_length=9,choices=compamy_choices,default="JANUARY")
